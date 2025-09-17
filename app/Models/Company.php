@@ -2,13 +2,25 @@
 
 namespace App\Models;
 
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Company extends Model
+class Company extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\CompanyFactory> */
     use HasFactory;
-    use HasApiTokens;
+    use Notifiable;
+    
+    use HasFactory;
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
