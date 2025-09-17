@@ -21,6 +21,8 @@ class Customer extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'exp' => Carbon::now()->addDays(30)->timestamp,
+        ];
     }
 }
