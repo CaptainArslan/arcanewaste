@@ -172,6 +172,18 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 'phone' => '03001234567',
             ]);
 
+
+            $defaultHolidays = [
+                ['name' => 'New Year\'s Day', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
+                ['name' => 'Independence Day', 'holiday_date' => now()->year . '-08-14', 'is_recurring' => true],
+                ['name' => 'Christmas', 'holiday_date' => now()->year . '-12-25', 'is_recurring' => true],
+            ];
+
+            foreach ($defaultHolidays as $holiday) {
+                $company->holidays()->create($holiday);
+            }
+
+
             return $company;
         });
     }
