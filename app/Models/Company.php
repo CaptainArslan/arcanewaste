@@ -9,6 +9,7 @@ use App\Models\MerchantOnboardingLog;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -123,10 +124,20 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(PaymentOption::class, 'company_id');
     }
 
-    public function customers()
+    public function customers(): BelongsToMany
     {
         return $this->belongsToMany(Customer::class, 'company_customer')
             ->withPivot('payment_option_id')
             ->withTimestamps();
+    }
+
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
+    public function latestLocation(): MorphOne
+    {
+        return $this->morphOne(LatestLocation::class, 'locatable');
     }
 }

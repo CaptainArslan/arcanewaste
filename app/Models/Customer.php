@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Customer extends Authenticatable implements JWTSubject
 {
@@ -63,14 +64,23 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
     }
 
-    public function companies()
+    public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_customer')
             ->withPivot('payment_option_id')
             ->withTimestamps();
     }
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+    public function latestLocation(): MorphOne
+    {
+        return $this->morphOne(LatestLocation::class, 'locatable');
+    }
 
-    public function paymentOptionForCompany($companyId)
+    // Helper methods
+    public function paymentOptionForCompany($companyId): ?int
     {
         return $this->companies()
             ->where('company_id', $companyId)

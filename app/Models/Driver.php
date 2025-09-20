@@ -47,18 +47,28 @@ class Driver extends Authenticatable implements JWTSubject
     }
 
     // Relationships
-    public function generalSettings() : MorphMany
+    public function generalSettings(): MorphMany
     {
         return $this->morphMany(GeneralSetting::class, 'settingable');
     }
 
-    public function addresses() : MorphMany
+    public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');
     }
 
-    public function defaultAddress() : MorphOne
+    public function defaultAddress(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
+    }
+
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
+    public function latestLocation(): MorphOne
+    {
+        return $this->morphOne(LatestLocation::class, 'locatable');
     }
 }
