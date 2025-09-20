@@ -151,6 +151,27 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 'path' => null,
             ]);
 
+            // Step 13: Holidays
+            $company->holidays()->create([
+                'name' => 'Independence Day',
+                'holiday_date' => '2025-08-14',
+                'is_recurring' => true,
+            ]);
+
+            // Step 14: Company driver
+            $company->drivers()->create([
+                'name' => 'Company Driver',
+                'email' => 'company@driver.com',
+                'phone' => '03001234567',
+            ]);
+
+            // Step 15: Company customer
+            $company->customers()->create([
+                'name' => 'Company Customer',
+                'email' => 'company@customer.com',
+                'phone' => '03001234567',
+            ]);
+
             return $company;
         });
     }
