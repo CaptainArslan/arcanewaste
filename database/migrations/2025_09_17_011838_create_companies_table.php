@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('customer_panel_url')->nullable();
             $table->string('logo')->nullable();
             $table->text('description')->nullable();
-            $table->text('address');
             $table->string('phone');
             $table->string('email');
             $table->string('password');

@@ -7,11 +7,32 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Driver extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use Notifiable;
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'email',
+        'password',
+        'phone',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'remember_token' => 'string',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     public function getJWTIdentifier()
     {
@@ -23,5 +44,21 @@ class Driver extends Authenticatable implements JWTSubject
         return [
             'exp' => Carbon::now()->addDays(30)->timestamp,
         ];
+    }
+
+    // Relationships
+    public function generalSettings() : MorphMany
+    {
+        return $this->morphMany(GeneralSetting::class, 'settingable');
+    }
+
+    public function addresses() : MorphMany
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
+
+    public function defaultAddress() : MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
     }
 }

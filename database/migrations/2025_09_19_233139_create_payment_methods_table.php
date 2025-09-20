@@ -13,31 +13,38 @@ return new class extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // e.g., "Finix", "Stripe", "PayPal"
-            $table->string('slug')->unique(); // e.g., "finix", "stripe", "paypal"
+            $table->string('name');
+            $table->string('code')->unique(); // e.g., stripe, paypal, finix
             $table->text('description')->nullable();
             $table->string('logo_url')->nullable();
             $table->string('website_url')->nullable();
-            $table->json('supported_countries')->nullable(); // Array of country codes
-            $table->json('supported_currencies')->nullable(); // Array of currency codes
-            $table->json('supported_payment_types')->nullable(); // ["credit_card", "debit_card", "bank_transfer", "digital_wallet"]
-            $table->decimal('transaction_fee_percentage', 5, 4)->default(0); // e.g., 2.9% = 0.029
-            $table->decimal('transaction_fee_fixed', 10, 2)->default(0); // Fixed fee per transaction
-            $table->decimal('monthly_fee', 10, 2)->default(0); // Monthly subscription fee
-            $table->decimal('setup_fee', 10, 2)->default(0); // One-time setup fee
-            $table->integer('min_transaction_amount')->default(0); // Minimum transaction amount in cents
-            $table->integer('max_transaction_amount')->nullable(); // Maximum transaction amount in cents
-            $table->json('api_configuration')->nullable(); // API endpoints, keys, etc.
-            $table->json('onboarding_requirements')->nullable(); // Required documents, fields, etc.
-            $table->json('features')->nullable(); // Available features like recurring payments, refunds, etc.
+
+            $table->json('supported_countries')->nullable(); // ["PK","US"]
+            $table->json('supported_currencies')->nullable(); // ["PKR","USD"]
+            $table->json('supported_payment_types')->nullable(); // ["credit_card","bank_transfer"]
+
+            // fees: store money as integer cents
+            $table->decimal('transaction_fee_percentage', 5, 4)->default(0); // e.g. 0.0290
+            $table->integer('transaction_fee_fixed')->default(0); // fixed fee in cents
+            $table->integer('monthly_fee')->default(0); // cents
+            $table->integer('setup_fee')->default(0); // cents
+
+            $table->integer('min_transaction_amount')->default(0); // in cents
+            $table->integer('max_transaction_amount')->nullable(); // in cents
+
+            $table->json('api_configuration')->nullable(); // e.g. endpoints, env flags
+            $table->json('onboarding_requirements')->nullable(); // list of docs/fields
+            $table->json('features')->nullable();
+
             $table->enum('status', ['active', 'inactive', 'maintenance', 'deprecated'])->default('active');
-            $table->boolean('is_popular')->default(false); // Mark popular payment methods
+            $table->boolean('is_popular')->default(false);
             $table->boolean('requires_merchant_onboarding')->default(true);
-            $table->integer('sort_order')->default(0); // For ordering in UI
+            $table->integer('sort_order')->default(0);
+
             $table->timestamps();
-            
+
             $table->index(['status', 'is_popular']);
-            $table->index(['slug']);
+            $table->index(['code']);
             $table->index(['sort_order']);
         });
     }
