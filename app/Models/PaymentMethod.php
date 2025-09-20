@@ -11,7 +11,7 @@ class PaymentMethod extends Model
 
     protected $fillable = [
         'name',
-        'slug',
+        'code',
         'description',
         'logo_url',
         'website_url',
@@ -38,9 +38,9 @@ class PaymentMethod extends Model
         'supported_currencies' => 'array',
         'supported_payment_types' => 'array',
         'transaction_fee_percentage' => 'decimal:4',
-        'transaction_fee_fixed' => 'decimal:2',
-        'monthly_fee' => 'decimal:2',
-        'setup_fee' => 'decimal:2',
+        'transaction_fee_fixed' => 'integer',
+        'monthly_fee' => 'integer',
+        'setup_fee' => 'integer',
         'min_transaction_amount' => 'integer',
         'max_transaction_amount' => 'integer',
         'api_configuration' => 'array',
@@ -76,7 +76,7 @@ class PaymentMethod extends Model
     public function getFormattedTransactionFeeAttribute()
     {
         $percentage = $this->transaction_fee_percentage * 100;
-        $fixed = $this->transaction_fee_fixed;
+        $fixed = $this->transaction_fee_fixed / 100; // Convert cents to dollars
         
         if ($percentage > 0 && $fixed > 0) {
             return "{$percentage}% + $" . number_format($fixed, 2);
@@ -91,12 +91,14 @@ class PaymentMethod extends Model
 
     public function getFormattedMonthlyFeeAttribute()
     {
-        return $this->monthly_fee > 0 ? "$" . number_format($this->monthly_fee, 2) . "/month" : 'Free';
+        $fee = $this->monthly_fee / 100; // Convert cents to dollars
+        return $fee > 0 ? "$" . number_format($fee, 2) . "/month" : 'Free';
     }
 
     public function getFormattedSetupFeeAttribute()
     {
-        return $this->setup_fee > 0 ? "$" . number_format($this->setup_fee, 2) : 'Free';
+        $fee = $this->setup_fee / 100; // Convert cents to dollars
+        return $fee > 0 ? "$" . number_format($fee, 2) : 'Free';
     }
 
     // Methods

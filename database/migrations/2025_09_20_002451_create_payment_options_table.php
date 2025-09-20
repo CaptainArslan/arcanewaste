@@ -23,7 +23,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['company_id', 'type', 'percentage']);
-            $table->timestamps();
         });
     }
 

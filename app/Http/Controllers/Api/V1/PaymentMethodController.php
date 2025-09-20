@@ -49,7 +49,7 @@ class PaymentMethodController extends Controller
             return [
                 'id' => $method->id,
                 'name' => $method->name,
-                'slug' => $method->slug,
+                'code' => $method->code,
                 'description' => $method->description,
                 'logo_url' => $method->logo_url,
                 'website_url' => $method->website_url,
@@ -72,11 +72,11 @@ class PaymentMethodController extends Controller
     }
 
     /**
-     * Get a specific payment method by slug
+     * Get a specific payment method by code
      */
-    public function show(string $slug): JsonResponse
+    public function show(string $code): JsonResponse
     {
-        $paymentMethod = PaymentMethod::active()->where('slug', $slug)->first();
+        $paymentMethod = PaymentMethod::active()->where('code', $code)->first();
 
         if (!$paymentMethod) {
             return $this->sendErrorResponse('Payment method not found.', 404);
@@ -85,7 +85,7 @@ class PaymentMethodController extends Controller
         $transformedMethod = [
             'id' => $paymentMethod->id,
             'name' => $paymentMethod->name,
-            'slug' => $paymentMethod->slug,
+                'code' => $paymentMethod->code,
             'description' => $paymentMethod->description,
             'logo_url' => $paymentMethod->logo_url,
             'website_url' => $paymentMethod->website_url,
@@ -114,9 +114,9 @@ class PaymentMethodController extends Controller
     /**
      * Get onboarding requirements for a specific payment method
      */
-    public function onboardingRequirements(string $slug): JsonResponse
+    public function onboardingRequirements(string $code): JsonResponse
     {
-        $paymentMethod = PaymentMethod::active()->where('slug', $slug)->first();
+        $paymentMethod = PaymentMethod::active()->where('code', $code)->first();
 
         if (!$paymentMethod) {
             return $this->sendErrorResponse('Payment method not found.', 404);
@@ -129,13 +129,13 @@ class PaymentMethodController extends Controller
         $requirements = [
             'payment_method' => [
                 'name' => $paymentMethod->name,
-                'slug' => $paymentMethod->slug,
+                'code' => $paymentMethod->code,
                 'logo_url' => $paymentMethod->logo_url,
             ],
             'requirements' => $paymentMethod->getOnboardingRequirements(),
             'api_configuration' => $paymentMethod->getApiConfiguration(),
-            'estimated_setup_time' => $this->getEstimatedSetupTime($paymentMethod->slug),
-            'next_steps' => $this->getNextSteps($paymentMethod->slug),
+            'estimated_setup_time' => $this->getEstimatedSetupTime($paymentMethod->code),
+            'next_steps' => $this->getNextSteps($paymentMethod->code),
         ];
 
         return $this->sendSuccessResponse($requirements, 'Onboarding requirements retrieved successfully.');
@@ -144,7 +144,7 @@ class PaymentMethodController extends Controller
     /**
      * Get estimated setup time for a payment method
      */
-    private function getEstimatedSetupTime(string $slug): string
+    private function getEstimatedSetupTime(string $code): string
     {
         $setupTimes = [
             'finix' => '1-3 business days',
@@ -154,13 +154,13 @@ class PaymentMethodController extends Controller
             'razorpay' => '1-2 business days',
         ];
 
-        return $setupTimes[$slug] ?? '2-5 business days';
+        return $setupTimes[$code] ?? '2-5 business days';
     }
 
     /**
      * Get next steps for onboarding
      */
-    private function getNextSteps(string $slug): array
+    private function getNextSteps(string $code): array
     {
         $nextSteps = [
             'finix' => [
@@ -200,7 +200,7 @@ class PaymentMethodController extends Controller
             ],
         ];
 
-        return $nextSteps[$slug] ?? [
+        return $nextSteps[$code] ?? [
             'Complete application',
             'Provide required documents',
             'Verify information',

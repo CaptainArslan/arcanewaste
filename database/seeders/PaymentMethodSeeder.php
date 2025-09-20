@@ -15,7 +15,7 @@ class PaymentMethodSeeder extends Seeder
         $paymentMethods = [
             [
                 'name' => 'Finix',
-                'slug' => 'finix',
+                'code' => 'finix',
                 'description' => 'Finix is a payment infrastructure platform that helps businesses accept payments online and in-person.',
                 'logo_url' => 'payment-logos/finix.png',
                 'website_url' => 'https://finix.com',
@@ -23,9 +23,9 @@ class PaymentMethodSeeder extends Seeder
                 'supported_currencies' => ['USD', 'CAD'],
                 'supported_payment_types' => ['credit_card', 'debit_card', 'bank_transfer'],
                 'transaction_fee_percentage' => 0.029,
-                'transaction_fee_fixed' => 0.30,
-                'monthly_fee' => 0.00,
-                'setup_fee' => 0.00,
+                'transaction_fee_fixed' => 30, // $0.30 in cents
+                'monthly_fee' => 0, // $0.00 in cents
+                'setup_fee' => 0, // $0.00 in cents
                 'min_transaction_amount' => 50, // $0.50
                 'max_transaction_amount' => 10000000, // $100,000
                 'api_configuration' => [
@@ -59,7 +59,7 @@ class PaymentMethodSeeder extends Seeder
             ],
             [
                 'name' => 'Stripe',
-                'slug' => 'stripe',
+                'code' => 'stripe',
                 'description' => 'Stripe is a technology company that builds economic infrastructure for the internet.',
                 'logo_url' => 'payment-logos/stripe.png',
                 'website_url' => 'https://stripe.com',
@@ -67,9 +67,9 @@ class PaymentMethodSeeder extends Seeder
                 'supported_currencies' => ['USD', 'CAD', 'GBP', 'EUR', 'AUD', 'CHF', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'RON', 'BGN', 'HRK'],
                 'supported_payment_types' => ['credit_card', 'debit_card', 'bank_transfer', 'digital_wallet', 'buy_now_pay_later'],
                 'transaction_fee_percentage' => 0.029,
-                'transaction_fee_fixed' => 0.30,
-                'monthly_fee' => 0.00,
-                'setup_fee' => 0.00,
+                'transaction_fee_fixed' => 30, // $0.30 in cents
+                'monthly_fee' => 0, // $0.00 in cents
+                'setup_fee' => 0, // $0.00 in cents
                 'min_transaction_amount' => 50,
                 'max_transaction_amount' => null,
                 'api_configuration' => [
@@ -107,7 +107,7 @@ class PaymentMethodSeeder extends Seeder
             ],
             [
                 'name' => 'PayPal',
-                'slug' => 'paypal',
+                'code' => 'paypal',
                 'description' => 'PayPal is a multinational financial technology company operating an online payments system.',
                 'logo_url' => 'payment-logos/paypal.png',
                 'website_url' => 'https://paypal.com',
@@ -116,8 +116,8 @@ class PaymentMethodSeeder extends Seeder
                 'supported_payment_types' => ['credit_card', 'debit_card', 'digital_wallet', 'bank_transfer'],
                 'transaction_fee_percentage' => 0.034,
                 'transaction_fee_fixed' => 0.00,
-                'monthly_fee' => 0.00,
-                'setup_fee' => 0.00,
+                'monthly_fee' => 0, // $0.00 in cents
+                'setup_fee' => 0, // $0.00 in cents
                 'min_transaction_amount' => 100,
                 'max_transaction_amount' => null,
                 'api_configuration' => [
@@ -155,7 +155,7 @@ class PaymentMethodSeeder extends Seeder
             ],
             [
                 'name' => 'Square',
-                'slug' => 'square',
+                'code' => 'square',
                 'description' => 'Square is a financial services and digital payments company.',
                 'logo_url' => 'payment-logos/square.png',
                 'website_url' => 'https://squareup.com',
@@ -164,8 +164,8 @@ class PaymentMethodSeeder extends Seeder
                 'supported_payment_types' => ['credit_card', 'debit_card', 'digital_wallet'],
                 'transaction_fee_percentage' => 0.026,
                 'transaction_fee_fixed' => 0.10,
-                'monthly_fee' => 0.00,
-                'setup_fee' => 0.00,
+                'monthly_fee' => 0, // $0.00 in cents
+                'setup_fee' => 0, // $0.00 in cents
                 'min_transaction_amount' => 100,
                 'max_transaction_amount' => null,
                 'api_configuration' => [
@@ -202,7 +202,7 @@ class PaymentMethodSeeder extends Seeder
             ],
             [
                 'name' => 'Razorpay',
-                'slug' => 'razorpay',
+                'code' => 'razorpay',
                 'description' => 'Razorpay is a payment gateway and financial technology company.',
                 'logo_url' => 'payment-logos/razorpay.png',
                 'website_url' => 'https://razorpay.com',
@@ -211,8 +211,8 @@ class PaymentMethodSeeder extends Seeder
                 'supported_payment_types' => ['credit_card', 'debit_card', 'bank_transfer', 'digital_wallet', 'upi'],
                 'transaction_fee_percentage' => 0.020,
                 'transaction_fee_fixed' => 0.00,
-                'monthly_fee' => 0.00,
-                'setup_fee' => 0.00,
+                'monthly_fee' => 0, // $0.00 in cents
+                'setup_fee' => 0, // $0.00 in cents
                 'min_transaction_amount' => 100,
                 'max_transaction_amount' => null,
                 'api_configuration' => [

@@ -14,6 +14,6 @@ Route::prefix('v1')->group(function () {
     
     // Payment Methods Routes
     Route::get('payment-methods', [PaymentMethodController::class, 'index']);
-    Route::get('payment-methods/{slug}', [PaymentMethodController::class, 'show']);
-    Route::get('payment-methods/{slug}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
+    Route::get('payment-methods/{code}', [PaymentMethodController::class, 'show']);
+    Route::get('payment-methods/{code}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
 });

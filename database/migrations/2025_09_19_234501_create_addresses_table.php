@@ -33,9 +33,6 @@ return new class extends Migration
             $table->boolean('is_primary')->default(false);
 
             $table->timestamps();
-
-            // Optional index for quick lookups
-            $table->index(['addressable_type', 'addressable_id']);
         });
     }
 
