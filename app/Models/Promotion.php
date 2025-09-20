@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Promotion extends Model
 {
@@ -31,9 +32,9 @@ class Promotion extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function dumpsterSize(): BelongsTo
+    public function dumpsterSizes(): BelongsToMany
     {
-        return $this->belongsTo(DumpsterSize::class);
+        return $this->belongsToMany(DumpsterSize::class, 'dumpster_size_promotion');
     }
 
     // Helper methods

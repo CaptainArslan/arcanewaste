@@ -48,4 +48,9 @@ class DumpsterSize extends Model
     {
         return $this->belongsToMany(Tax::class);
     }
+
+    public function promotions(): BelongsToMany
+    {
+        return $this->belongsToMany(Promotion::class, 'dumpster_size_promotion');
+    }
 }
