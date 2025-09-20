@@ -24,12 +24,10 @@ class DumpsterSize extends Model
         'volume_cubic_yards',
         'weight_limit_lbs',
         'is_active',
-        'is_available',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'is_available' => 'boolean',
         'min_rental_days' => 'integer',
         'max_rental_days' => 'integer',
         'base_rent' => 'decimal:2',
