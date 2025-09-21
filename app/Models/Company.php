@@ -4,21 +4,23 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Models\PaymentMethod;
+use Spatie\Sluggable\HasSlug;
 use App\Models\GeneralSetting;
+use Spatie\Sluggable\SlugOptions;
 use App\Models\MerchantOnboardingLog;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Company extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, HasSlug;
 
     protected $fillable = [
         'name',
@@ -76,6 +78,13 @@ class Company extends Authenticatable implements JWTSubject
         return [
             'exp' => Carbon::now()->addDays(30)->timestamp,
         ];
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 
     // Relationships

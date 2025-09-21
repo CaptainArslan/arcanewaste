@@ -1,10 +1,15 @@
 <?php
 
 use Illuminate\Foundation\Application;
-use App\Http\Middleware\CheckJsonHeaders;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,18 +20,43 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
-            CheckJsonHeaders::class,
+            // CheckJsonHeaders::class,
         ]);
     })
     ->withExceptions(function ($exceptions) {
         $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
-            if ($request->is('api/*')) {
-                return true;
-            }
+            return $request->is('api/*') || $request->expectsJson();
+        });
 
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], Response::HTTP_BAD_REQUEST);
+        // Customize JSON response
+        $exceptions->renderable(function (Throwable $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                $statusCode = match (true) {
+                    $e instanceof ValidationException => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    $e instanceof NotFoundHttpException => Response::HTTP_NOT_FOUND,
+                    $e instanceof MethodNotAllowedHttpException => Response::HTTP_METHOD_NOT_ALLOWED,
+                    $e instanceof AuthenticationException => Response::HTTP_UNAUTHORIZED,
+                    $e instanceof AuthorizationException => Response::HTTP_FORBIDDEN,
+                    $e instanceof BadRequestHttpException => Response::HTTP_BAD_REQUEST,
+                    default => Response::HTTP_INTERNAL_SERVER_ERROR,
+                };
+
+
+                $message = match (true) {
+                    $e instanceof ValidationException => implode(', ', $e->errors()),
+                    $e instanceof NotFoundHttpException => 'Resource not found',
+                    $e instanceof MethodNotAllowedHttpException => 'Method not allowed',
+                    $e instanceof AuthenticationException => 'Unauthorized',
+                    $e instanceof AuthorizationException => 'Forbidden',
+                    $e instanceof BadRequestHttpException => 'Bad request',
+                    default => 'Something went wrong',
+                };
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                    'errors' => $e->getMessage(),
+                ], $statusCode);
+            }
         });
     })->create();

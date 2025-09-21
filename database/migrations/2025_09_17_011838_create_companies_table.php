@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('customer_panel_url')->nullable();
             $table->string('logo')->nullable();
-            $table->text('description')->nullable();
+            $table->longText('description')->nullable();
             $table->string('phone');
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('password');
             $table->string('website')->nullable();
             $table->string('onboarding_status')->default('pending');

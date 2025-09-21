@@ -43,8 +43,6 @@ class Address extends Model
     protected $hidden = [
         'addressable_id',
         'addressable_type',
-        'latitude',
-        'longitude',
     ];
 
     public function addressable(): MorphTo

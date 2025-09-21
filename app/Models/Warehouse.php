@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Warehouse extends Model
 {
@@ -29,9 +30,24 @@ class Warehouse extends Model
         // 
     ];
 
+    protected $appends = [
+        'default_address',
+    ];
+
+    // Relationships
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function defaultAddress(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
+    }
+
+    public function addresses(): MorphMany
+    {
+        return $this->morphMany(Address::class, 'addressable');
     }
 
     public function timings(): MorphMany

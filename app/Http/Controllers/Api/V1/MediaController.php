@@ -66,6 +66,10 @@ class MediaController extends Controller
                 }
                 $path = $media->store('media', 's3'); // e.g. "media/xyz.jpg"
                 $urls['path'] = $path;
+                $urls['name'] = $media->getClientOriginalName();
+                $urls['type'] = $media->getClientOriginalExtension();
+                $urls['mime_type'] = $media->getClientMimeType();
+                $urls['size'] = $media->getSize();
                 $urls['url'] = Storage::disk('s3')->url($path);
             }
 

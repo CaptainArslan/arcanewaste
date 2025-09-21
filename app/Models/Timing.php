@@ -20,11 +20,12 @@ class Timing extends Model
     ];
 
     protected $casts = [
-        'opens_at' => 'time',
-        'closes_at' => 'time',
+        'opens_at' => 'datetime:H:i',
+        'closes_at' => 'datetime:H:i',
         'is_closed' => 'boolean',
     ];
 
+    // Relationships
     public function timeable(): MorphTo
     {
         return $this->morphTo();
