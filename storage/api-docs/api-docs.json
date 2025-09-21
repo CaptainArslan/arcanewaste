@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Rogue Insider API Documentation",
-        "description": "Authentication endpoints for Rogue Insider.",
+        "description": "Media endpoints for media upload and management.",
         "version": "1.0.0"
     },
     "servers": [
@@ -12,6 +12,402 @@
         }
     ],
     "paths": {
+        "/company/auth/register": {
+            "post": {
+                "tags": [
+                    "Company Authentication"
+                ],
+                "summary": "Register a new company and return access token",
+                "description": "Registers a company, creates a warehouse, registers device, and issues a JWT access token.",
+                "operationId": "3ea198bf3b9ad5d1098b784b294f325b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password",
+                                    "company_name",
+                                    "address",
+                                    "documents"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "company@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    },
+                                    "company_name": {
+                                        "type": "string",
+                                        "example": "Acme Inc."
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+1234567890"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "example": "https://acme.com"
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "example": "https://acme.com/logo.png"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Company description goes here."
+                                    },
+                                    "address": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "address_line1",
+                                                "city",
+                                                "country"
+                                            ],
+                                            "properties": {
+                                                "address_line1": {
+                                                    "type": "string",
+                                                    "example": "123 Business St"
+                                                },
+                                                "address_line2": {
+                                                    "type": "string",
+                                                    "example": "Suite 100"
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "New York"
+                                                },
+                                                "state": {
+                                                    "type": "string",
+                                                    "example": "NY"
+                                                },
+                                                "country": {
+                                                    "type": "string",
+                                                    "example": "USA"
+                                                },
+                                                "zip": {
+                                                    "type": "string",
+                                                    "example": "10001"
+                                                },
+                                                "is_primary": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "documents": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "name",
+                                                "type",
+                                                "file_path",
+                                                "mime_type",
+                                                "issued_at",
+                                                "expires_at",
+                                                "is_verified"
+                                            ],
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Business License"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "license"
+                                                },
+                                                "file_path": {
+                                                    "type": "string",
+                                                    "example": "documents/license.pdf"
+                                                },
+                                                "mime_type": {
+                                                    "type": "string",
+                                                    "example": "application/pdf"
+                                                },
+                                                "issued_at": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-01-01"
+                                                },
+                                                "expires_at": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2030-01-01"
+                                                },
+                                                "is_verified": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "device_token": {
+                                        "type": "string",
+                                        "example": "device-uuid-123",
+                                        "nullable": true
+                                    },
+                                    "device_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "android",
+                                            "ios"
+                                        ],
+                                        "example": "android"
+                                    },
+                                    "device_id": {
+                                        "type": "string",
+                                        "example": "device-uuid-123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Company registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company registered successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGci..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Company"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The email field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/company/auth/login": {
+            "post": {
+                "tags": [
+                    "Company Authentication"
+                ],
+                "summary": "Login a company and return access token",
+                "description": "Authenticates a company and returns a JWT access token along with company details.",
+                "operationId": "0a0c61ff8b1b065d428d62a75a1f8ffd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "company@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Company logged in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company logged in successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGci..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Company"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The email field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/company/auth/logout": {
+            "post": {
+                "tags": [
+                    "Company Authentication"
+                ],
+                "summary": "Logout a company",
+                "description": "Logs out a company and invalidates the access token.",
+                "operationId": "ef15ba390ef00e8b0869167c0d5912ed",
+                "responses": {
+                    "200": {
+                        "description": "Company logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/media/upload": {
             "post": {
                 "tags": [
@@ -41,7 +437,7 @@
                                         "type": "array",
                                         "items": {
                                             "type": "string",
-                                            "example": "media/old-file.jpg"
+                                            "example": ""
                                         }
                                     }
                                 },
@@ -187,6 +583,46 @@
         }
     },
     "components": {
+        "schemas": {
+            "Company": {
+                "title": "Company",
+                "description": "Company resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Acme Inc."
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "company@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+1234567890"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "123 Business St, NY"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-22T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-22T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -196,6 +632,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Company Authentication",
+            "description": "Company Authentication"
+        },
         {
             "name": "Media",
             "description": "Media"
