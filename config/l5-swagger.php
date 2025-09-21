@@ -5,18 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Arcane Waste API v2',
-                'description' => 'Comprehensive API documentation for Arcane Waste management system with Finix payment integration.',
-                'version' => '2.0.0',
-                'contact' => [
-                    'name' => 'Arcane Waste Support',
-                    'email' => 'support@arcanewaste.com',
-                    'url' => 'https://arcanewaste.com'
-                ],
-                'license' => [
-                    'name' => 'MIT',
-                    'url' => 'https://opensource.org/licenses/MIT'
-                ]
+                'title' => 'L5 Swagger UI',
             ],
 
             'routes' => [
@@ -225,14 +214,7 @@ return [
                     'name' => 'Authorization', // The name of the header or query parameter to be used.
                     'in' => 'header', // The location of the API key. Valid values are "query" or "header".
                 ],
-                */
-                'bearerAuth' => [
-                    'type' => 'http',
-                    'scheme' => 'bearer',
-                    'bearerFormat' => 'JWT',
-                    'description' => 'Enter JWT token in format (Bearer <token>)'
-                ],
-                ],
+                */],
             'security' => [
                 /*
                  * Examples of Securities
@@ -297,7 +279,7 @@ return [
                  * 'full' (expands the tags and operations),
                  * 'none' (expands nothing).
                  */
-                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'list'),
+                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'none'),
 
                 /**
                  * If set, enables filtering. The top bar will show an edit box that
@@ -308,7 +290,6 @@ return [
                  * the tag.
                  */
                 'filter' => env('L5_SWAGGER_UI_FILTERS', true), // true | false
-                
             ],
 
             'authorization' => [
@@ -329,7 +310,7 @@ return [
          * Constants which can be used in annotations
          */
         'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('APP_URL', 'http://arcane-2nd-version.test'),
+            'L5_SWAGGER_CONST_HOST' => env('APP_URL', 'http://arcane-2nd-version.test') . '/api/v1',
         ],
     ],
 ];

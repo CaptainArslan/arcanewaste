@@ -1,0 +1,210 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Rogue Insider API Documentation",
+        "description": "Authentication endpoints for Rogue Insider.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://arcane-2nd-version.test/api/v1",
+            "description": "API Base URL"
+        }
+    ],
+    "paths": {
+        "/media/upload": {
+            "post": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Upload media files to S3 and optionally delete old ones",
+                "description": "This endpoint uploads one or more media files to S3 and can also delete old files if `remove_paths` are provided.",
+                "operationId": "db57490fe0f8cd0f85b387cd8eab8166",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "media"
+                                ],
+                                "properties": {
+                                    "media[]": {
+                                        "description": "One or more media files (max 2MB each)",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "remove_paths[]": {
+                                        "description": "Optional array of S3 paths to delete",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "media/old-file.jpg"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Media processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Media processed successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "uploaded": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "path": {
+                                                                "type": "string",
+                                                                "example": "media/abc123.jpg"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "myfile.jpg"
+                                                            },
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "jpg"
+                                                            },
+                                                            "mime_type": {
+                                                                "type": "string",
+                                                                "example": "image/jpeg"
+                                                            },
+                                                            "size": {
+                                                                "type": "integer",
+                                                                "example": 204800
+                                                            },
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "https://bucket.s3.amazonaws.com/media/abc123.jpg"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "deleted": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "media/old-file.jpg"
+                                                    }
+                                                },
+                                                "failed_deletes": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "media/fail.jpg"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No media file provided."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The media field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to process media. Something went wrong"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Media",
+            "description": "Media"
+        }
+    ]
+}
