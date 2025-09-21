@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers\Api\V1\Company;
 
+use App\Models\Timing;
+use App\Models\Address;
 use App\Models\Company;
+use App\Models\Warehouse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\CompanyResource;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use App\Events\CompanySetupSuccessfullyEvent;
 use App\Http\Requests\Company\RegisterRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->all();
         $address = $data['address'];
@@ -28,31 +36,12 @@ class AuthController extends Controller
         ]);
 
         // create default address
-        $address = $company->defaultAddress()->create([
-            "address_line1" => $address['address_line1'],
-            "address_line2" => $address['address_line2'],
-            "city" => $address['city'],
-            "state" => $address['state'],
-            "postal_code" => $address['postal_code'],
-            "country" => $address['country'],
-            "latitude" => $address['latitude'],
-            "longitude" => $address['longitude'],
-            "is_primary" => $address['is_primary'] ?? true,
-        ]);
-
-        if ($request->has('documents')) {
-            foreach ($request->documents as $document) {
-                $company->documents()->create([
-                    'name' => $document['name'],
-                    'type' => $document['type'],
-                    'file_path' => $document['file_path'],
-                    'mime_type' => $document['mime_type'],
-                    'issued_at' => $document['issued_at'],
-                    'expires_at' => $document['expires_at'],
-                    'is_verified' => $document['is_verified'],
-                ]);
-            }
-        }
+        $address = $this->createAddress($company, $address, true);
+        $this->createDocuments($company, $request->documents ?? []);
+        $this->createCompanyTimings($company);
+        $this->createCompanyHolidays($company);
+        $this->createCompanyGeneralSettings($company);
+        $this->createCompanyPaymentOptions($company);
 
         // create default warehouse
         $warehouse = $company->warehouses()->create([
@@ -63,80 +52,8 @@ class AuthController extends Controller
             'is_active' => true,
         ]);
 
-        // create default warehouse address
-        $warehouse->defaultAddress()->create($address->toArray());
-
-        $timings = [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-        ];
-
-        foreach ($timings as $timing) {
-            if ($company->timings()->where('day_of_week', $timing)->exists()) {
-                continue;
-            } else {
-                $company->timings()->create([
-                    'day_of_week' => $timing,
-                    'opens_at' => '09:00',
-                    'closes_at' => '17:00',
-                    'is_closed' => false,
-                ]);
-            }
-
-            if ($warehouse->timings()->where('day_of_week', $timing)->exists()) {
-                continue;
-            } else {
-                $warehouse->timings()->create([
-                    'day_of_week' => $timing,
-                    'opens_at' => '09:00',
-                    'closes_at' => '17:00',
-                    'is_closed' => false,
-                ]);
-            }
-        }
-
-        // holo
-        $holidays = [
-            ['name' => 'New Year', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
-            ['name' => 'Independence Day', 'holiday_date' => now()->year . '-03-14', 'is_recurring' => true],
-        ];
-        foreach ($holidays as $holiday) {
-            $company->holidays()->create($holiday);
-            // $warehouse->holidays()->create($holiday);
-        }
-
-        // create default general settings
-        $company->generalSettings()->createMany([
-            ['key' => 'default_timezone', 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi')],
-            ['key' => 'order_cancelation_time_limit', 'value' =>  24],
-            ['key' => 'default_driver_hourly_rate', 'value' => 10],
-            ['key' => 'default_driver_daily_hours', 'value' => 8],
-        ]);
-
-        // // create default payment methods
-        // $company->paymentMethods()->createMany([
-        //     ['name' => 'Finix', 'code' => 'finix', 'status' => 'active', 'requires_merchant_onboarding' => true],
-        //     // ['name' => 'Stripe', 'slug' => 'stripe', 'status' => 'active', 'requires_merchant_onboarding' => true],
-        //     // ['name' => 'Paypal', 'slug' => 'paypal', 'status' => 'active', 'requires_merchant_onboarding' => true],
-        // ]);
-
-        // // create default merchant onboarding logs
-        // $company->merchantOnboardingLogs()->createMany([
-        //     ['payment_method_code' => 'finix', 'status' => 'pending'],
-        //     // ['payment_method_code' => 'stripe', 'status' => 'pending'],
-        //     // ['payment_method_code' => 'paypal', 'status' => 'pending'],
-        // ]);
-        // create default payment options
-        $company->paymentOptions()->createMany([
-            ['type' => 'upfront_full', 'percentage' => 100],
-            ['type' => 'partial_upfront', 'percentage' => 50],
-            ['type' => 'after_completion', 'percentage' => 0],
-        ]);
-
+        $this->createAddress($warehouse, $address->toArray() ?? [], true);
+        $this->createWarehouseTimings($warehouse);
         CompanySetupSuccessfullyEvent::dispatch($company);
 
         $credentials = [
@@ -161,6 +78,142 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('company')->factory()->getTTL() * 60,
             'data' => CompanyResource::make($company),
-        ], 'Company registered successfully');
+        ], 'Company registered successfully', Response::HTTP_CREATED);
+    }
+
+    public function getTimings(): array
+    {
+        return [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+        ];
+    }
+
+    private function createCompanyTimings(Company $company): Collection
+    {
+        $timings = $this->getTimings();
+        $now = now();
+
+        $existingDays = $company->timings()->pluck('day_of_week')->toArray();
+        $newTimings = [];
+
+        foreach ($timings as $timing) {
+            if (!in_array($timing, $existingDays)) {
+                $newTimings[] = [
+                    'timeable_id'  => $company->id,
+                    'timeable_type'  => Company::class,
+                    'day_of_week' => $timing,
+                    'opens_at'    => '09:00',
+                    'closes_at'   => '17:00',
+                    'is_closed'   => false,
+                    'created_at'  => $now,
+                    'updated_at'  => $now,
+                ];
+            }
+        }
+
+        return $company->timings()->createMany($newTimings);
+    }
+
+    private function createWarehouseTimings(Warehouse $warehouse): Collection
+    {
+        $timings = $this->getTimings();
+        $now = now();
+        $newTimings = [];
+        $existingDays = $warehouse->timings()->pluck('day_of_week')->toArray();
+        foreach ($timings as $timing) {
+            if (!in_array($timing, $existingDays)) {
+                $newTimings[] = [
+                    'timeable_id'  => $warehouse->id,
+                    'timeable_type'  => Warehouse::class,
+                    'day_of_week' => $timing,
+                    'opens_at'    => '09:00',
+                    'closes_at'   => '17:00',
+                    'is_closed'   => false,
+                    'created_at'  => $now,
+                    'updated_at'  => $now,
+                ];
+            }
+        }
+        return $warehouse->timings()->createMany($newTimings);
+    }
+
+    private function createAddress(Model $addressable, array $address = [], bool $isPrimary = false): Address
+    {
+        if (empty($address)) {
+            return $addressable->addresses()->where('is_primary', true)->first();
+        }
+
+        // If another primary exists and we are not overriding, force false
+        if (!$isPrimary && $addressable->addresses()->where('is_primary', true)->exists()) {
+            $isPrimary = false;
+        }
+
+        return $addressable->addresses()->create([
+            'address_line1' => $address['address_line1'] ?? null,
+            'address_line2' => $address['address_line2'] ?? null,
+            'city'          => $address['city'] ?? null,
+            'state'         => $address['state'] ?? null,
+            'postal_code'   => $address['postal_code'] ?? null,
+            'country'       => $address['country'] ?? null,
+            'latitude'      => $address['latitude'] ?? null,
+            'longitude'     => $address['longitude'] ?? null,
+            'is_primary'    => $isPrimary,
+        ]);
+    }
+
+    private function createDocuments(Model $documentable, array $documents = []): Collection
+    {
+        if (empty($documents)) {
+            return $documentable->documents()->get();
+        }
+
+        $newDocuments = [];
+        foreach ($documents as $document) {
+            $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
+            if (!in_array($document['file_path'], $existingDocuments)) {
+                $newDocuments[] = [
+                    'name' => $document['name'],
+                    'type' => $document['type'],
+                    'file_path' => $document['file_path'],
+                    'mime_type' => $document['mime_type'],
+                    'issued_at' => $document['issued_at'],
+                    'expires_at' => $document['expires_at'],
+                    'is_verified' => $document['is_verified'],
+                ];
+            }
+        }
+        return $documentable->documents()->createMany($newDocuments);
+    }
+
+    private function createCompanyHolidays(Company $company): Collection
+    {
+        $holidays = [
+            ['name' => 'New Year', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
+            ['name' => 'Independence Day', 'holiday_date' => now()->year . '-03-14', 'is_recurring' => true],
+        ];
+        return $company->holidays()->createMany($holidays);
+    }
+
+    private function createCompanyGeneralSettings(Company $company): Collection
+    {
+        return $company->generalSettings()->createMany([
+            ['key' => 'default_timezone', 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi')],
+            ['key' => 'order_cancelation_time_limit', 'value' =>  24],
+            ['key' => 'default_driver_hourly_rate', 'value' => 10],
+        ]);
+    }
+
+    private function createCompanyPaymentOptions(Company $company): Collection
+    {
+        return $company->paymentOptions()->createMany([
+            ['type' => 'upfront_full', 'percentage' => 100],
+            ['type' => 'partial_upfront', 'percentage' => 50],
+            ['type' => 'after_completion', 'percentage' => 0],
+        ]);
     }
 }
