@@ -18,7 +18,6 @@
                     "Media"
                 ],
                 "summary": "Upload media files to S3 and optionally delete old ones",
-                "description": "This endpoint uploads one or more media files to S3 and can also delete old files if `remove_paths` are provided.",
                 "operationId": "db57490fe0f8cd0f85b387cd8eab8166",
                 "requestBody": {
                     "required": true,
@@ -26,7 +25,7 @@
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "media"
+                                    "media[]"
                                 ],
                                 "properties": {
                                     "media[]": {
@@ -76,9 +75,13 @@
                                                                 "type": "string",
                                                                 "example": "media/abc123.jpg"
                                                             },
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "https://bucket.s3.amazonaws.com/media/abc123.jpg"
+                                                            },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "myfile.jpg"
+                                                                "example": "example.jpg"
                                                             },
                                                             "type": {
                                                                 "type": "string",
@@ -91,10 +94,6 @@
                                                             "size": {
                                                                 "type": "integer",
                                                                 "example": 204800
-                                                            },
-                                                            "url": {
-                                                                "type": "string",
-                                                                "example": "https://bucket.s3.amazonaws.com/media/abc123.jpg"
                                                             }
                                                         },
                                                         "type": "object"
@@ -124,7 +123,7 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request - No media file provided",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -144,7 +143,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
+                        "description": "Validation Error - Invalid input",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -164,7 +163,7 @@
                         }
                     },
                     "500": {
-                        "description": "Server Error",
+                        "description": "Internal Server Error - Failed to process media",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -183,12 +182,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         }
     },
