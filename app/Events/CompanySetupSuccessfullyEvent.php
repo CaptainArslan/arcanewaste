@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Company;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,12 +15,13 @@ class CompanySetupSuccessfullyEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $company;
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(Company $company)
     {
-        //
+        $this->company = $company;
     }
 
     /**

@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api\V1\Company;
 
 use App\Models\Company;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\CompanyResource;
+use App\Events\CompanySetupSuccessfullyEvent;
 use App\Http\Requests\Company\RegisterRequest;
 
 class AuthController extends Controller
@@ -134,6 +137,30 @@ class AuthController extends Controller
             ['type' => 'after_completion', 'percentage' => 0],
         ]);
 
-        return $this->sendSuccessResponse($company, 'Company registered successfully');
+        CompanySetupSuccessfullyEvent::dispatch($company);
+
+        $credentials = [
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ];
+
+        if (!$token = Auth::guard('company')->attempt($credentials)) {
+            return $this->sendErrorResponse('Invalid credentials');
+        }
+
+        if ($data['device_token'] && $data['device_type'] && $data['device_id']) {
+            $company->devices()->create([
+                'device_token' => $data['device_token'],
+                'device_type' => $data['device_type'],
+                'device_id' => $data['device_id'],
+            ]);
+        }
+
+        return $this->sendSuccessResponse([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::guard('company')->factory()->getTTL() * 60,
+            'data' => CompanyResource::make($company),
+        ], 'Company registered successfully');
     }
 }

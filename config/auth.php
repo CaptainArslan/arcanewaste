@@ -41,15 +41,15 @@ return [
             'provider' => 'users',
         ],
         'company' => [
-            'driver' => 'passport',   // Use Passport here
+            'driver' => 'jwt',   // Use jwt here
             'provider' => 'companies',
         ],
         'driver' => [
-            'driver' => 'passport',
+            'driver' => 'jwt',
             'provider' => 'drivers',
         ],
         'customer' => [
-            'driver' => 'passport',
+            'driver' => 'jwt',
             'provider' => 'customers',
         ],
     ],

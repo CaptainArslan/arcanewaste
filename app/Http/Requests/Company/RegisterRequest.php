@@ -36,6 +36,9 @@ class RegisterRequest extends FormRequest
             'website' => ['required', 'string', 'max:255'],
             "address" => ['required', 'array', new AddressRule()],
             'documents' => ['required', 'array', new DocumentRule()],
+            "device_token" => ['nullable', 'string',],
+            'device_type' => ['required_if:device_token,not_null', 'in:android,ios', 'string',],
+            'device_id' => ['required_if:device_token,not_null', 'string',],
         ];
     }
 

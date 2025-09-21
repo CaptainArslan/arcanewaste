@@ -88,6 +88,11 @@ class Company extends Authenticatable implements JWTSubject
     }
 
     // Relationships
+    public function devices(): MorphMany
+    {
+        return $this->morphMany(DeviceToken::class, 'deviceable');
+    }
+
     public function generalSettings(): MorphMany
     {
         return $this->morphMany(GeneralSetting::class, 'settingable');
@@ -153,5 +158,11 @@ class Company extends Authenticatable implements JWTSubject
     public function latestLocation(): MorphOne
     {
         return $this->morphOne(LatestLocation::class, 'locatable');
+    }
+
+    // Helper methods
+    public function getDeviceTokens(): array
+    {
+        return $this->devices()->pluck('device_token')->toArray();
     }
 }
