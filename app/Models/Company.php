@@ -65,7 +65,7 @@ class Company extends Authenticatable implements JWTSubject
     ];
 
     protected $appends = [
-        'logo_url',
+        // 
     ];
 
     public function getJWTIdentifier()
