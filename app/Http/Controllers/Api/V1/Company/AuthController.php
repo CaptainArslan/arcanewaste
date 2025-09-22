@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Company;
 
 use App\Services\DeviceService;
+use App\Models\PasswordResetTokens;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Company\LoginRequest;
@@ -164,6 +165,12 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
+        // check if otp is expired
+        $passwordResetToken = PasswordResetTokens::where('token', $request->otp)->first();
+        if (!$passwordResetToken || $passwordResetToken->expires_at < now()) {
+            return $this->sendErrorResponse('OTP expired', Response::HTTP_BAD_REQUEST);
+        }
+
         $company = $this->companyRegistrationService->registerCompany($request->all());
         $this->companyRegistrationService->registerWarehouse($company);
 
@@ -176,7 +183,7 @@ class AuthController extends Controller
         ];
 
         if (!$token = Auth::guard('company')->attempt($credentials)) {
-            return $this->sendErrorResponse('Invalid credentials');
+            return $this->sendErrorResponse('Invalid credentials', Response::HTTP_BAD_REQUEST);
         }
 
         $this->deviceService->registerDevice($company, $data);
