@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Api\V1\Company;
 use App\Services\DeviceService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\CompanyResource;
 use App\Http\Requests\Company\LoginRequest;
+use App\Http\Requests\Company\GetOtpRequest;
 use App\Services\CompanyRegistrationService;
 use App\Events\CompanySetupSuccessfullyEvent;
+use App\Http\Resources\CompanyDetailResource;
 use App\Http\Requests\Company\RegisterRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Http\Resources\CompanyDetailResource;
 
 class AuthController extends Controller
 {
@@ -29,37 +29,83 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/company/auth/register",
-     *     summary="Register a new company and return access token",
-     *     description="Registers a company, creates a warehouse, registers device, and issues a JWT access token.",
-     *     tags={"Company - Authentication"},
+     *     path="/company/auth/send-otp",
+     *     summary="Send OTP to company email",
+     *     description="Generates a one-time password (OTP) and sends it to the company's registered email address.",
+     *     tags={"Company Authentication"},
      *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"email","password","company_name","address","documents"},
+     *             type="object",
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="company@example.com")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OTP sent successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="OTP sent successfully"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null)
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="The email field is required."),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null)
+     *         )
+     *     )
+     * )
+     */
+    public function sendOtp(GetOtpRequest $request): JsonResponse
+    {
+        $email = $request->email;
+        $this->companyRegistrationService->sendOtp($email);
+        return $this->sendSuccessResponse(null, 'OTP sent successfully', Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/company/auth/register",
+     *     summary="Register a new company and return access token",
+     *     description="Registers a company, creates a warehouse, registers device, and issues a JWT access token.",
+     *     tags={"Company Authentication"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password","otp","name","address","documents"},
      *             @OA\Property(property="email", type="string", format="email", example="company@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="secret123"),
-     *             @OA\Property(property="company_name", type="string", example="Acme Inc."),
-     *             @OA\Property(property="phone", type="string", example="+1234567890"),
+     *             @OA\Property(property="otp", type="string", example="123456"),
+     *             @OA\Property(property="name", type="string", example="Acme Inc."),
+     *             @OA\Property(property="phone", type="string", example="1234567890"),
      *             @OA\Property(property="website", type="string", example="https://acme.com"),
      *             @OA\Property(property="logo", type="string", example="https://acme.com/logo.png"),
      *             @OA\Property(property="description", type="string", example="Company description goes here."),
+     *
      *             @OA\Property(
      *                 property="address",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"address_line1","city","country"},
-     *                     @OA\Property(property="address_line1", type="string", example="123 Business St"),
-     *                     @OA\Property(property="address_line2", type="string", example="Suite 100"),
-     *                     @OA\Property(property="city", type="string", example="New York"),
-     *                     @OA\Property(property="state", type="string", example="NY"),
-     *                     @OA\Property(property="country", type="string", example="USA"),
-     *                     @OA\Property(property="zip", type="string", example="10001"),
-     *                     @OA\Property(property="is_primary", type="boolean", example=true)
-     *                 )
+     *                 type="object",
+     *                 required={"address_line1","city","country"},
+     *                 @OA\Property(property="address_line1", type="string", example="123 Business St"),
+     *                 @OA\Property(property="address_line2", type="string", example="Suite 100"),
+     *                 @OA\Property(property="city", type="string", example="New York"),
+     *                 @OA\Property(property="state", type="string", example="NY"),
+     *                 @OA\Property(property="country", type="string", example="USA"),
+     *                 @OA\Property(property="zip", type="string", example="10001"),
+     *                 @OA\Property(property="is_primary", type="boolean", example=true)
      *             ),
+     *
      *             @OA\Property(
      *                 property="documents",
      *                 type="array",
@@ -75,6 +121,7 @@ class AuthController extends Controller
      *                     @OA\Property(property="is_verified", type="boolean", example=true)
      *                 )
      *             ),
+     *
      *             @OA\Property(property="device_token", type="string", nullable=true, example="device-uuid-123"),
      *             @OA\Property(property="device_type", type="string", enum={"android","ios"}, example="android"),
      *             @OA\Property(property="device_id", type="string", example="device-uuid-123")
@@ -91,7 +138,7 @@ class AuthController extends Controller
      *                 @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGci..."),
      *                 @OA\Property(property="token_type", type="string", example="bearer"),
      *                 @OA\Property(property="expires_in", type="integer", example=3600),
-     *                 @OA\Property(property="data", ref="#/components/schemas/Company")
+     *                 @OA\Property(property="company", ref="#/components/schemas/CompanyResource")
      *             )
      *         )
      *     ),
@@ -115,7 +162,6 @@ class AuthController extends Controller
      *     )
      * )
      */
-
     public function register(RegisterRequest $request): JsonResponse
     {
         $company = $this->companyRegistrationService->registerCompany($request->all());
@@ -134,17 +180,19 @@ class AuthController extends Controller
         }
 
         $this->deviceService->registerDevice($company, $data);
+        $this->companyRegistrationService->deletePasswordResetToken($data['otp']);
 
-        return $this->sendSuccessResponse(
-            [
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Company registered successfully',
+            'data' => [
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => Auth::guard('company')->factory()->getTTL() * 60,
-                'data' => CompanyResource::make($company),
-            ],
-            'Company registered successfully',
-            Response::HTTP_CREATED
-        );
+                'data' => CompanyDetailResource::make($company),
+            ]
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -152,7 +200,7 @@ class AuthController extends Controller
      *     path="/company/auth/login",
      *     summary="Login a company and return access token",
      *     description="Authenticates a company and returns a JWT access token along with company details.",
-     *     tags={"Company - Authentication"},
+     *     tags={"Company Authentication"},
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -173,7 +221,7 @@ class AuthController extends Controller
      *                 @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGci..."),
      *                 @OA\Property(property="token_type", type="string", example="bearer"),
      *                 @OA\Property(property="expires_in", type="integer", example=3600),
-     *                 @OA\Property(property="data", ref="#/components/schemas/Company")
+     *                 @OA\Property(property="company", ref="#/components/schemas/CompanyResource")
      *             )
      *         )
      *     ),
@@ -197,7 +245,6 @@ class AuthController extends Controller
      *     )
      * )
      */
-
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
@@ -231,10 +278,10 @@ class AuthController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/company/auth/details",
+     *     path="/company/details",
      *     summary="Get company details",
      *     description="Fetches authenticated company's details including general settings, addresses, documents, warehouses, payment options, timings, holidays, etc.",
-     *     tags={"Company - Details"},
+     *     tags={"Company Details"},
      *     security={{"bearerAuth": {}}},
      *
      *     @OA\Response(
@@ -284,7 +331,7 @@ class AuthController extends Controller
      *     path="/company/auth/logout",
      *     summary="Logout a company",
      *     description="Logs out a company and invalidates the access token.",
-     *     tags={"Company - Authentication"},
+     *     tags={"Company Authentication"},
      *
      *     @OA\Response(
      *         response=200,

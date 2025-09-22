@@ -24,13 +24,18 @@ Route::prefix('v1')->group(function () {
     Route::prefix('company')->group(function () {
         Route::middleware([CheckJsonHeaders::class])
             ->prefix('auth')->group(function () {
+                
+                Route::post('send-otp', [CompanyAuthController::class, 'sendOtp']);
                 Route::post('register', [CompanyAuthController::class, 'register']);
                 Route::post('login', [CompanyAuthController::class, 'login']);
                 // VerifyJwt middleware should be applied after login
                 Route::middleware([VerifyJwt::class])->group(function () {
-                    Route::get('details', [CompanyAuthController::class, 'details']);
                     Route::post('logout', [CompanyAuthController::class, 'logout']);
                 });
             });
+
+        Route::middleware([VerifyJwt::class])->group(function () {
+            Route::get('details', [CompanyAuthController::class, 'details']);
+        });
     });
 });

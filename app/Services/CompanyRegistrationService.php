@@ -2,16 +2,21 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
+use App\Mail\OtpMail;
 use App\Models\Address;
 use App\Models\Company;
 use App\Models\Warehouse;
+use App\Models\PasswordResetTokens;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
 class CompanyRegistrationService
 {
-    public function registerCompany(array $data ): Company
+    public function registerCompany(array $data): Company
     {
         $address = $data['address'];
         $company = Company::create([
@@ -183,5 +188,57 @@ class CompanyRegistrationService
             ['name' => 'Partial Upfront', 'type' => 'partial_upfront', 'percentage' => 50],
             ['name' => 'After Completion', 'type' => 'after_completion', 'percentage' => 0],
         ]);
+    }
+
+    public function sendOtp(string $email): array
+    {
+        $minutes = 5;
+        $otp = rand(100000, 999999);
+
+        $passwordResetToken = PasswordResetTokens::updateOrCreate([
+            'email' => $email,
+        ], [
+            'token' => $otp,
+            'expires_at' => Carbon::now()->addMinutes($minutes),
+        ]);
+
+        $name = $this->getNameFromEmail($email);
+
+        $emailSent = $this->sendEmail($email, $name, $otp, $minutes);
+
+        return [
+            'success' => $emailSent,
+            'message' => $emailSent
+                ? 'OTP generated and sent successfully'
+                : 'OTP generated but failed to send email',
+            'data' => [
+                'email' => $email,
+                'name' => $name,
+                'otp_expired_at' => $passwordResetToken->expires_at->toDateTimeString(),
+            ]
+        ];
+    }
+
+    public function sendEmail(string $email, string $name, string $otp, int $minutes): bool
+    {
+        try {
+            Mail::to($email)->send(
+                new OtpMail($otp, $name, $minutes)
+            );
+            return true;
+        } catch (\Throwable $th) {
+            Log::error('Failed to send OTP email: ' . $th->getMessage());
+            return false;
+        }
+    }
+
+    public function getNameFromEmail(string $email): string
+    {
+        return explode('@', $email)[0];
+    }
+
+    public function deletePasswordResetToken(string $token): void
+    {
+        PasswordResetTokens::where('token', $token)->delete();
     }
 }

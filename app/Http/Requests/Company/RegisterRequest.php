@@ -30,6 +30,7 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:companies,email'],
             'password' => ['required', 'string', 'min:8'],
+            'otp' => ['required', 'string', 'min:6', 'exists:password_reset_tokens,token'],
             'logo' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:65535'],
             'phone' => ['required', 'string', 'max:255'],

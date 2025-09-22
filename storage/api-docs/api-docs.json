@@ -12,10 +12,92 @@
         }
     ],
     "paths": {
+        "/company/auth/send-otp": {
+            "post": {
+                "tags": [
+                    "Company Authentication"
+                ],
+                "summary": "Send OTP to company email",
+                "description": "Generates a one-time password (OTP) and sends it to the company's registered email address.",
+                "operationId": "4c0c8e888a896e72324a5745d604d44b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "company@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "OTP sent successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The email field is required."
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/company/auth/register": {
             "post": {
                 "tags": [
-                    "Company - Authentication"
+                    "Company Authentication"
                 ],
                 "summary": "Register a new company and return access token",
                 "description": "Registers a company, creates a warehouse, registers device, and issues a JWT access token.",
@@ -28,7 +110,8 @@
                                 "required": [
                                     "email",
                                     "password",
-                                    "company_name",
+                                    "otp",
+                                    "name",
                                     "address",
                                     "documents"
                                 ],
@@ -43,13 +126,17 @@
                                         "format": "password",
                                         "example": "secret123"
                                     },
-                                    "company_name": {
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "name": {
                                         "type": "string",
                                         "example": "Acme Inc."
                                     },
                                     "phone": {
                                         "type": "string",
-                                        "example": "+1234567890"
+                                        "example": "1234567890"
                                     },
                                     "website": {
                                         "type": "string",
@@ -64,45 +151,42 @@
                                         "example": "Company description goes here."
                                     },
                                     "address": {
-                                        "type": "array",
-                                        "items": {
-                                            "required": [
-                                                "address_line1",
-                                                "city",
-                                                "country"
-                                            ],
-                                            "properties": {
-                                                "address_line1": {
-                                                    "type": "string",
-                                                    "example": "123 Business St"
-                                                },
-                                                "address_line2": {
-                                                    "type": "string",
-                                                    "example": "Suite 100"
-                                                },
-                                                "city": {
-                                                    "type": "string",
-                                                    "example": "New York"
-                                                },
-                                                "state": {
-                                                    "type": "string",
-                                                    "example": "NY"
-                                                },
-                                                "country": {
-                                                    "type": "string",
-                                                    "example": "USA"
-                                                },
-                                                "zip": {
-                                                    "type": "string",
-                                                    "example": "10001"
-                                                },
-                                                "is_primary": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                }
+                                        "required": [
+                                            "address_line1",
+                                            "city",
+                                            "country"
+                                        ],
+                                        "properties": {
+                                            "address_line1": {
+                                                "type": "string",
+                                                "example": "123 Business St"
                                             },
-                                            "type": "object"
-                                        }
+                                            "address_line2": {
+                                                "type": "string",
+                                                "example": "Suite 100"
+                                            },
+                                            "city": {
+                                                "type": "string",
+                                                "example": "New York"
+                                            },
+                                            "state": {
+                                                "type": "string",
+                                                "example": "NY"
+                                            },
+                                            "country": {
+                                                "type": "string",
+                                                "example": "USA"
+                                            },
+                                            "zip": {
+                                                "type": "string",
+                                                "example": "10001"
+                                            },
+                                            "is_primary": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        },
+                                        "type": "object"
                                     },
                                     "documents": {
                                         "type": "array",
@@ -203,8 +287,8 @@
                                                     "type": "integer",
                                                     "example": 3600
                                                 },
-                                                "data": {
-                                                    "$ref": "#/components/schemas/Company"
+                                                "company": {
+                                                    "$ref": "#/components/schemas/CompanyResource"
                                                 }
                                             },
                                             "type": "object"
@@ -261,7 +345,7 @@
         "/company/auth/login": {
             "post": {
                 "tags": [
-                    "Company - Authentication"
+                    "Company Authentication"
                 ],
                 "summary": "Login a company and return access token",
                 "description": "Authenticates a company and returns a JWT access token along with company details.",
@@ -321,8 +405,8 @@
                                                     "type": "integer",
                                                     "example": 3600
                                                 },
-                                                "data": {
-                                                    "$ref": "#/components/schemas/Company"
+                                                "company": {
+                                                    "$ref": "#/components/schemas/CompanyResource"
                                                 }
                                             },
                                             "type": "object"
@@ -376,14 +460,14 @@
                 }
             }
         },
-        "/company/auth/details": {
+        "/company/details": {
             "get": {
                 "tags": [
-                    "Company - Details"
+                    "Company Details"
                 ],
                 "summary": "Get company details",
                 "description": "Fetches authenticated company's details including general settings, addresses, documents, warehouses, payment options, timings, holidays, etc.",
-                "operationId": "3597e5ab79ee0b7364624a9cbdfa6845",
+                "operationId": "10e29bff4ad3be72dcbd544e2422803c",
                 "responses": {
                     "200": {
                         "description": "Company details fetched successfully",
@@ -439,7 +523,7 @@
         "/company/auth/logout": {
             "post": {
                 "tags": [
-                    "Company - Authentication"
+                    "Company Authentication"
                 ],
                 "summary": "Logout a company",
                 "description": "Logs out a company and invalidates the access token.",
@@ -1112,12 +1196,12 @@
     },
     "tags": [
         {
-            "name": "Company - Authentication",
-            "description": "Company - Authentication"
+            "name": "Company Authentication",
+            "description": "Company Authentication"
         },
         {
-            "name": "Company - Details",
-            "description": "Company - Details"
+            "name": "Company Details",
+            "description": "Company Details"
         },
         {
             "name": "Media",
