@@ -584,6 +584,177 @@
     },
     "components": {
         "schemas": {
+            "AddressResource": {
+                "title": "Address",
+                "description": "Address resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "address_line1": {
+                        "type": "string",
+                        "example": "Address Line 1"
+                    },
+                    "address_line2": {
+                        "type": "string",
+                        "example": "Address Line 2"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "City"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "State"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Country"
+                    },
+                    "zip": {
+                        "type": "string",
+                        "example": "Zip"
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyResource": {
+                "title": "Company Details",
+                "description": "Company details with related resources",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "ABC Waste Management"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "info@abcwaste.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+923001234567"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "abc-waste"
+                    },
+                    "customer_panel_url": {
+                        "type": "string",
+                        "example": "https://customer.abcwaste.com",
+                        "nullable": true
+                    },
+                    "logo": {
+                        "type": "string",
+                        "example": "https://cdn.example.com/logo.png",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Waste management company in Karachi",
+                        "nullable": true
+                    },
+                    "website": {
+                        "type": "string",
+                        "example": "https://abcwaste.com",
+                        "nullable": true
+                    },
+                    "onboarding_status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "onboarding_notes": {
+                        "type": "string",
+                        "example": "Awaiting verification",
+                        "nullable": true
+                    },
+                    "onboarding_completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "general_settings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GeneralSettingResource"
+                        }
+                    },
+                    "timings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TimingResource"
+                        }
+                    },
+                    "holidays": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HolidayResource"
+                        }
+                    },
+                    "payment_options": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PaymentOptionResource"
+                        }
+                    },
+                    "documents": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DocumentResource"
+                        }
+                    },
+                    "latest_location": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/LatestLocationResource"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "addresses": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AddressResource"
+                        }
+                    },
+                    "warehouses": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WarehouseResource"
+                        }
+                    },
+                    "company_default_address": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/DefaultAddressResource"
+                            }
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Company": {
                 "title": "Company",
                 "description": "Company resource response",
@@ -618,6 +789,254 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-09-22T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "DefaultAddressResource": {
+                "title": "Default Address",
+                "description": "Default address resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "label"
+                    },
+                    "address_line1": {
+                        "type": "string",
+                        "example": "Address Line 1"
+                    },
+                    "address_line2": {
+                        "type": "string",
+                        "example": "Address Line 2"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "City"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "State"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Country"
+                    },
+                    "zip": {
+                        "type": "string",
+                        "example": "Zip"
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "DocumentResource": {
+                "title": "Document",
+                "description": "Document resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Document"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "type"
+                    },
+                    "file_path": {
+                        "type": "string",
+                        "example": "file_path"
+                    },
+                    "mime_type": {
+                        "type": "string",
+                        "example": "mime_type"
+                    },
+                    "issued_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-01-01"
+                    },
+                    "expires_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-01-01"
+                    },
+                    "is_verified": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "GeneralSettingResource": {
+                "title": "General Setting",
+                "description": "General setting resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "key": {
+                        "type": "string",
+                        "example": "key"
+                    },
+                    "value": {
+                        "type": "string",
+                        "example": "value"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "type"
+                    }
+                },
+                "type": "object"
+            },
+            "HolidayResource": {
+                "title": "Holiday",
+                "description": "Holiday resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Holiday"
+                    },
+                    "holiday_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-01-01"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Holiday description"
+                    },
+                    "is_recurring": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "LatestLocationResource": {
+                "title": "Latest Location",
+                "description": "Latest location resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Address"
+                    },
+                    "recorded_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentOptionResource": {
+                "title": "Payment Option",
+                "description": "Payment option resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Payment Option"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "type"
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "example": 100
+                    }
+                },
+                "type": "object"
+            },
+            "TimingResource": {
+                "title": "Timing",
+                "description": "Timing resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "day_of_week": {
+                        "type": "string",
+                        "example": "monday"
+                    },
+                    "opens_at": {
+                        "type": "string",
+                        "example": "09:00"
+                    },
+                    "closes_at": {
+                        "type": "string",
+                        "example": "17:00"
+                    },
+                    "is_closed": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "WarehouseResource": {
+                "title": "Warehouse",
+                "description": "Warehouse resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Warehouse"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "code"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "type"
+                    },
+                    "capacity": {
+                        "type": "integer",
+                        "example": 100
                     }
                 },
                 "type": "object"

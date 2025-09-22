@@ -6,29 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PaymentOption extends Model
+class CompantPaymentMethod extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'company_id',
-        'name',
-        'type',
-        'percentage',
-        'is_active',
+        'payment_method_id',
+        'merchant_id',
+        'account_id',
+        'identity_id',
+        'status',
     ];
 
-    protected $casts = [
-        'company_id' => 'integer',
-        'name' => 'string',
-        'type' => 'string',
-        'percentage' => 'float',
-        'is_active' => 'boolean',
-    ];
-
-    // Relationships
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 }

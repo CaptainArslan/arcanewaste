@@ -31,7 +31,7 @@ class Warehouse extends Model
     ];
 
     protected $appends = [
-        'default_address',
+        // 
     ];
 
     // Relationships

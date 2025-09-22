@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use App\Models\PaymentMethod;
 use Spatie\Sluggable\HasSlug;
 use App\Models\GeneralSetting;
 use Spatie\Sluggable\SlugOptions;
 use App\Models\MerchantOnboardingLog;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -113,9 +114,9 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(Warehouse::class);
     }
 
-    public function paymentMethods(): HasMany
+    public function companyPaymentMethods(): HasMany
     {
-        return $this->hasMany(PaymentMethod::class, 'company_id');
+        return $this->hasMany(CompantPaymentMethod::class, 'company_id');
     }
 
     public function merchantOnboardingLogs(): HasMany
@@ -158,6 +159,14 @@ class Company extends Authenticatable implements JWTSubject
     public function latestLocation(): MorphOne
     {
         return $this->morphOne(LatestLocation::class, 'locatable');
+    }
+
+    // Accessors & Mutators
+    protected function logo(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => Storage::disk('s3')->url($value),
+        );
     }
 
     // Helper methods

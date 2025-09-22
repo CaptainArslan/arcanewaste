@@ -12,11 +12,13 @@ use App\Events\CompanySetupSuccessfullyEvent;
 use App\Http\Requests\Company\RegisterRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\Resources\CompanyDetailResource;
 
 class AuthController extends Controller
 {
     private $companyRegistrationService;
     private $deviceService;
+    
     public function __construct(
         CompanyRegistrationService $companyRegistrationService,
         DeviceService $deviceService
@@ -203,14 +205,24 @@ class AuthController extends Controller
             return $this->sendErrorResponse('Invalid credentials');
         }
 
-        $company = Auth::guard('company')->user();
+        $company = Auth::guard('company')->user()->load([
+            'generalSettings',
+            'addresses',
+            'defaultAddress',
+            'documents',
+            'latestLocation',
+            'warehouses',
+            'paymentOptions',
+            'timings',
+            'holidays'
+        ]);
 
         return $this->sendSuccessResponse(
             [
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => Auth::guard('company')->factory()->getTTL() * 60,
-                'data' => CompanyResource::make($company),
+                'data' => CompanyDetailResource::make($company),
             ],
             'Company logged in successfully',
             Response::HTTP_OK

@@ -179,9 +179,9 @@ class CompanyRegistrationService
     private function createCompanyPaymentOptions(Company $company): Collection
     {
         return $company->paymentOptions()->createMany([
-            ['type' => 'upfront_full', 'percentage' => 100],
-            ['type' => 'partial_upfront', 'percentage' => 50],
-            ['type' => 'after_completion', 'percentage' => 0],
+            ['name' => 'Full Upfront', 'type' => 'upfront_full', 'percentage' => 100],
+            ['name' => 'Partial Upfront', 'type' => 'partial_upfront', 'percentage' => 50],
+            ['name' => 'After Completion', 'type' => 'after_completion', 'percentage' => 0],
         ]);
     }
 }

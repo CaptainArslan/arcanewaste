@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
 
+            $table->string('name');
             $table->enum('type', ['upfront_full', 'partial_upfront', 'after_completion']);
             $table->decimal('percentage', 5, 2)->nullable();
             // Only required for partial_upfront (e.g., 30.00 = 30%)
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->unique(['company_id', 'type', 'percentage']);
+            $table->unique(['company_id', 'name', 'type', 'percentage']);
         });
     }
 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Document extends Model
@@ -34,5 +36,13 @@ class Document extends Model
     public function documentable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    // Accessors & Mutators
+    protected function filePath(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => Storage::disk('s3')->url($value),
+        );
     }
 }
