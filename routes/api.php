@@ -28,6 +28,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('login', [CompanyAuthController::class, 'login']);
                 // VerifyJwt middleware should be applied after login
                 Route::middleware([VerifyJwt::class])->group(function () {
+                    Route::get('details', [CompanyAuthController::class, 'details']);
                     Route::post('logout', [CompanyAuthController::class, 'logout']);
                 });
             });

@@ -15,7 +15,7 @@
         "/company/auth/register": {
             "post": {
                 "tags": [
-                    "Company Authentication"
+                    "Company - Authentication"
                 ],
                 "summary": "Register a new company and return access token",
                 "description": "Registers a company, creates a warehouse, registers device, and issues a JWT access token.",
@@ -261,7 +261,7 @@
         "/company/auth/login": {
             "post": {
                 "tags": [
-                    "Company Authentication"
+                    "Company - Authentication"
                 ],
                 "summary": "Login a company and return access token",
                 "description": "Authenticates a company and returns a JWT access token along with company details.",
@@ -376,10 +376,70 @@
                 }
             }
         },
+        "/company/auth/details": {
+            "get": {
+                "tags": [
+                    "Company - Details"
+                ],
+                "summary": "Get company details",
+                "description": "Fetches authenticated company's details including general settings, addresses, documents, warehouses, payment options, timings, holidays, etc.",
+                "operationId": "3597e5ab79ee0b7364624a9cbdfa6845",
+                "responses": {
+                    "200": {
+                        "description": "Company details fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company details fetched successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CompanyResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid or missing token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/company/auth/logout": {
             "post": {
                 "tags": [
-                    "Company Authentication"
+                    "Company - Authentication"
                 ],
                 "summary": "Logout a company",
                 "description": "Logs out a company and invalidates the access token.",
@@ -1052,8 +1112,12 @@
     },
     "tags": [
         {
-            "name": "Company Authentication",
-            "description": "Company Authentication"
+            "name": "Company - Authentication",
+            "description": "Company - Authentication"
+        },
+        {
+            "name": "Company - Details",
+            "description": "Company - Details"
         },
         {
             "name": "Media",

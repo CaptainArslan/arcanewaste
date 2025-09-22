@@ -18,7 +18,7 @@ class AuthController extends Controller
 {
     private $companyRegistrationService;
     private $deviceService;
-    
+
     public function __construct(
         CompanyRegistrationService $companyRegistrationService,
         DeviceService $deviceService
@@ -32,7 +32,7 @@ class AuthController extends Controller
      *     path="/company/auth/register",
      *     summary="Register a new company and return access token",
      *     description="Registers a company, creates a warehouse, registers device, and issues a JWT access token.",
-     *     tags={"Company Authentication"},
+     *     tags={"Company - Authentication"},
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -152,7 +152,7 @@ class AuthController extends Controller
      *     path="/company/auth/login",
      *     summary="Login a company and return access token",
      *     description="Authenticates a company and returns a JWT access token along with company details.",
-     *     tags={"Company Authentication"},
+     *     tags={"Company - Authentication"},
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -230,11 +230,61 @@ class AuthController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/company/auth/details",
+     *     summary="Get company details",
+     *     description="Fetches authenticated company's details including general settings, addresses, documents, warehouses, payment options, timings, holidays, etc.",
+     *     tags={"Company - Details"},
+     *     security={{"bearerAuth": {}}},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Company details fetched successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Company details fetched successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 ref="#/components/schemas/CompanyResource"
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - invalid or missing token",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function details(): JsonResponse
+    {
+        $company = Auth::guard('company')->user()->load([
+            'generalSettings',
+            'addresses',
+            'defaultAddress',
+            'documents',
+            'latestLocation',
+            'warehouses',
+            'paymentOptions',
+            'timings',
+            'holidays'
+        ]);
+        return $this->sendSuccessResponse(CompanyDetailResource::make($company), 'Company details fetched successfully', Response::HTTP_OK);
+    }
+
+    /**
      * @OA\Post(
      *     path="/company/auth/logout",
      *     summary="Logout a company",
      *     description="Logs out a company and invalidates the access token.",
-     *     tags={"Company Authentication"},
+     *     tags={"Company - Authentication"},
      *
      *     @OA\Response(
      *         response=200,
@@ -246,7 +296,6 @@ class AuthController extends Controller
      *     )
      * )
      */
-
     public function logout(): JsonResponse
     {
         Auth::guard('company')->logout();
