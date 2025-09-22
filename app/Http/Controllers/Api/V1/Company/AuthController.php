@@ -8,23 +8,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Company\LoginRequest;
 use App\Http\Requests\Company\GetOtpRequest;
-use App\Services\CompanyRegistrationService;
 use App\Events\CompanySetupSuccessfullyEvent;
+use App\Http\Requests\Company\ForgotPassword;
+use App\Http\Requests\Company\UpdatePassword;
 use App\Http\Resources\CompanyDetailResource;
 use App\Http\Requests\Company\RegisterRequest;
+use App\Services\companyAuthenticationService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\Requests\Company\ResetPasswordRequest;
 
 class AuthController extends Controller
 {
-    private $companyRegistrationService;
+    private $companyAuthenticationService;
     private $deviceService;
 
     public function __construct(
-        CompanyRegistrationService $companyRegistrationService,
+        CompanyAuthenticationService $companyAuthenticationService,
         DeviceService $deviceService
     ) {
-        $this->companyRegistrationService = $companyRegistrationService;
+        $this->companyAuthenticationService = $companyAuthenticationService;
         $this->deviceService = $deviceService;
     }
 
@@ -70,7 +73,7 @@ class AuthController extends Controller
     public function sendOtp(GetOtpRequest $request): JsonResponse
     {
         $email = $request->email;
-        $this->companyRegistrationService->sendOtp($email);
+        $this->companyAuthenticationService->sendOtp($email);
         return $this->sendSuccessResponse(null, 'OTP sent successfully', Response::HTTP_OK);
     }
 
@@ -171,8 +174,8 @@ class AuthController extends Controller
             return $this->sendErrorResponse('OTP expired', Response::HTTP_BAD_REQUEST);
         }
 
-        $company = $this->companyRegistrationService->registerCompany($request->all());
-        $this->companyRegistrationService->registerWarehouse($company);
+        $company = $this->companyAuthenticationService->registerCompany($request->all());
+        $this->companyAuthenticationService->registerWarehouse($company);
 
         CompanySetupSuccessfullyEvent::dispatch($company);
 
@@ -187,7 +190,7 @@ class AuthController extends Controller
         }
 
         $this->deviceService->registerDevice($company, $data);
-        $this->companyRegistrationService->deletePasswordResetToken($data['otp']);
+        $this->companyAuthenticationService->deletePasswordResetToken($data['otp']);
 
 
         return response()->json([
@@ -331,6 +334,103 @@ class AuthController extends Controller
             'holidays'
         ]);
         return $this->sendSuccessResponse(CompanyDetailResource::make($company), 'Company details fetched successfully', Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/company/auth/forgot-password",
+     *     summary="Send OTP for password reset",
+     *     description="Sends an OTP to the company's registered email address for password reset.",
+     *     tags={"Company Authentication"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="company@example.com")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OTP sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="OTP sent successfully")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="The email field is required.")
+     *         )
+     *     )
+     * )
+     */
+    public function forgotPassword(ForgotPassword $request): JsonResponse
+    {
+        $this->companyAuthenticationService->sendOtp($request->email);
+        return $this->sendSuccessResponse(null, 'OTP sent successfully', Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/company/auth/reset-password",
+     *     summary="Reset password using OTP",
+     *     description="Resets the company's password using the provided email, OTP, and new password.",
+     *     tags={"Company Authentication"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password","otp"},
+     *             @OA\Property(property="email", type="string", format="email", example="company@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="newSecret123"),
+     *             @OA\Property(property="otp", type="string", example="123456")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Password reset successfully")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid or expired OTP",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid or expired OTP")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="The email field is required.")
+     *         )
+     *     )
+     * )
+     */
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $this->companyAuthenticationService->resetPassword($request->email, $request->password, $request->otp);
+        return $this->sendSuccessResponse(null, 'Password reset successfully', Response::HTTP_OK);
+    }
+
+    public function updatePassword(UpdatePassword $request): JsonResponse
+    {
+        $this->companyAuthenticationService->updatePassword($request->old_password, $request->password);
+        return $this->sendSuccessResponse(null, 'Password updated successfully', Response::HTTP_OK);
     }
 
     /**

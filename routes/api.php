@@ -28,8 +28,11 @@ Route::prefix('v1')->group(function () {
                 Route::post('send-otp', [CompanyAuthController::class, 'sendOtp']);
                 Route::post('register', [CompanyAuthController::class, 'register']);
                 Route::post('login', [CompanyAuthController::class, 'login']);
+                Route::post('forgot-password', [CompanyAuthController::class, 'forgotPassword']);
+                Route::post('reset-password', [CompanyAuthController::class, 'resetPassword']);
                 // VerifyJwt middleware should be applied after login
                 Route::middleware([VerifyJwt::class])->group(function () {
+                    Route::post('update-password', [CompanyAuthController::class, 'updatePassword']);
                     Route::post('logout', [CompanyAuthController::class, 'logout']);
                 });
             });

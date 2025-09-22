@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
-class CompanyRegistrationService
+class CompanyAuthenticationService
 {
     public function registerCompany(array $data): Company
     {
@@ -240,5 +241,42 @@ class CompanyRegistrationService
     public function deletePasswordResetToken(string $token): void
     {
         PasswordResetTokens::where('token', $token)->delete();
+    }
+
+    public function verifyPasswordResetToken(string $email, string $otp): bool
+    {
+        $passwordResetToken = PasswordResetTokens::where('email', $email)->where('token', $otp)->first();
+        return $passwordResetToken && $passwordResetToken->expires_at > now();
+    }
+
+    public function resetPassword(string $email, string $password, string $otp): Company
+    {
+        if (!$this->verifyPasswordResetToken($email, $otp)) {
+            throw new \Exception('Invalid password reset token');
+        }
+
+        $company = Company::where('email', $email)->first();
+        $company->password = Hash::make($password);
+        $company->save();
+
+        $this->deletePasswordResetToken($otp);
+
+        return $company;
+    }
+
+    public function updatePassword(string $oldPassword, string $newPassword): Company
+    {
+        $company = Auth::guard('company')->user();
+
+        // check for the current password
+        if (!Hash::check($oldPassword, $company->password)) {
+            throw new \Exception('Invalid current password');
+        }
+
+        $company->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        return $company;
     }
 }
