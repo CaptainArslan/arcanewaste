@@ -3,6 +3,10 @@
 namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 
 class LoginRequest extends FormRequest
 {
@@ -11,7 +15,7 @@ class LoginRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,5 +41,16 @@ class LoginRequest extends FormRequest
             'password.string' => 'Password must be a string',
             'password.min' => 'Password must be at least 8 characters',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' =>  implode(', ', $validator->errors()->all()),
+                'errors' => $validator->errors()->all(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY)
+        );
     }
 }

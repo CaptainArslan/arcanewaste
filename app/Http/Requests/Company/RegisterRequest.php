@@ -76,7 +76,7 @@ class RegisterRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' =>  implode(', ', $validator->errors()->all()),
-                'errors' => $validator->errors(),
+                'errors' => $validator->errors()->all(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY)
         );
     }
