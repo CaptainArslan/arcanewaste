@@ -185,7 +185,9 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         // check if otp is expired
-        $passwordResetToken = PasswordResetTokens::where('token', $request->otp)->first();
+        $passwordResetToken = PasswordResetTokens::where('token', $request->otp)
+            ->where('email', $request->email)
+            ->first();
         if (! $passwordResetToken || $passwordResetToken->expires_at < now()) {
             return $this->sendErrorResponse('OTP expired', Response::HTTP_BAD_REQUEST);
         }

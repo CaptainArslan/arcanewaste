@@ -44,8 +44,8 @@ class CompanyAuthenticationService
     public function registerWarehouse(Company $company): Warehouse
     {
         $warehouse = $company->warehouses()->create([
-            'name' => $company->name.' Warehouse',
-            'code' => $company->name.' Warehouse',
+            'name' => $company->name . ' Warehouse',
+            'code' => $company->name . '-' . $company->id . ' Warehouse',
             'type' => 'storage',
             'capacity' => 1000,
             'is_active' => true,
@@ -171,8 +171,8 @@ class CompanyAuthenticationService
     private function createCompanyHolidays(Company $company): Collection
     {
         $holidays = [
-            ['name' => 'New Year', 'holiday_date' => now()->year.'-01-01', 'is_recurring' => true],
-            ['name' => 'Independence Day', 'holiday_date' => now()->year.'-03-14', 'is_recurring' => true],
+            ['name' => 'New Year', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
+            ['name' => 'Independence Day', 'holiday_date' => now()->year . '-03-14', 'is_recurring' => true],
         ];
 
         return $company->holidays()->createMany($holidays);
@@ -181,9 +181,9 @@ class CompanyAuthenticationService
     private function createCompanyGeneralSettings(Company $company): Collection
     {
         return $company->generalSettings()->createMany([
-            ['key' => 'default_timezone', 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi')],
-            ['key' => 'order_cancelation_time_limit', 'value' => 24],
-            ['key' => 'default_driver_hourly_rate', 'value' => 10],
+            ['key' => 'default_timezone', 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi'), 'type' => 'string'],
+            ['key' => 'order_cancelation_time_limit', 'value' => 24, 'type' => 'integer'],
+            ['key' => 'default_driver_hourly_rate', 'value' => 10, 'type' => 'float'],
         ]);
     }
 
@@ -234,7 +234,7 @@ class CompanyAuthenticationService
 
             return true;
         } catch (\Throwable $th) {
-            Log::error('Failed to send OTP email: '.$th->getMessage());
+            Log::error('Failed to send OTP email: ' . $th->getMessage());
 
             return false;
         }

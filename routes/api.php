@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
 use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Middleware\VerifyJwt;
 use Illuminate\Http\Request;
@@ -37,6 +38,9 @@ Route::prefix('v1')->group(function () {
 
         Route::middleware([VerifyJwt::class, CheckJsonHeaders::class])->group(function () {
             Route::get('details', [CompanyAuthController::class, 'details']);
+            Route::get('general-settings', [GeneralSettingController::class, 'index']);
+            Route::get('general-settings/{generalSetting}', [GeneralSettingController::class, 'show']);
+            Route::post('general-settings/{generalSetting}/{key}', [GeneralSettingController::class, 'update']);
         });
     });
 });
