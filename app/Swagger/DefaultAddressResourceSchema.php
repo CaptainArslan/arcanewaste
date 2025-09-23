@@ -8,6 +8,7 @@ namespace App\Swagger;
  *     type="object",
  *     title="Default Address",
  *     description="Default address resource response",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="label", type="string", example="label"),
  *     @OA\Property(property="address_line1", type="string", example="Address Line 1"),
@@ -21,7 +22,6 @@ namespace App\Swagger;
  *     @OA\Property(property="is_primary", type="boolean", example=false)
  * )
  */
-
 class DefaultAddressResourceSchema
 {
     // This class can remain empty; it's just for Swagger annotations

@@ -31,7 +31,7 @@ class GeneralSetting extends Model
         'settingable_type',
     ];
 
-    public function settingable() : MorphTo
+    public function settingable(): MorphTo
     {
         return $this->morphTo();
     }

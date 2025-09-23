@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use App\Enums\FinixOnboardingStatusEnums;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyDetailResource extends JsonResource
@@ -36,7 +36,7 @@ class CompanyDetailResource extends JsonResource
             'onboarding_completed_at' => $this->finix_onboarding_completed_at ?? null,
             'is_active' => $this->is_active ?? true,
             // relationships
-            'general_settings' =>  GeneralSettingResource::collection($this->generalSettings) ?? [],
+            'general_settings' => GeneralSettingResource::collection($this->generalSettings) ?? [],
             // 'payment_methods' => $this->companyPaymentMethods ?? [],
             // 'merchant_onboarding_logs' => $this->merchantOnboardingLogs ?? [],
             'timings' => TimingResource::collection($this->timings) ?? [],

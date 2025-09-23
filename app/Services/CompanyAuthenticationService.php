@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use Carbon\Carbon;
 use App\Mail\OtpMail;
 use App\Models\Address;
 use App\Models\Company;
-use App\Models\Warehouse;
 use App\Models\PasswordResetTokens;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CompanyAuthenticationService
 {
@@ -21,13 +21,13 @@ class CompanyAuthenticationService
     {
         $address = $data['address'];
         $company = Company::create([
-            "name" => $data['name'],
-            "email" => $data['email'],
-            "password" => Hash::make($data['password']),
-            "logo" => $data['logo'],
-            "description" => $data['description'],
-            "phone" => $data['phone'],
-            "website" => $data['website']
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'logo' => $data['logo'],
+            'description' => $data['description'],
+            'phone' => $data['phone'],
+            'website' => $data['website'],
         ]);
 
         // create default address
@@ -37,14 +37,15 @@ class CompanyAuthenticationService
         $this->createCompanyHolidays($company);
         $this->createCompanyGeneralSettings($company);
         $this->createCompanyPaymentOptions($company);
+
         return $company;
     }
 
     public function registerWarehouse(Company $company): Warehouse
     {
         $warehouse = $company->warehouses()->create([
-            'name' => $company->name . " Warehouse",
-            'code' => $company->name . " Warehouse",
+            'name' => $company->name.' Warehouse',
+            'code' => $company->name.' Warehouse',
             'type' => 'storage',
             'capacity' => 1000,
             'is_active' => true,
@@ -52,6 +53,7 @@ class CompanyAuthenticationService
 
         $this->createAddress($warehouse, $company->defaultAddress->toArray() ?? [], true);
         $this->createWarehouseTimings($warehouse);
+
         return $warehouse;
     }
 
@@ -76,16 +78,16 @@ class CompanyAuthenticationService
         $newTimings = [];
 
         foreach ($timings as $timing) {
-            if (!in_array($timing, $existingDays)) {
+            if (! in_array($timing, $existingDays)) {
                 $newTimings[] = [
-                    'timeable_id'  => $company->id,
-                    'timeable_type'  => Company::class,
+                    'timeable_id' => $company->id,
+                    'timeable_type' => Company::class,
                     'day_of_week' => $timing,
-                    'opens_at'    => '09:00',
-                    'closes_at'   => '17:00',
-                    'is_closed'   => false,
-                    'created_at'  => $now,
-                    'updated_at'  => $now,
+                    'opens_at' => '09:00',
+                    'closes_at' => '17:00',
+                    'is_closed' => false,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
         }
@@ -100,19 +102,20 @@ class CompanyAuthenticationService
         $newTimings = [];
         $existingDays = $warehouse->timings()->pluck('day_of_week')->toArray();
         foreach ($timings as $timing) {
-            if (!in_array($timing, $existingDays)) {
+            if (! in_array($timing, $existingDays)) {
                 $newTimings[] = [
-                    'timeable_id'  => $warehouse->id,
-                    'timeable_type'  => Warehouse::class,
+                    'timeable_id' => $warehouse->id,
+                    'timeable_type' => Warehouse::class,
                     'day_of_week' => $timing,
-                    'opens_at'    => '09:00',
-                    'closes_at'   => '17:00',
-                    'is_closed'   => false,
-                    'created_at'  => $now,
-                    'updated_at'  => $now,
+                    'opens_at' => '09:00',
+                    'closes_at' => '17:00',
+                    'is_closed' => false,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
         }
+
         return $warehouse->timings()->createMany($newTimings);
     }
 
@@ -123,20 +126,20 @@ class CompanyAuthenticationService
         }
 
         // If another primary exists and we are not overriding, force false
-        if (!$isPrimary && $addressable->addresses()->where('is_primary', true)->exists()) {
+        if (! $isPrimary && $addressable->addresses()->where('is_primary', true)->exists()) {
             $isPrimary = false;
         }
 
         return $addressable->addresses()->create([
             'address_line1' => $address['address_line1'] ?? null,
             'address_line2' => $address['address_line2'] ?? null,
-            'city'          => $address['city'] ?? null,
-            'state'         => $address['state'] ?? null,
-            'postal_code'   => $address['postal_code'] ?? null,
-            'country'       => $address['country'] ?? null,
-            'latitude'      => $address['latitude'] ?? null,
-            'longitude'     => $address['longitude'] ?? null,
-            'is_primary'    => $isPrimary,
+            'city' => $address['city'] ?? null,
+            'state' => $address['state'] ?? null,
+            'postal_code' => $address['postal_code'] ?? null,
+            'country' => $address['country'] ?? null,
+            'latitude' => $address['latitude'] ?? null,
+            'longitude' => $address['longitude'] ?? null,
+            'is_primary' => $isPrimary,
         ]);
     }
 
@@ -149,7 +152,7 @@ class CompanyAuthenticationService
         $newDocuments = [];
         foreach ($documents as $document) {
             $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
-            if (!in_array($document['file_path'], $existingDocuments)) {
+            if (! in_array($document['file_path'], $existingDocuments)) {
                 $newDocuments[] = [
                     'name' => $document['name'],
                     'type' => $document['type'],
@@ -161,15 +164,17 @@ class CompanyAuthenticationService
                 ];
             }
         }
+
         return $documentable->documents()->createMany($newDocuments);
     }
 
     private function createCompanyHolidays(Company $company): Collection
     {
         $holidays = [
-            ['name' => 'New Year', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
-            ['name' => 'Independence Day', 'holiday_date' => now()->year . '-03-14', 'is_recurring' => true],
+            ['name' => 'New Year', 'holiday_date' => now()->year.'-01-01', 'is_recurring' => true],
+            ['name' => 'Independence Day', 'holiday_date' => now()->year.'-03-14', 'is_recurring' => true],
         ];
+
         return $company->holidays()->createMany($holidays);
     }
 
@@ -177,7 +182,7 @@ class CompanyAuthenticationService
     {
         return $company->generalSettings()->createMany([
             ['key' => 'default_timezone', 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi')],
-            ['key' => 'order_cancelation_time_limit', 'value' =>  24],
+            ['key' => 'order_cancelation_time_limit', 'value' => 24],
             ['key' => 'default_driver_hourly_rate', 'value' => 10],
         ]);
     }
@@ -216,7 +221,7 @@ class CompanyAuthenticationService
                 'email' => $email,
                 'name' => $name,
                 'otp_expired_at' => $passwordResetToken->expires_at->toDateTimeString(),
-            ]
+            ],
         ];
     }
 
@@ -226,9 +231,11 @@ class CompanyAuthenticationService
             Mail::to($email)->send(
                 new OtpMail($otp, $name, $minutes)
             );
+
             return true;
         } catch (\Throwable $th) {
-            Log::error('Failed to send OTP email: ' . $th->getMessage());
+            Log::error('Failed to send OTP email: '.$th->getMessage());
+
             return false;
         }
     }
@@ -246,12 +253,13 @@ class CompanyAuthenticationService
     public function verifyPasswordResetToken(string $email, string $otp): bool
     {
         $passwordResetToken = PasswordResetTokens::where('email', $email)->where('token', $otp)->first();
+
         return $passwordResetToken && $passwordResetToken->expires_at > now();
     }
 
     public function resetPassword(string $email, string $password, string $otp): Company
     {
-        if (!$this->verifyPasswordResetToken($email, $otp)) {
+        if (! $this->verifyPasswordResetToken($email, $otp)) {
             throw new \Exception('Invalid password reset token');
         }
 
@@ -269,7 +277,7 @@ class CompanyAuthenticationService
         $company = Auth::guard('company')->user();
 
         // check for the current password
-        if (!Hash::check($oldPassword, $company->password)) {
+        if (! Hash::check($oldPassword, $company->password)) {
             throw new \Exception('Invalid current password');
         }
 

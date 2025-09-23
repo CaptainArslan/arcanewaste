@@ -14,56 +14,58 @@ class DocumentRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $fail("The $attribute must be an array.");
+
             return;
         }
 
         foreach ($value as $document) {
-            if (!is_array($document)) {
+            if (! is_array($document)) {
                 $fail("The $attribute must be an array.");
+
                 return;
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['name'])) {
+            if (! isset($document['name'])) {
                 $fail("The $attribute.name field is required.");
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['type'])) {
+            if (! isset($document['type'])) {
                 $fail("The $attribute.type field is required.");
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['file_path'])) {
+            if (! isset($document['file_path'])) {
                 $fail("The $attribute.file_path field is required.");
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['mime_type'])) {
+            if (! isset($document['mime_type'])) {
                 $fail("The $attribute.mime_type field is required.");
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['issued_at'])) {
+            if (! isset($document['issued_at'])) {
                 $fail("The $attribute.issued_at field is required.");
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['expires_at'])) {
+            if (! isset($document['expires_at'])) {
                 $fail("The $attribute.expires_at field is required.");
             }
         }
 
         foreach ($value as $document) {
-            if (!isset($document['is_verified'])) {
+            if (! isset($document['is_verified'])) {
                 $fail("The $attribute.is_verified field is required.");
             }
         }

@@ -17,7 +17,7 @@ class CheckJsonHeaders
 
         // Validate Content-Type header for methods with body
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH'])) {
-            if (!$request->hasHeader('Content-Type')) {
+            if (! $request->hasHeader('Content-Type')) {
                 $errors[] = 'Missing Content-Type header';
             } elseif (stripos($request->header('Content-Type'), 'application/json') === false) {
                 $errors[] = 'Invalid Content-Type. Expected application/json';
@@ -25,17 +25,17 @@ class CheckJsonHeaders
         }
 
         // Validate Accept header for all requests
-        if (!$request->hasHeader('Accept')) {
+        if (! $request->hasHeader('Accept')) {
             $errors[] = 'Missing Accept header';
         } elseif (stripos($request->header('Accept'), 'application/json') === false) {
             $errors[] = 'Invalid Accept header. Expected application/json';
         }
 
         // If any errors, return JSON response as single string
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return response()->json([
                 'success' => false,
-                'message' => implode('. ', $errors) . '.',
+                'message' => implode('. ', $errors).'.',
             ], Response::HTTP_BAD_REQUEST);
         }
 

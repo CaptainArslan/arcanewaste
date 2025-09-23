@@ -70,35 +70,37 @@ class PaymentMethod extends Model
     // Accessors
     public function getLogoUrlAttribute($value)
     {
-        return $value ? asset('storage/' . $value) : null;
+        return $value ? asset('storage/'.$value) : null;
     }
 
     public function getFormattedTransactionFeeAttribute()
     {
         $percentage = $this->transaction_fee_percentage * 100;
         $fixed = $this->transaction_fee_fixed / 100; // Convert cents to dollars
-        
+
         if ($percentage > 0 && $fixed > 0) {
-            return "{$percentage}% + $" . number_format($fixed, 2);
+            return "{$percentage}% + $".number_format($fixed, 2);
         } elseif ($percentage > 0) {
             return "{$percentage}%";
         } elseif ($fixed > 0) {
-            return "$" . number_format($fixed, 2);
+            return '$'.number_format($fixed, 2);
         }
-        
+
         return 'Free';
     }
 
     public function getFormattedMonthlyFeeAttribute()
     {
         $fee = $this->monthly_fee / 100; // Convert cents to dollars
-        return $fee > 0 ? "$" . number_format($fee, 2) . "/month" : 'Free';
+
+        return $fee > 0 ? '$'.number_format($fee, 2).'/month' : 'Free';
     }
 
     public function getFormattedSetupFeeAttribute()
     {
         $fee = $this->setup_fee / 100; // Convert cents to dollars
-        return $fee > 0 ? "$" . number_format($fee, 2) : 'Free';
+
+        return $fee > 0 ? '$'.number_format($fee, 2) : 'Free';
     }
 
     // Methods
@@ -107,7 +109,7 @@ class PaymentMethod extends Model
         if (empty($this->supported_countries)) {
             return true; // If no countries specified, assume global
         }
-        
+
         return in_array($countryCode, $this->supported_countries);
     }
 
@@ -116,7 +118,7 @@ class PaymentMethod extends Model
         if (empty($this->supported_currencies)) {
             return true; // If no currencies specified, assume all supported
         }
-        
+
         return in_array($currencyCode, $this->supported_currencies);
     }
 
@@ -125,7 +127,7 @@ class PaymentMethod extends Model
         if (empty($this->supported_payment_types)) {
             return true; // If no types specified, assume all supported
         }
-        
+
         return in_array($paymentType, $this->supported_payment_types);
     }
 
@@ -134,7 +136,7 @@ class PaymentMethod extends Model
         if (empty($this->features)) {
             return false;
         }
-        
+
         return in_array($feature, $this->features);
     }
 

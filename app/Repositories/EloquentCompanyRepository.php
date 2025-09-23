@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Company;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Collection;
 use App\repositories\Contracts\CompanyRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EloquentCompanyRepository implements CompanyRepositoryInterface
 {
@@ -14,7 +14,7 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
         return Company::all();
     }
 
-    public function getCompanyById($id): Company|null
+    public function getCompanyById($id): ?Company
     {
         return Company::find($id);
     }
@@ -172,35 +172,32 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 'phone' => '03001234567',
             ]);
 
-
             $defaultHolidays = [
-                ['name' => 'New Year\'s Day', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
-                ['name' => 'Independence Day', 'holiday_date' => now()->year . '-08-14', 'is_recurring' => true],
-                ['name' => 'Christmas', 'holiday_date' => now()->year . '-12-25', 'is_recurring' => true],
+                ['name' => 'New Year\'s Day', 'holiday_date' => now()->year.'-01-01', 'is_recurring' => true],
+                ['name' => 'Independence Day', 'holiday_date' => now()->year.'-08-14', 'is_recurring' => true],
+                ['name' => 'Christmas', 'holiday_date' => now()->year.'-12-25', 'is_recurring' => true],
             ];
 
             foreach ($defaultHolidays as $holiday) {
                 $company->holidays()->create($holiday);
             }
 
-
             return $company;
         });
     }
 
-
-    public function updateCompany(array $data, $id): Company|null
+    public function updateCompany(array $data, $id): ?Company
     {
         return Company::find($id)->update($data);
     }
 
-    public function deleteCompany($id): Company|null
+    public function deleteCompany($id): ?Company
     {
         return Company::find($id)->delete();
     }
 
     public function searchCompanies($query): Company|null|Collection
     {
-        return Company::where('name', 'like', '%' . $query . '%')->get();
+        return Company::where('name', 'like', '%'.$query.'%')->get();
     }
 }

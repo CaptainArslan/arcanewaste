@@ -29,7 +29,7 @@ return new class extends Migration
                 'delivered',
                 'picked_up',
                 'cancelled',
-                'completed'
+                'completed',
             ])->default('pending');
 
             $table->boolean('return_requested')->default(false);

@@ -8,6 +8,7 @@ namespace App\Swagger;
  *     type="object",
  *     title="Company Details",
  *     description="Company details with related resources",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="ABC Waste Management"),
  *     @OA\Property(property="email", type="string", format="email", example="info@abcwaste.com"),
@@ -21,34 +22,38 @@ namespace App\Swagger;
  *     @OA\Property(property="onboarding_notes", type="string", nullable=true, example="Awaiting verification"),
  *     @OA\Property(property="onboarding_completed_at", type="string", format="date-time", nullable=true),
  *     @OA\Property(property="is_active", type="boolean", example=true),
- *
  *     @OA\Property(
  *         property="general_settings",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/GeneralSettingResource")
  *     ),
  *
  *     @OA\Property(
  *         property="timings",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/TimingResource")
  *     ),
  *
  *     @OA\Property(
  *         property="holidays",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/HolidayResource")
  *     ),
  *
  *     @OA\Property(
  *         property="payment_options",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/PaymentOptionResource")
  *     ),
  *
  *     @OA\Property(
  *         property="documents",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/DocumentResource")
  *     ),
  *
@@ -57,16 +62,17 @@ namespace App\Swagger;
  *         ref="#/components/schemas/LatestLocationResource",
  *         nullable=true
  *     ),
- *
  *     @OA\Property(
  *         property="addresses",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/AddressResource")
  *     ),
  *
  *     @OA\Property(
  *         property="warehouses",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/WarehouseResource")
  *     ),
  *
@@ -77,7 +83,6 @@ namespace App\Swagger;
  *     )
  * )
  */
-
 class CompanyDetailSchema
 {
     // This class can remain empty; it's just for Swagger annotations

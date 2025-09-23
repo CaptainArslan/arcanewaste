@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Http\Middleware\VerifyJwt;
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckJsonHeaders;
+use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
-use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
+use App\Http\Middleware\CheckJsonHeaders;
+use App\Http\Middleware\VerifyJwt;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,13 +24,11 @@ Route::prefix('v1')->group(function () {
     Route::prefix('company')->group(function () {
         Route::middleware([CheckJsonHeaders::class])
             ->prefix('auth')->group(function () {
-
                 Route::post('send-otp', [CompanyAuthController::class, 'sendOtp']);
                 Route::post('register', [CompanyAuthController::class, 'register']);
                 Route::post('login', [CompanyAuthController::class, 'login']);
                 Route::post('forgot-password', [CompanyAuthController::class, 'forgotPassword']);
                 Route::post('reset-password', [CompanyAuthController::class, 'resetPassword']);
-                // VerifyJwt middleware should be applied after login
                 Route::middleware([VerifyJwt::class])->group(function () {
                     Route::post('update-password', [CompanyAuthController::class, 'updatePassword']);
                     Route::post('logout', [CompanyAuthController::class, 'logout']);

@@ -8,6 +8,7 @@ namespace App\Swagger;
  *     type="object",
  *     title="Document",
  *     description="Document resource response",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Document"),
  *     @OA\Property(property="type", type="string", example="type"),
@@ -18,7 +19,6 @@ namespace App\Swagger;
  *     @OA\Property(property="is_verified", type="boolean", example=false)
  * )
  */
-
 class DocumentResourceSchema
 {
     // This class can remain empty; it's just for Swagger annotations

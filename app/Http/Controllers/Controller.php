@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use JsonSerializable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Resources\Json\JsonResource;
+use JsonSerializable;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class Controller
@@ -21,7 +21,6 @@ abstract class Controller
             'data' => $data instanceof JsonResource ? $data->response()->getData(true) : $data,
         ], $code, $headers);
     }
-
 
     public function sendErrorResponse(string $message = '', int $code = 400): JsonResponse
     {

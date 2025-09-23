@@ -3,25 +3,23 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Spatie\Sluggable\HasSlug;
-use App\Models\GeneralSetting;
-use Spatie\Sluggable\SlugOptions;
-use App\Models\MerchantOnboardingLog;
-use Illuminate\Support\Facades\Storage;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Company extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, SoftDeletes, HasSlug;
+    use HasFactory, HasSlug, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -66,7 +64,7 @@ class Company extends Authenticatable implements JWTSubject
     ];
 
     protected $appends = [
-        // 
+        //
     ];
 
     public function getJWTIdentifier()
@@ -165,7 +163,7 @@ class Company extends Authenticatable implements JWTSubject
     protected function logo(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => Storage::disk('s3')->url($value),
+            get: fn (string $value) => Storage::disk('s3')->url($value),
         );
     }
 

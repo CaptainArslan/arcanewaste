@@ -38,7 +38,7 @@ it('uploads media successfully', function () {
         ]);
 
     // file should exist
-    Storage::disk('s3')->assertExists('media/' . $file->hashName());
+    Storage::disk('s3')->assertExists('media/'.$file->hashName());
 });
 
 it('returns validation error if no media provided', function () {
@@ -74,7 +74,7 @@ it('can delete media files when remove_paths is provided', function () {
         ]);
 
     Storage::disk('s3')->assertMissing($filePath);
-    Storage::disk('s3')->assertExists('media/' . $file->hashName());
+    Storage::disk('s3')->assertExists('media/'.$file->hashName());
 });
 
 it('returns validation error if media is not an array', function () {

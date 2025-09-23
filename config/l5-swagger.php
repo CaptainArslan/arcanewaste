@@ -113,8 +113,8 @@ return [
              * @link https://zircote.github.io/swagger-php/reference/processors.html
              */
             'default_processors_configuration' => [
-                /** Example */
-                /**
+            /** Example */
+            /**
              * 'operationId.hash' => true,
              * 'pathFilter' => [
              * 'tags' => [
@@ -198,7 +198,7 @@ return [
                 ],
                 */
 
-                /* Open API 3.0 support
+            /* Open API 3.0 support
                 'passport' => [ // Unique name of security
                     'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
                     'description' => 'Laravel passport oauth2 security.',
@@ -225,7 +225,7 @@ return [
                  * Examples of Securities
                  */
                 [
-                    /*
+                /*
                     'oauth2_security_example' => [
                         'read',
                         'write'
@@ -315,7 +315,7 @@ return [
          * Constants which can be used in annotations
          */
         'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('APP_URL', 'http://arcane-2nd-version.test') . '/api/v1',
+            'L5_SWAGGER_CONST_HOST' => env('APP_URL', 'http://arcane-2nd-version.test').'/api/v1',
         ],
     ],
 ];

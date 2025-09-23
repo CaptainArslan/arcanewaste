@@ -8,6 +8,7 @@ namespace App\Swagger;
  *     type="object",
  *     title="Company",
  *     description="Company resource response",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Acme Inc."),
  *     @OA\Property(property="email", type="string", format="email", example="company@example.com"),

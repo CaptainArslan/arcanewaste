@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 class ResetPasswordRequest extends FormRequest
 {
@@ -52,7 +52,7 @@ class ResetPasswordRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'success' => false,
-                'message' =>  implode(', ', $validator->errors()->all()),
+                'message' => implode(', ', $validator->errors()->all()),
                 'errors' => $validator->errors()->all(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY)
         );

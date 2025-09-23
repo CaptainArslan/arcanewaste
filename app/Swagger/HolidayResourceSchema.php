@@ -8,6 +8,7 @@ namespace App\Swagger;
  *     type="object",
  *     title="Holiday",
  *     description="Holiday resource response",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Holiday"),
  *     @OA\Property(property="holiday_date", type="string", format="date", example="2025-01-01"),
@@ -15,7 +16,6 @@ namespace App\Swagger;
  *     @OA\Property(property="is_recurring", type="boolean", example=false)
  * )
  */
-
 class HolidayResourceSchema
 {
     // This class can remain empty; it's just for Swagger annotations

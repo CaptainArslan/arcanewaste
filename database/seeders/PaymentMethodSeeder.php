@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\PaymentMethod;
+use Illuminate\Database\Seeder;
 
 class PaymentMethodSeeder extends Seeder
 {
@@ -33,7 +33,7 @@ class PaymentMethodSeeder extends Seeder
                     'sandbox_url' => 'https://api-sandbox.finix.com',
                     'auth_type' => 'bearer_token',
                     'webhook_supported' => true,
-                    'api_version' => 'v1'
+                    'api_version' => 'v1',
                 ],
                 'onboarding_requirements' => [
                     'business_license',
@@ -41,7 +41,7 @@ class PaymentMethodSeeder extends Seeder
                     'bank_account_info',
                     'business_address',
                     'contact_information',
-                    'identity_verification'
+                    'identity_verification',
                 ],
                 'features' => [
                     'recurring_payments',
@@ -50,7 +50,7 @@ class PaymentMethodSeeder extends Seeder
                     'multi_currency',
                     'webhooks',
                     'reporting',
-                    'fraud_protection'
+                    'fraud_protection',
                 ],
                 'status' => 'active',
                 'is_popular' => true,
@@ -77,7 +77,7 @@ class PaymentMethodSeeder extends Seeder
                     'sandbox_url' => 'https://api.stripe.com',
                     'auth_type' => 'api_key',
                     'webhook_supported' => true,
-                    'api_version' => '2023-10-16'
+                    'api_version' => '2023-10-16',
                 ],
                 'onboarding_requirements' => [
                     'business_license',
@@ -86,7 +86,7 @@ class PaymentMethodSeeder extends Seeder
                     'business_address',
                     'contact_information',
                     'identity_verification',
-                    'website_url'
+                    'website_url',
                 ],
                 'features' => [
                     'recurring_payments',
@@ -98,7 +98,7 @@ class PaymentMethodSeeder extends Seeder
                     'fraud_protection',
                     'subscription_billing',
                     'marketplace_payments',
-                    'connect_platform'
+                    'connect_platform',
                 ],
                 'status' => 'active',
                 'is_popular' => true,
@@ -125,7 +125,7 @@ class PaymentMethodSeeder extends Seeder
                     'sandbox_url' => 'https://api.sandbox.paypal.com',
                     'auth_type' => 'oauth2',
                     'webhook_supported' => true,
-                    'api_version' => 'v2'
+                    'api_version' => 'v2',
                 ],
                 'onboarding_requirements' => [
                     'business_license',
@@ -134,7 +134,7 @@ class PaymentMethodSeeder extends Seeder
                     'business_address',
                     'contact_information',
                     'identity_verification',
-                    'website_url'
+                    'website_url',
                 ],
                 'features' => [
                     'recurring_payments',
@@ -146,7 +146,7 @@ class PaymentMethodSeeder extends Seeder
                     'fraud_protection',
                     'subscription_billing',
                     'marketplace_payments',
-                    'express_checkout'
+                    'express_checkout',
                 ],
                 'status' => 'active',
                 'is_popular' => true,
@@ -173,7 +173,7 @@ class PaymentMethodSeeder extends Seeder
                     'sandbox_url' => 'https://connect.squareupsandbox.com',
                     'auth_type' => 'oauth2',
                     'webhook_supported' => true,
-                    'api_version' => '2023-10-18'
+                    'api_version' => '2023-10-18',
                 ],
                 'onboarding_requirements' => [
                     'business_license',
@@ -181,7 +181,7 @@ class PaymentMethodSeeder extends Seeder
                     'bank_account_info',
                     'business_address',
                     'contact_information',
-                    'identity_verification'
+                    'identity_verification',
                 ],
                 'features' => [
                     'recurring_payments',
@@ -193,7 +193,7 @@ class PaymentMethodSeeder extends Seeder
                     'fraud_protection',
                     'subscription_billing',
                     'invoicing',
-                    'inventory_management'
+                    'inventory_management',
                 ],
                 'status' => 'active',
                 'is_popular' => true,
@@ -220,7 +220,7 @@ class PaymentMethodSeeder extends Seeder
                     'sandbox_url' => 'https://api.razorpay.com',
                     'auth_type' => 'basic_auth',
                     'webhook_supported' => true,
-                    'api_version' => 'v1'
+                    'api_version' => 'v1',
                 ],
                 'onboarding_requirements' => [
                     'business_license',
@@ -229,7 +229,7 @@ class PaymentMethodSeeder extends Seeder
                     'business_address',
                     'contact_information',
                     'identity_verification',
-                    'website_url'
+                    'website_url',
                 ],
                 'features' => [
                     'recurring_payments',
@@ -241,7 +241,7 @@ class PaymentMethodSeeder extends Seeder
                     'fraud_protection',
                     'subscription_billing',
                     'marketplace_payments',
-                    'upi_payments'
+                    'upi_payments',
                 ],
                 'status' => 'active',
                 'is_popular' => false,

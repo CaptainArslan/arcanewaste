@@ -3,18 +3,19 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Customer extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
     use HasFactory;
+
     use Notifiable;
 
     protected $fillable = [
@@ -70,10 +71,12 @@ class Customer extends Authenticatable implements JWTSubject
             ->withPivot('payment_option_id')
             ->withTimestamps();
     }
+
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
     }
+
     public function latestLocation(): MorphOne
     {
         return $this->morphOne(LatestLocation::class, 'locatable');

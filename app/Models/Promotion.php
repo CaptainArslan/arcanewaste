@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Promotion extends Model
@@ -42,10 +42,18 @@ class Promotion extends Model
     {
         $today = now()->toDateString();
 
-        if (!$this->is_active) return false;
-        if ($this->start_date && $today < $this->start_date) return false;
-        if ($this->end_date && $today > $this->end_date) return false;
-        if ($this->usage_limit && $this->used_count >= $this->usage_limit) return false;
+        if (! $this->is_active) {
+            return false;
+        }
+        if ($this->start_date && $today < $this->start_date) {
+            return false;
+        }
+        if ($this->end_date && $today > $this->end_date) {
+            return false;
+        }
+        if ($this->usage_limit && $this->used_count >= $this->usage_limit) {
+            return false;
+        }
 
         return true;
     }

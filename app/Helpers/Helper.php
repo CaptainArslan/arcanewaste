@@ -12,8 +12,8 @@ if (! function_exists('normalizeS3Key')) {
             $parsed = parse_url($pathOrUrl, PHP_URL_PATH) ?: '';
             $key = ltrim(urldecode($parsed), '/');
 
-            if ($bucket && Str::startsWith($key, $bucket . '/')) {
-                $key = Str::after($key, $bucket . '/');
+            if ($bucket && Str::startsWith($key, $bucket.'/')) {
+                $key = Str::after($key, $bucket.'/');
             }
         } else {
             $key = ltrim($pathOrUrl, '/');

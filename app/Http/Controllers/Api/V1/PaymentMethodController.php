@@ -20,7 +20,7 @@ class PaymentMethodController extends Controller
         if ($request->has('country')) {
             $query->where(function ($q) use ($request) {
                 $q->whereJsonContains('supported_countries', $request->country)
-                  ->orWhereNull('supported_countries');
+                    ->orWhereNull('supported_countries');
             });
         }
 
@@ -28,7 +28,7 @@ class PaymentMethodController extends Controller
         if ($request->has('currency')) {
             $query->where(function ($q) use ($request) {
                 $q->whereJsonContains('supported_currencies', $request->currency)
-                  ->orWhereNull('supported_currencies');
+                    ->orWhereNull('supported_currencies');
             });
         }
 
@@ -78,14 +78,14 @@ class PaymentMethodController extends Controller
     {
         $paymentMethod = PaymentMethod::active()->where('code', $code)->first();
 
-        if (!$paymentMethod) {
+        if (! $paymentMethod) {
             return $this->sendErrorResponse('Payment method not found.', 404);
         }
 
         $transformedMethod = [
             'id' => $paymentMethod->id,
             'name' => $paymentMethod->name,
-                'code' => $paymentMethod->code,
+            'code' => $paymentMethod->code,
             'description' => $paymentMethod->description,
             'logo_url' => $paymentMethod->logo_url,
             'website_url' => $paymentMethod->website_url,
@@ -118,11 +118,11 @@ class PaymentMethodController extends Controller
     {
         $paymentMethod = PaymentMethod::active()->where('code', $code)->first();
 
-        if (!$paymentMethod) {
+        if (! $paymentMethod) {
             return $this->sendErrorResponse('Payment method not found.', 404);
         }
 
-        if (!$paymentMethod->requires_merchant_onboarding) {
+        if (! $paymentMethod->requires_merchant_onboarding) {
             return $this->sendErrorResponse('This payment method does not require merchant onboarding.', 400);
         }
 

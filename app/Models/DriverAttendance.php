@@ -19,7 +19,7 @@ class DriverAttendance extends Model
         'is_overtime',
         'regular_hours',
         'overtime_hours',
-        'total_pay'
+        'total_pay',
     ];
 
     public function company()

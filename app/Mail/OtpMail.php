@@ -14,7 +14,9 @@ class OtpMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public string $otp;
+
     public string $name;
+
     public int $expiryMinutes;
 
     /**

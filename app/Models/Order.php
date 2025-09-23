@@ -18,7 +18,7 @@ class Order extends Model
         'is_early_return',
         'is_job_shifted',
         'order_type',
-        'reference_order_id'
+        'reference_order_id',
     ];
 
     // Relationships
@@ -26,18 +26,22 @@ class Order extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
+
     public function dumpster()
     {
         return $this->belongsTo(Dumpster::class);
     }
+
     public function dumpsterSize()
     {
         return $this->belongsTo(DumpsterSize::class);
     }
+
     public function wasteType()
     {
         return $this->belongsTo(WasteType::class);
@@ -47,18 +51,22 @@ class Order extends Model
     {
         return $this->hasOne(OrderTiming::class);
     }
+
     public function pricing()
     {
         return $this->hasOne(OrderPricing::class);
     }
+
     public function discounts()
     {
         return $this->hasMany(OrderDiscount::class);
     }
+
     public function payments()
     {
         return $this->hasMany(OrderPayment::class);
     }
+
     public function address()
     {
         return $this->hasOne(OrderAddress::class);

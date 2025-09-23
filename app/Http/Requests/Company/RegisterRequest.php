@@ -4,10 +4,10 @@ namespace App\Http\Requests\Company;
 
 use App\Rules\AddressRule;
 use App\Rules\DocumentRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegisterRequest extends FormRequest
 {
@@ -35,11 +35,11 @@ class RegisterRequest extends FormRequest
             'description' => ['required', 'string', 'max:65535'],
             'phone' => ['required', 'string', 'max:255'],
             'website' => ['required', 'string', 'max:255'],
-            "address" => ['required', 'array', new AddressRule()],
-            'documents' => ['required', 'array', new DocumentRule()],
-            "device_token" => ['nullable', 'string',],
-            'device_type' => ['required_if:device_token,not_null', 'in:android,ios', 'string',],
-            'device_id' => ['required_if:device_token,not_null', 'string',],
+            'address' => ['required', 'array', new AddressRule],
+            'documents' => ['required', 'array', new DocumentRule],
+            'device_token' => ['nullable', 'string'],
+            'device_type' => ['required_if:device_token,not_null', 'in:android,ios', 'string'],
+            'device_id' => ['required_if:device_token,not_null', 'string'],
         ];
     }
 
@@ -76,7 +76,7 @@ class RegisterRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'success' => false,
-                'message' =>  implode(', ', $validator->errors()->all()),
+                'message' => implode(', ', $validator->errors()->all()),
                 'errors' => $validator->errors()->all(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY)
         );

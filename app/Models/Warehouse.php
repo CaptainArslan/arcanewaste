@@ -27,11 +27,11 @@ class Warehouse extends Model
     ];
 
     protected $hidden = [
-        // 
+        //
     ];
 
     protected $appends = [
-        // 
+        //
     ];
 
     // Relationships
