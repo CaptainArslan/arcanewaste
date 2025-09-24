@@ -163,6 +163,7 @@ class GeneralSettingController extends Controller
             'data'    => GeneralSettingResource::collection($generalSettings)
         ]);
     }
+
     /**
      * @OA\Get(
      *     path="/company/general-settings/{id}",
@@ -210,13 +211,66 @@ class GeneralSettingController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/company/general-settings/{id}/{key}",
+     *     summary="Update a general setting",
+     *     description="Updates a specific general setting by its ID and key for the authenticated company.",
+     *     tags={"General Settings"},
+     *     security={{"bearerAuth": {}}},
+
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the general setting",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="key",
+     *         in="path",
+     *         required=true,
+     *         description="Key of the general setting to update",
+     *         @OA\Schema(type="string", example="order_cancelation_time_limit")
+     *     ),
+
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"value"},
+     *             @OA\Property(property="value", type="string", example="30")
+     *         )
+     *     ),
+
+     *     @OA\Response(
+     *         response=200,
+     *         description="General setting updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="General setting updated successfully"),
+     *             @OA\Property(property="data", ref="#/components/schemas/GeneralSettingResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="General setting not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="General setting not found")
+     *         )
+     *     )
+     * )
+     */
     public function update(GeneralSettingUpdateRequest $request, GeneralSetting $generalSetting, $key)
     {
         $company = Auth::guard('company')->user();
         $generalSetting = $this->generalSettingRepository->updateGeneralSetting($company, $request->all(), $generalSetting->id, $key);
+
         if (!$generalSetting) {
-            return $this->sendErrorResponse('General setting not found', Response::HTTP_NOT_FOUND);
+            return $this->sendErrorResponse('Setting not found', Response::HTTP_NOT_FOUND);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'General setting updated successfully',

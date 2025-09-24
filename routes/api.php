@@ -40,7 +40,7 @@ Route::prefix('v1')->group(function () {
             Route::get('details', [CompanyAuthController::class, 'details']);
             Route::get('general-settings', [GeneralSettingController::class, 'index']);
             Route::get('general-settings/{generalSetting}', [GeneralSettingController::class, 'show']);
-            Route::post('general-settings/{generalSetting}/{key}', [GeneralSettingController::class, 'update']);
+            Route::put('general-settings/{generalSetting}/{key}', [GeneralSettingController::class, 'update']);
         });
     });
 });

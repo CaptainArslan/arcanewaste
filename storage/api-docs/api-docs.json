@@ -1110,6 +1110,107 @@
                 ]
             }
         },
+        "/company/general-settings/{id}/{key}": {
+            "put": {
+                "tags": [
+                    "General Settings"
+                ],
+                "summary": "Update a general setting",
+                "description": "Updates a specific general setting by its ID and key for the authenticated company.",
+                "operationId": "6fa171c0bcbb5e97012230d1fabffe60",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the general setting",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "description": "Key of the general setting to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "order_cancelation_time_limit"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "value"
+                                ],
+                                "properties": {
+                                    "value": {
+                                        "type": "string",
+                                        "example": "30"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "General setting updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "General setting updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/GeneralSettingResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "General setting not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "General setting not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/media/upload": {
             "post": {
                 "tags": [
