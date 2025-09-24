@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api\V1\Company;
 
 use Illuminate\Http\Request;
+use App\Models\GeneralSetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\GeneralSettingResource;
 use App\Repositories\GeneralSettingRepository;
-use App\Models\GeneralSetting;
+use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Company\GeneralSettingUpdateRequest;
 
 class GeneralSettingController extends Controller

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('type', ['upfront_full', 'partial_upfront', 'after_completion']);
             $table->decimal('percentage', 5, 2)->nullable();
+            $table->text('description')->nullable();
             // Only required for partial_upfront (e.g., 30.00 = 30%)
 
             $table->boolean('is_active')->default(true);

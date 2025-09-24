@@ -17,6 +17,7 @@ class GeneralSetting extends Model
         'key',
         'value',
         'type',
+        'description',
     ];
 
     protected $casts = [
@@ -25,6 +26,7 @@ class GeneralSetting extends Model
         'key' => 'string',
         'value' => 'string',
         'type' => 'string',
+        'description' => 'string',
     ];
 
     protected $hidden = [
@@ -37,12 +39,25 @@ class GeneralSetting extends Model
     {
         return $this->morphTo();
     }
-    
+
     // Scopes 
     public function value(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => json_decode($value, true),
+            get: function ($value) {
+                // Try to decode JSON, return original if it's not valid JSON
+                $decoded = json_decode($value, true);
+                return (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value;
+            },
+            set: function ($value) {
+                // If it's an array or object, encode to JSON
+                if (is_array($value) || is_object($value)) {
+                    return json_encode($value);
+                }
+
+                // For int, float, string, bool → just return as is
+                return $value;
+            }
         );
     }
 
@@ -54,7 +69,8 @@ class GeneralSetting extends Model
                 ->when($filters['key'] ?? false, fn($q, $key) => $q->where('key', $key))
                 ->when($filters['id'] ?? false, fn($q, $id) => $q->where('id', $id))
                 ->when($filters['value'] ?? false, fn($q, $value) => $q->where('value', $value))
-                ->when($filters['type'] ?? false, fn($q, $type) => $q->where('type', $type));
+                ->when($filters['type'] ?? false, fn($q, $type) => $q->where('type', $type))
+                ->when($filters['description'] ?? false, fn($q, $description) => $q->where('description', $description));
         });
     }
 

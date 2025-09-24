@@ -52,7 +52,7 @@ class CompanyAuthenticationService
         ]);
 
         $this->createAddress($warehouse, $company->defaultAddress->toArray() ?? [], true);
-        $this->createWarehouseTimings($warehouse);
+        // $this->createWarehouseTimings($warehouse);
 
         return $warehouse;
     }
@@ -181,18 +181,48 @@ class CompanyAuthenticationService
     private function createCompanyGeneralSettings(Company $company): Collection
     {
         return $company->generalSettings()->createMany([
-            ['key' => 'default_timezone', 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi'), 'type' => 'string'],
-            ['key' => 'order_cancelation_time_limit', 'value' => 24, 'type' => 'integer'],
-            ['key' => 'default_driver_hourly_rate', 'value' => 10, 'type' => 'float'],
+            [
+                'key' => 'default_timezone',
+                'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi'),
+                'type' => 'string',
+                'description' => 'The default timezone for the company'
+            ],
+            [
+                'key' => 'order_cancelation_time_limit',
+                'value' => 24,
+                'type' => 'integer',
+                'description' => 'The time limit for canceling an order in hours'
+            ],
+            [
+                'key' => 'default_driver_hourly_rate',
+                'value' => 10,
+                'type' => 'float',
+                'description' => 'The default hourly rate for a driver in USD'
+            ],
         ]);
     }
 
     private function createCompanyPaymentOptions(Company $company): Collection
     {
         return $company->paymentOptions()->createMany([
-            ['name' => 'Full Upfront', 'type' => 'upfront_full', 'percentage' => 100],
-            ['name' => 'Partial Upfront', 'type' => 'partial_upfront', 'percentage' => 50],
-            ['name' => 'After Completion', 'type' => 'after_completion', 'percentage' => 0],
+            [
+                'name' => 'Full Upfront',
+                'type' => 'upfront_full',
+                'percentage' => 100,
+                'description' => 'The percentage of the order amount that is paid upfront'
+            ],
+            [
+                'name' => 'Partial Upfront',
+                'type' => 'partial_upfront',
+                'percentage' => 50,
+                'description' => 'The percentage of the order amount that is paid upfront'
+            ],
+            [
+                'name' => 'After Completion',
+                'type' => 'after_completion',
+                'percentage' => 0,
+                'description' => 'The percentage of the order amount that is paid after the completion of the order'
+            ],
         ]);
     }
 

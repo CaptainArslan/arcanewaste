@@ -16,6 +16,7 @@ use App\Services\companyAuthenticationService;
 use App\Services\DeviceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -192,34 +193,42 @@ class AuthController extends Controller
             return $this->sendErrorResponse('OTP expired', Response::HTTP_BAD_REQUEST);
         }
 
-        $company = $this->companyAuthenticationService->registerCompany($request->all());
-        $this->companyAuthenticationService->registerWarehouse($company);
+        try {
+            DB::beginTransaction();
+            $company = $this->companyAuthenticationService->registerCompany($request->all());
+            $this->companyAuthenticationService->registerWarehouse($company);
 
-        CompanySetupSuccessfullyEvent::dispatch($company);
+            CompanySetupSuccessfullyEvent::dispatch($company);
 
-        $data = $request->all();
-        $credentials = [
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ];
+            $data = $request->all();
+            $credentials = [
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ];
 
-        if (! $token = Auth::guard('company')->attempt($credentials)) {
-            return $this->sendErrorResponse('Invalid credentials', Response::HTTP_BAD_REQUEST);
+            if (! $token = Auth::guard('company')->attempt($credentials)) {
+                return $this->sendErrorResponse('Invalid credentials', Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->deviceService->registerDevice($company, $data);
+            $this->companyAuthenticationService->deletePasswordResetToken($data['otp']);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Company registered successfully',
+                'data' => [
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_in' => Auth::guard('company')->factory()->getTTL() * 60,
+                    'company' => CompanyDetailResource::make($company),
+                ],
+            ], Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->sendErrorResponse($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $this->deviceService->registerDevice($company, $data);
-        $this->companyAuthenticationService->deletePasswordResetToken($data['otp']);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Company registered successfully',
-            'data' => [
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => Auth::guard('company')->factory()->getTTL() * 60,
-                'company' => CompanyDetailResource::make($company),
-            ],
-        ], Response::HTTP_CREATED);
     }
 
     /**

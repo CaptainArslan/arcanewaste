@@ -15,6 +15,7 @@ class PaymentOption extends Model
         'name',
         'type',
         'percentage',
+        'description',
         'is_active',
     ];
 
@@ -23,6 +24,7 @@ class PaymentOption extends Model
         'name' => 'string',
         'type' => 'string',
         'percentage' => 'float',
+        'description' => 'string',
         'is_active' => 'boolean',
     ];
 

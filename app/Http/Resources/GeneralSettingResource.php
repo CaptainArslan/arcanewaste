@@ -19,6 +19,7 @@ class GeneralSettingResource extends JsonResource
             'key' => $this->key,
             'value' => $this->value,
             'type' => $this->type,
+            'description' => $this->description,
         ];
     }
 }
