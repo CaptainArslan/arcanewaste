@@ -67,11 +67,11 @@ class GeneralSetting extends Model
     {
         return $query->when($filters, function ($query, $filters) {
             return $query
-                ->when($filters['key'] ?? false, fn($q, $key) => $q->where('key', $key))
-                ->when($filters['id'] ?? false, fn($q, $id) => $q->where('id', $id))
-                ->when($filters['value'] ?? false, fn($q, $value) => $q->where('value', $value))
-                ->when($filters['type'] ?? false, fn($q, $type) => $q->where('type', $type))
-                ->when($filters['description'] ?? false, fn($q, $description) => $q->where('description', $description));
+                ->when(isset($filters['key']), fn($q) => $q->where('key', $filters['key']))
+                ->when(isset($filters['id']), fn($q) => $q->where('id', $filters['id']))
+                ->when(isset($filters['value']), fn($q) => $q->where('value', $filters['value']))
+                ->when(isset($filters['type']), fn($q) => $q->where('type', $filters['type']))
+                ->when(isset($filters['description']), fn($q) => $q->where('description', $filters['description']));
         });
     }
 

@@ -32,7 +32,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "company@example.com"
+                                        "example": "company@gmail.com"
                                     }
                                 },
                                 "type": "object"
@@ -119,7 +119,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "company@example.com"
+                                        "example": "company@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
@@ -363,12 +363,12 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "company@example.com"
+                                        "example": "company@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "secret123"
+                                        "example": "password"
                                     }
                                 },
                                 "type": "object"
@@ -540,7 +540,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "company@example.com"
+                                        "example": "company@gmail.com"
                                     }
                                 },
                                 "type": "object"
@@ -614,7 +614,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "company@example.com"
+                                        "example": "company@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
@@ -717,7 +717,7 @@
                                     "old_password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "oldSecret123"
+                                        "example": "password"
                                     },
                                     "password": {
                                         "type": "string",
@@ -1227,7 +1227,7 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 1
+                            "example": null
                         }
                     },
                     {
@@ -1237,7 +1237,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "Early Payment Discount"
+                            "example": null
                         }
                     },
                     {
@@ -1247,7 +1247,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "percentage"
+                            "example": null
                         }
                     },
                     {
@@ -1258,7 +1258,7 @@
                         "schema": {
                             "type": "number",
                             "format": "float",
-                            "example": 15
+                            "example": null
                         }
                     },
                     {
@@ -1268,7 +1268,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "Discount applied for early payments"
+                            "example": null
                         }
                     },
                     {
@@ -1277,8 +1277,12 @@
                         "description": "Filter by active status",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "example": true
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ],
+                            "example": null
                         }
                     },
                     {
@@ -1288,7 +1292,7 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 10
+                            "example": null
                         }
                     },
                     {
@@ -1308,17 +1312,21 @@
                     {
                         "name": "paginate",
                         "in": "query",
-                        "description": "Whether to paginate results (true/false). Default: true",
+                        "description": "Whether to paginate results (1/0). Default: 1",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "example": true
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ],
+                            "example": 1
                         }
                     },
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "Number of results per page (if paginate=true).",
+                        "description": "Number of results per page (if paginate=1).",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1388,6 +1396,229 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/company/payment-options/{id}": {
+            "get": {
+                "tags": [
+                    "Payment Options"
+                ],
+                "summary": "Get payment option details",
+                "description": "Fetch a specific payment option by its ID for the authenticated company.",
+                "operationId": "0c00722c6986b19a8cd261c9c51107de",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payment option ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment option fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment option fetched successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/PaymentOptionResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Payment option not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment option not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/company/payment-options/{id}/{type}": {
+            "patch": {
+                "tags": [
+                    "Payment Options"
+                ],
+                "summary": "Update a payment option",
+                "description": "Update specific fields of a payment option for the authenticated company. \n     *         Only partial updates are allowed (you do not need to send all fields).",
+                "operationId": "e091768925db1622fe8aa0725aea0f0f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payment option ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "Type of update (e.g. 'partial')",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "partial"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Upfront Payment"
+                                    },
+                                    "percentage": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": ""
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Upfront 50% payment option"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment option updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment option updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/PaymentOptionResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Payment option not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment option not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
                                         }
                                     },
                                     "type": "object"

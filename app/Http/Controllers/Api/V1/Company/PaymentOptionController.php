@@ -34,49 +34,49 @@ class PaymentOptionController extends Controller
      *         in="query",
      *         required=false,
      *         description="Filter by payment option ID",
-     *         @OA\Schema(type="integer", example=1)
+     *         @OA\Schema(type="integer", example=null)
      *     ),
      *     @OA\Parameter(
      *         name="filters[name]",
      *         in="query",
      *         required=false,
      *         description="Filter by payment option name (partial match)",
-     *         @OA\Schema(type="string", example="Early Payment Discount")
+     *         @OA\Schema(type="string", example=null)
      *     ),
      *     @OA\Parameter(
      *         name="filters[type]",
      *         in="query",
      *         required=false,
      *         description="Filter by payment option type",
-     *         @OA\Schema(type="string", example="percentage")
+     *         @OA\Schema(type="string", example=null)
      *     ),
      *     @OA\Parameter(
      *         name="filters[percentage]",
      *         in="query",
      *         required=false,
      *         description="Filter by percentage value",
-     *         @OA\Schema(type="number", format="float", example=15)
+     *         @OA\Schema(type="number", format="float", example=null)
      *     ),
      *     @OA\Parameter(
      *         name="filters[description]",
      *         in="query",
      *         required=false,
      *         description="Filter by description (partial match)",
-     *         @OA\Schema(type="string", example="Discount applied for early payments")
+     *         @OA\Schema(type="string", example=null)
      *     ),
      *     @OA\Parameter(
      *         name="filters[is_active]",
      *         in="query",
      *         required=false,
      *         description="Filter by active status",
-     *         @OA\Schema(type="boolean", example=true)
+     *         @OA\Schema(type="integer", enum={0,1}, example=null)
      *     ),
      *     @OA\Parameter(
      *         name="filters[company_id]",
      *         in="query",
      *         required=false,
      *         description="Filter by company ID",
-     *         @OA\Schema(type="integer", example=10)
+     *         @OA\Schema(type="integer", example=null)
      *     ),
      *     @OA\Parameter(
      *         name="sort",
@@ -89,14 +89,14 @@ class PaymentOptionController extends Controller
      *         name="paginate",
      *         in="query",
      *         required=false,
-     *         description="Whether to paginate results (true/false). Default: true",
-     *         @OA\Schema(type="boolean", example=true)
+     *         description="Whether to paginate results (1/0). Default: 1",
+     *         @OA\Schema(type="integer", enum={0,1}, example=1)
      *     ),
      *     @OA\Parameter(
      *         name="limit",
      *         in="query",
      *         required=false,
-     *         description="Number of results per page (if paginate=true).",
+     *         description="Number of results per page (if paginate=1).",
      *         @OA\Schema(type="integer", example=15)
      *     ),
      *
@@ -125,7 +125,6 @@ class PaymentOptionController extends Controller
      *     )
      * )
      */
-
     public function index(Request $request)
     {
         $company = Auth::guard('company')->user();
@@ -163,6 +162,58 @@ class PaymentOptionController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/company/payment-options/{id}",
+     *     summary="Get payment option details",
+     *     description="Fetch a specific payment option by its ID for the authenticated company.",
+     *     tags={"Payment Options"},
+     *     security={{"bearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Payment option ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment option fetched successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Payment option fetched successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 ref="#/components/schemas/PaymentOptionResource"
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=404,
+     *         description="Payment option not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Payment option not found")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
+     */
     public function show(PaymentOption $paymentOption)
     {
         $company = Auth::guard('company')->user();
@@ -174,6 +225,77 @@ class PaymentOptionController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/api/company/payment-options/{id}/{type}",
+     *     summary="Update a payment option",
+     *     description="Update specific fields of a payment option for the authenticated company. 
+     *         Only partial updates are allowed (you do not need to send all fields).",
+     *     tags={"Payment Options"},
+     *     security={{"bearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Payment option ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="type",
+     *         in="path",
+     *         required=true,
+     *         description="Type of update (e.g. 'partial')",
+     *         @OA\Schema(type="string", example="partial")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="Upfront Payment"),
+     *             @OA\Property(property="percentage", type="number", format="float", example=""),
+     *             @OA\Property(property="description", type="string", example="Upfront 50% payment option"),
+     *             @OA\Property(property="is_active", type="boolean", example=true)
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment option updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Payment option updated successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 ref="#/components/schemas/PaymentOptionResource"
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=404,
+     *         description="Payment option not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Payment option not found")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
+     */
     public function update(PaymentOptionUpdateRequest $request, PaymentOption $paymentOption, $type)
     {
         $company = Auth::guard('company')->user();
