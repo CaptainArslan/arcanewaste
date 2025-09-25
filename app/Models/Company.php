@@ -16,10 +16,13 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Traits\HasAddresses;
+use App\Traits\HasDocuments;
 
 class Company extends Authenticatable implements JWTSubject
 {
     use HasFactory, HasSlug, Notifiable, SoftDeletes;
+    use HasAddresses, HasDocuments;
 
     protected $fillable = [
         'name',
@@ -163,7 +166,7 @@ class Company extends Authenticatable implements JWTSubject
     protected function logo(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Storage::disk('s3')->url($value),
+            get: fn(string $value) => Storage::disk('s3')->url($value),
         );
     }
 

@@ -1634,6 +1634,636 @@
                 ]
             }
         },
+        "/company/warehouses": {
+            "get": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "List warehouses",
+                "description": "Fetches a list of warehouses for the authenticated company with filtering, sorting, and pagination support. All filters default to null.",
+                "operationId": "953ff457fdb81fa0a66c122e2ed6f230",
+                "parameters": [
+                    {
+                        "name": "filters[name]",
+                        "in": "query",
+                        "description": "Filter by warehouse name (partial match). Default: null",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "filters[code]",
+                        "in": "query",
+                        "description": "Filter by warehouse code (partial match). Default: null",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "filters[type]",
+                        "in": "query",
+                        "description": "Filter by warehouse type (partial match). Default: null",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "filters[capacity]",
+                        "in": "query",
+                        "description": "Filter by warehouse capacity (partial match). Default: null",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "filters[is_active]",
+                        "in": "query",
+                        "description": "Filter by active status (0 = inactive, 1 = active). Default: null",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ],
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort order (asc or desc). Default: desc",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "example": "desc"
+                        }
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "description": "Whether to paginate results (true/false). Default: true",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results per page (if paginate=true). Default: 15",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Warehouses fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouses fetched successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/WarehouseResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 72
+                                                },
+                                                "links": {
+                                                    "properties": {
+                                                        "first": {
+                                                            "type": "string",
+                                                            "example": "http://api.example.com/company/warehouses?page=1"
+                                                        },
+                                                        "last": {
+                                                            "type": "string",
+                                                            "example": "http://api.example.com/company/warehouses?page=5"
+                                                        },
+                                                        "prev": {
+                                                            "type": "string",
+                                                            "example": null
+                                                        },
+                                                        "next": {
+                                                            "type": "string",
+                                                            "example": "http://api.example.com/company/warehouses?page=2"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Create a warehouse",
+                "description": "Creates a new warehouse for the authenticated company",
+                "operationId": "ba4e71d75f1ffe8d0c6566d664174254",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Main Warehouse"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "WH001"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "Dumpster"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 50
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "address": {
+                                        "properties": {
+                                            "address_line1": {
+                                                "type": "string",
+                                                "example": "123 Street"
+                                            },
+                                            "address_line2": {
+                                                "type": "string",
+                                                "example": "Apt 4B"
+                                            },
+                                            "city": {
+                                                "type": "string",
+                                                "example": "New York"
+                                            },
+                                            "state": {
+                                                "type": "string",
+                                                "example": "NY"
+                                            },
+                                            "postal_code": {
+                                                "type": "string",
+                                                "example": "10001"
+                                            },
+                                            "country": {
+                                                "type": "string",
+                                                "example": "USA"
+                                            },
+                                            "latitude": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 40.7128
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": -74.006
+                                            },
+                                            "is_primary": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Warehouse created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse created successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WarehouseResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The name field is required."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/company/warehouses/{id}": {
+            "get": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Get a single warehouse",
+                "description": "Fetches a single warehouse by its ID for the authenticated company.",
+                "operationId": "ab3d514ad19e465ee6b9cbd5851d0f37",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the warehouse",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Warehouse fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse fetched successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WarehouseResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Warehouse not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/company/warehouses/{warehouse}": {
+            "put": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Update a warehouse",
+                "description": "Updates an existing warehouse for the authenticated company. Only provided fields will be updated.",
+                "operationId": "29de98a61b7083d5315ef03f109959a7",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID of the warehouse to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Main Warehouse"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "WH001"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "Dumpster"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 50
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "address": {
+                                        "properties": {
+                                            "address_line1": {
+                                                "type": "string",
+                                                "example": "123 Street"
+                                            },
+                                            "address_line2": {
+                                                "type": "string",
+                                                "example": "Apt 4B"
+                                            },
+                                            "city": {
+                                                "type": "string",
+                                                "example": "New York"
+                                            },
+                                            "state": {
+                                                "type": "string",
+                                                "example": "NY"
+                                            },
+                                            "postal_code": {
+                                                "type": "string",
+                                                "example": "10001"
+                                            },
+                                            "country": {
+                                                "type": "string",
+                                                "example": "USA"
+                                            },
+                                            "latitude": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 40.7128
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": -74.006
+                                            },
+                                            "is_primary": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Warehouse updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WarehouseResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Warehouse not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The code field is required."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Delete a warehouse",
+                "description": "Deletes a warehouse for the authenticated company.",
+                "operationId": "15fcaf06e41af7069b4e1801dfb8be72",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID of the warehouse to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Warehouse deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse deleted successfully"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Warehouse not deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Warehouse not deleted"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/media/upload": {
             "post": {
                 "tags": [
@@ -2275,6 +2905,18 @@
                     "capacity": {
                         "type": "integer",
                         "example": 100
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "address": {
+                        "type": "object",
+                        "example": {
+                            "address_line1": "123 Main St",
+                            "city": "New York",
+                            "country": "USA"
+                        }
                     }
                 },
                 "type": "object"
@@ -2304,6 +2946,10 @@
         {
             "name": "Payment Options",
             "description": "Payment Options"
+        },
+        {
+            "name": "Warehouses",
+            "description": "Warehouses"
         },
         {
             "name": "Media",

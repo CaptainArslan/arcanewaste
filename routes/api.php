@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Company\WarehouseController;
 use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
 use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
 use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
@@ -50,7 +51,14 @@ Route::prefix('v1')->group(function () {
             Route::get('payment-options/{paymentOption}', [PaymentOptionController::class, 'show']);
             Route::put('payment-options/{paymentOption}/{type}', [PaymentOptionController::class, 'update']);
 
-            // Notification Routes
+            // Warehouses Routes
+            Route::get('warehouses', [WarehouseController::class, 'index']);
+            Route::get('warehouses/{warehouse}', [WarehouseController::class, 'show']);
+            Route::post('warehouses', [WarehouseController::class, 'store']);
+            Route::put('warehouses/{warehouse}', [WarehouseController::class, 'update']);
+            Route::delete('warehouses/{warehouse}', [WarehouseController::class, 'destroy']);
+
+            
         });
     });
 });

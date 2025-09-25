@@ -20,6 +20,8 @@ class WarehouseResource extends JsonResource
             'code' => $this->code,
             'type' => $this->type,
             'capacity' => $this->capacity,
+            'is_active' => $this->is_active,
+            'address' => $this->defaultAddress,
         ];
     }
 }

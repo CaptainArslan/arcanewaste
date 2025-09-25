@@ -13,7 +13,9 @@ namespace App\Swagger;
  *     @OA\Property(property="name", type="string", example="Warehouse"),
  *     @OA\Property(property="code", type="string", example="code"),
  *     @OA\Property(property="type", type="string", example="type"),
- *     @OA\Property(property="capacity", type="integer", example=100)
+ *     @OA\Property(property="capacity", type="integer", example=100),
+ *     @OA\Property(property="is_active", type="boolean", example=true),
+ *     @OA\Property(property="address", type="object", example={"address_line1": "123 Main St", "city": "New York", "country": "USA"}),
  * )
  */
 class WarehouseResourceSchema

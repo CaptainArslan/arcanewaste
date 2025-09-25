@@ -31,8 +31,8 @@ class CompanyAuthenticationService
         ]);
 
         // create default address
-        $address = $this->createAddress($company, $address, true);
-        $this->createDocuments($company, $data['documents'] ?? []);
+        $address = $company->createAddress($company, $address, true);
+        $company->createDocuments($company, $data['documents'] ?? []);
         $this->createCompanyTimings($company);
         $this->createCompanyHolidays($company);
         $this->createCompanyGeneralSettings($company);
@@ -119,54 +119,54 @@ class CompanyAuthenticationService
         return $warehouse->timings()->createMany($newTimings);
     }
 
-    private function createAddress(Model $addressable, array $address = [], bool $isPrimary = false): Address
-    {
-        if (empty($address)) {
-            return $addressable->addresses()->where('is_primary', true)->first();
-        }
+    // private function createAddress(Model $addressable, array $address = [], bool $isPrimary = false): Address
+    // {
+    //     if (empty($address)) {
+    //         return $addressable->addresses()->where('is_primary', true)->first();
+    //     }
 
-        // If another primary exists and we are not overriding, force false
-        if (! $isPrimary && $addressable->addresses()->where('is_primary', true)->exists()) {
-            $isPrimary = false;
-        }
+    //     // If another primary exists and we are not overriding, force false
+    //     if (! $isPrimary && $addressable->addresses()->where('is_primary', true)->exists()) {
+    //         $isPrimary = false;
+    //     }
 
-        return $addressable->addresses()->create([
-            'address_line1' => $address['address_line1'] ?? null,
-            'address_line2' => $address['address_line2'] ?? null,
-            'city' => $address['city'] ?? null,
-            'state' => $address['state'] ?? null,
-            'postal_code' => $address['postal_code'] ?? null,
-            'country' => $address['country'] ?? null,
-            'latitude' => $address['latitude'] ?? null,
-            'longitude' => $address['longitude'] ?? null,
-            'is_primary' => $isPrimary,
-        ]);
-    }
+    //     return $addressable->addresses()->create([
+    //         'address_line1' => $address['address_line1'] ?? null,
+    //         'address_line2' => $address['address_line2'] ?? null,
+    //         'city' => $address['city'] ?? null,
+    //         'state' => $address['state'] ?? null,
+    //         'postal_code' => $address['postal_code'] ?? null,
+    //         'country' => $address['country'] ?? null,
+    //         'latitude' => $address['latitude'] ?? null,
+    //         'longitude' => $address['longitude'] ?? null,
+    //         'is_primary' => $isPrimary,
+    //     ]);
+    // }
 
-    private function createDocuments(Model $documentable, array $documents = []): Collection
-    {
-        if (empty($documents)) {
-            return $documentable->documents()->get();
-        }
+    // private function createDocuments(Model $documentable, array $documents = []): Collection
+    // {
+    //     if (empty($documents)) {
+    //         return $documentable->documents()->get();
+    //     }
 
-        $newDocuments = [];
-        foreach ($documents as $document) {
-            $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
-            if (! in_array($document['file_path'], $existingDocuments)) {
-                $newDocuments[] = [
-                    'name' => $document['name'],
-                    'type' => $document['type'],
-                    'file_path' => $document['file_path'],
-                    'mime_type' => $document['mime_type'],
-                    'issued_at' => $document['issued_at'],
-                    'expires_at' => $document['expires_at'],
-                    'is_verified' => $document['is_verified'],
-                ];
-            }
-        }
+    //     $newDocuments = [];
+    //     foreach ($documents as $document) {
+    //         $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
+    //         if (! in_array($document['file_path'], $existingDocuments)) {
+    //             $newDocuments[] = [
+    //                 'name' => $document['name'],
+    //                 'type' => $document['type'],
+    //                 'file_path' => $document['file_path'],
+    //                 'mime_type' => $document['mime_type'],
+    //                 'issued_at' => $document['issued_at'],
+    //                 'expires_at' => $document['expires_at'],
+    //                 'is_verified' => $document['is_verified'],
+    //             ];
+    //         }
+    //     }
 
-        return $documentable->documents()->createMany($newDocuments);
-    }
+    //     return $documentable->documents()->createMany($newDocuments);
+    // }
 
     private function createCompanyHolidays(Company $company): Collection
     {
