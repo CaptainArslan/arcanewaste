@@ -12,7 +12,8 @@ namespace App\Swagger;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="key", type="string", example="key"),
  *     @OA\Property(property="value", type="string", example="value"),
- *     @OA\Property(property="type", type="string", example="type")
+ *     @OA\Property(property="type", type="string", example="type"),
+ *     @OA\Property(property="description", type="string", example="Description")
  * )
  */
 class GeneralSettingSchema

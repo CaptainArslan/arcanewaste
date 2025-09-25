@@ -1503,14 +1503,14 @@
                 ]
             }
         },
-        "/api/company/payment-options/{id}/{type}": {
-            "patch": {
+        "/company/payment-options/{id}/{type}": {
+            "put": {
                 "tags": [
                     "Payment Options"
                 ],
                 "summary": "Update a payment option",
                 "description": "Update specific fields of a payment option for the authenticated company. \n     *         Only partial updates are allowed (you do not need to send all fields).",
-                "operationId": "e091768925db1622fe8aa0725aea0f0f",
+                "operationId": "95c785c7c6d413ffb75ae9a3623c0b8d",
                 "parameters": [
                     {
                         "name": "id",
@@ -1546,7 +1546,7 @@
                                     "percentage": {
                                         "type": "number",
                                         "format": "float",
-                                        "example": ""
+                                        "example": 10
                                     },
                                     "description": {
                                         "type": "string",
@@ -2130,6 +2130,10 @@
                     "type": {
                         "type": "string",
                         "example": "type"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Description"
                     }
                 },
                 "type": "object"
@@ -2209,6 +2213,14 @@
                     "percentage": {
                         "type": "number",
                         "example": 100
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Description"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
                     }
                 },
                 "type": "object"

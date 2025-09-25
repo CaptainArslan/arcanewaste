@@ -12,7 +12,9 @@ namespace App\Swagger;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Payment Option"),
  *     @OA\Property(property="type", type="string", example="type"),
- *     @OA\Property(property="percentage", type="number", example=100)
+ *     @OA\Property(property="percentage", type="number", example=100),
+ *     @OA\Property(property="description", type="string", example="Description"),
+ *     @OA\Property(property="is_active", type="boolean", example=true)
  * )
  */
 class PaymentOptionResourceSchema

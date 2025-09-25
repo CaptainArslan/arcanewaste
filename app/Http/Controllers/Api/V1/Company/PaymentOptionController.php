@@ -226,8 +226,8 @@ class PaymentOptionController extends Controller
     }
 
     /**
-     * @OA\Patch(
-     *     path="/api/company/payment-options/{id}/{type}",
+     * @OA\Put(
+     *     path="/company/payment-options/{id}/{type}",
      *     summary="Update a payment option",
      *     description="Update specific fields of a payment option for the authenticated company. 
      *         Only partial updates are allowed (you do not need to send all fields).",
@@ -254,7 +254,7 @@ class PaymentOptionController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="name", type="string", example="Upfront Payment"),
-     *             @OA\Property(property="percentage", type="number", format="float", example=""),
+     *             @OA\Property(property="percentage", type="number", format="float", example=10),
      *             @OA\Property(property="description", type="string", example="Upfront 50% payment option"),
      *             @OA\Property(property="is_active", type="boolean", example=true)
      *         )
