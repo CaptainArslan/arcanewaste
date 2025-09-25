@@ -6,9 +6,8 @@ use Illuminate\Bus\Queueable;
 use App\Events\FcmNotificationEvent;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
-class FcmDatabaseNotification extends Notification
+class FcmDatabaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

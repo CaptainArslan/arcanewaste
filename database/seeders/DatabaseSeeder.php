@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // Seed payment methods
         $this->call([
             PaymentMethodSeeder::class,
-            SecureFileSeeder::class,
+            // SecureFileSeeder::class,
         ]);
     }
 }

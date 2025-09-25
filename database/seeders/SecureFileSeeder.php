@@ -37,11 +37,11 @@ class SecureFileSeeder extends Seeder
         );
 
         // Save in storage/app/public/firebase/firebase.json
-        $filePath = 'firebase/firebase.json';
+        // $filePath = 'firebase/firebase.json';
 
-        if (!Storage::disk('public')->exists($filePath)) {
-            $json = json_encode($credentials, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            Storage::disk('public')->put($filePath, $json);
-        }
+        // if (!Storage::disk('public')->exists($filePath)) {
+        //     $json = json_encode($credentials, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        //     Storage::disk('public')->put($filePath, $json);
+        // }
     }
 }

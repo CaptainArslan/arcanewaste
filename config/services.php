@@ -37,7 +37,7 @@ return [
     'fcm' => [
         'key' => env('FCM_KEY'),
         'project_id' => env('FCM_PROJECT_ID'),
-        'credentials_file_path' => env('FCM_CREDENTIALS_FILE_PATH', storage_path('app/public/firebase/firebase.json')),
+        'credentials_file_path' => env('FCM_CREDENTIALS_FILE_PATH', storage_path('app/firebase/firebase.json')),
     ],
     'finix' => [
         'mode' => env('FINIX_MODE', 'sandbox'),
