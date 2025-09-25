@@ -1211,6 +1211,198 @@
                 ]
             }
         },
+        "/company/payment-options": {
+            "get": {
+                "tags": [
+                    "Payment Options"
+                ],
+                "summary": "List payment options",
+                "description": "Fetches a list of payment options for the authenticated company with filtering, sorting, and pagination support.",
+                "operationId": "4b7fc2d233242c2822d74f8e3763fc63",
+                "parameters": [
+                    {
+                        "name": "filters[id]",
+                        "in": "query",
+                        "description": "Filter by payment option ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "filters[name]",
+                        "in": "query",
+                        "description": "Filter by payment option name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Early Payment Discount"
+                        }
+                    },
+                    {
+                        "name": "filters[type]",
+                        "in": "query",
+                        "description": "Filter by payment option type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "percentage"
+                        }
+                    },
+                    {
+                        "name": "filters[percentage]",
+                        "in": "query",
+                        "description": "Filter by percentage value",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "filters[description]",
+                        "in": "query",
+                        "description": "Filter by description (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Discount applied for early payments"
+                        }
+                    },
+                    {
+                        "name": "filters[is_active]",
+                        "in": "query",
+                        "description": "Filter by active status",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "filters[company_id]",
+                        "in": "query",
+                        "description": "Filter by company ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort order (asc or desc). Default: desc",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "example": "desc"
+                        }
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "description": "Whether to paginate results (true/false). Default: true",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results per page (if paginate=true).",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment options fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment options fetched successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PaymentOptionResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 72
+                                                },
+                                                "links": {
+                                                    "properties": {
+                                                        "first": {
+                                                            "type": "string",
+                                                            "example": "http://api.example.com/company/payment-options?page=1"
+                                                        },
+                                                        "last": {
+                                                            "type": "string",
+                                                            "example": "http://api.example.com/company/payment-options?page=5"
+                                                        },
+                                                        "prev": {
+                                                            "type": "string",
+                                                            "example": null
+                                                        },
+                                                        "next": {
+                                                            "type": "string",
+                                                            "example": "http://api.example.com/company/payment-options?page=2"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/media/upload": {
             "post": {
                 "tags": [
@@ -1865,6 +2057,10 @@
         {
             "name": "General Settings",
             "description": "General Settings"
+        },
+        {
+            "name": "Payment Options",
+            "description": "Payment Options"
         },
         {
             "name": "Media",

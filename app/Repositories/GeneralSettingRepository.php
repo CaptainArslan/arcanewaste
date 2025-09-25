@@ -3,18 +3,21 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class GeneralSettingRepository
 {
+
     public function getAllGeneralSettings(
         Model $generalSettingable,
         $filters = [],
         $sort = 'desc',
         $paginate = true,
         $perPage = 10,
-    ) {
+    ): Collection|LengthAwarePaginator {
         $query = $generalSettingable->generalSettings()
-            ->filter($filters)
+            ->filters($filters)
             ->orderBy('id', $sort);
 
         if ($paginate) {
@@ -24,17 +27,12 @@ class GeneralSettingRepository
         return $query->get();
     }
 
-    public function getGeneralSettingById(Model $generalSettingable, $id)
+    public function getGeneralSettingById(Model $generalSettingable, $id): ?Model
     {
         return $generalSettingable->generalSettings()->find($id);
     }
 
-    public function createGeneralSetting(Model $generalSettingable, array $data)
-    {
-        return $generalSettingable->generalSettings()->create($data);
-    }
-
-    public function updateGeneralSetting(Model $generalSettingable, array $data, $id, $key)
+    public function updateGeneralSetting(Model $generalSettingable, array $data, $id, $key): ?Model
     {
         $generalSetting = $generalSettingable->generalSettings()
             ->where('key', $key)
@@ -48,17 +46,5 @@ class GeneralSettingRepository
         $generalSetting->save();
 
         return $generalSetting;
-    }
-
-
-
-    public function deleteGeneralSetting(Model $generalSettingable, $id)
-    {
-        return $generalSettingable->generalSettings()->find($id)->delete();
-    }
-
-    public function searchGeneralSettings(Model $generalSettingable, $query)
-    {
-        return $generalSettingable->generalSettings()->where('key', 'like', '%' . $query . '%')->get();
     }
 }

@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
+use Illuminate\Http\Request;
+use App\Http\Middleware\VerifyJwt;
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
 use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
-use App\Http\Middleware\CheckJsonHeaders;
-use App\Http\Middleware\VerifyJwt;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -38,9 +39,16 @@ Route::prefix('v1')->group(function () {
 
         Route::middleware([VerifyJwt::class, CheckJsonHeaders::class])->group(function () {
             Route::get('details', [CompanyAuthController::class, 'details']);
+
+            // General Settings Routes
             Route::get('general-settings', [GeneralSettingController::class, 'index']);
             Route::get('general-settings/{generalSetting}', [GeneralSettingController::class, 'show']);
             Route::put('general-settings/{generalSetting}/{key}', [GeneralSettingController::class, 'update']);
+
+            // Payment Options Routes
+            Route::get('payment-options', [PaymentOptionController::class, 'index']);
+            Route::get('payment-options/{paymentOption}', [PaymentOptionController::class, 'show']);
+            Route::put('payment-options/{paymentOption}/{type}', [PaymentOptionController::class, 'update']);
         });
     });
 });

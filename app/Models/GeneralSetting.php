@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -62,7 +63,7 @@ class GeneralSetting extends Model
     }
 
     // Scopes
-    public function scopeFilter($query, $filters = [])
+    public function scopeFilters(Builder $query, $filters = []): Builder
     {
         return $query->when($filters, function ($query, $filters) {
             return $query
@@ -74,7 +75,7 @@ class GeneralSetting extends Model
         });
     }
 
-    public function scopeSort($query, $sort = [])
+    public function scopeSort(Builder $query, $sort = []): Builder
     {
         return $query->when($sort, function ($query, $sort) {
             return $query->orderBy($sort['column'], $sort['direction']);

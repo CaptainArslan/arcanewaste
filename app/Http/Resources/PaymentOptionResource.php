@@ -16,8 +16,10 @@ class PaymentOptionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
             'type' => $this->type,
             'percentage' => $this->percentage,
+            'description' => $this->description,
             'is_active' => $this->is_active,
         ];
     }
