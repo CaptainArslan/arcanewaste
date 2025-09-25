@@ -5,6 +5,7 @@ use App\Http\Middleware\VerifyJwt;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\Company\TaxController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Company\TimingsController;
 use App\Http\Controllers\Api\V1\Company\WarehouseController;
@@ -63,6 +64,13 @@ Route::prefix('v1')->group(function () {
             Route::get('timings', [TimingsController::class, 'index']);
             Route::get('timings/{timing}', [TimingsController::class, 'show']);
             Route::put('timings/sync', [TimingsController::class, 'update']);
+
+            // company taxes routes
+            Route::get('taxes', [TaxController::class, 'index']);
+            Route::get('taxes/{tax}', [TaxController::class, 'show']);
+            Route::post('taxes', [TaxController::class, 'store']);
+            Route::put('taxes/{tax}', [TaxController::class, 'update']);
+            Route::delete('taxes/{tax}', [TaxController::class, 'destroy']);
         });
     });
 });

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CompanyResource extends JsonResource
+class TaxResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,9 @@ class CompanyResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'slug' => $this->slug,
+            'type' => $this->type,
+            'rate' => $this->rate,
+            'is_active' => $this->is_active,
         ];
     }
 }
