@@ -49,6 +49,8 @@ Route::prefix('v1')->group(function () {
             Route::get('payment-options', [PaymentOptionController::class, 'index']);
             Route::get('payment-options/{paymentOption}', [PaymentOptionController::class, 'show']);
             Route::put('payment-options/{paymentOption}/{type}', [PaymentOptionController::class, 'update']);
+
+            // Notification Routes
         });
     });
 });

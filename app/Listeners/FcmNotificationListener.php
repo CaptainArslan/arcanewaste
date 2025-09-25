@@ -2,21 +2,30 @@
 
 namespace App\Listeners;
 
+use Exception;
+use App\Models\Driver;
+use App\Models\Company;
+use App\Models\Customer;
+use Google_Client as GoogleClient;
 use Illuminate\Support\Facades\Log;
 use App\Events\FcmNotificationEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-class FcmNotificationListener
+class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
 {
+    use InteractsWithQueue;
+
     public function handle(FcmNotificationEvent $event): void
     {
         $tokens = $event->deviceTokens;
+        $model = $event->model;
         $title = $event->title;
         $body = $event->body;
         $rawData = $event->data ?? [];
-        $modelType = $event->modelType;
-        $modelId = $event->modelId;
+
+        // save the notification to the database
 
 
         // Initialize statistics
@@ -44,6 +53,8 @@ class FcmNotificationListener
             $projectId = config('services.fcm.project_id');
             $credentialsFilePath = config('services.fcm.credentials_file_path');
 
+            Log::info($credentialsFilePath);
+
             if (empty($projectId)) {
                 Log::error('❌ FCM project_id not configured');
 
@@ -55,6 +66,27 @@ class FcmNotificationListener
                     'path' => $credentialsFilePath,
                 ]);
 
+                return;
+            }
+
+            // Validate credentials file content
+            $credentialsContent = file_get_contents($credentialsFilePath);
+            $credentials = json_decode($credentialsContent, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('❌ FCM credentials file is not valid JSON', [
+                    'path' => $credentialsFilePath,
+                    'json_error' => json_last_error_msg(),
+                ]);
+                return;
+            }
+
+            if (empty($credentials['private_key']) || strpos($credentials['private_key'], '...') !== false) {
+                Log::error('❌ FCM credentials file has invalid or truncated private key', [
+                    'path' => $credentialsFilePath,
+                    'has_private_key' => !empty($credentials['private_key']),
+                    'is_truncated' => strpos($credentials['private_key'], '...') !== false,
+                ]);
                 return;
             }
 

@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1\Company;
 
 use Illuminate\Http\Request;
 use App\Models\PaymentOption;
+use App\Events\FcmNotificationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\PaymentOptionResource;
 use App\Repositories\PaymentOptionRepository;
+use App\Notifications\FcmDatabaseNotification;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Company\PaymentOptionUpdateRequest;
 
@@ -304,6 +306,12 @@ class PaymentOptionController extends Controller
         if (!$paymentOption) {
             return $this->sendErrorResponse('Payment option not found', Response::HTTP_NOT_FOUND);
         }
+
+        $company->notify(new FcmDatabaseNotification(
+            'Payment option updated',
+            'Payment option updated for ' . $paymentOption->name,
+            []
+        ));
 
         return response()->json([
             'success' => true,
