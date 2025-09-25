@@ -308,8 +308,8 @@ class PaymentOptionController extends Controller
         }
 
         $company->notify(new FcmDatabaseNotification(
-            'Payment option updated',
-            'Payment option updated for ' . $paymentOption->name,
+            "Payment option updated",
+            "Payment option updated for {$paymentOption->name}",
             []
         ));
 
