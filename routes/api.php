@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Company\TimingsController;
 use App\Http\Controllers\Api\V1\Company\WarehouseController;
 use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
 use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
@@ -58,7 +59,10 @@ Route::prefix('v1')->group(function () {
             Route::put('warehouses/{warehouse}', [WarehouseController::class, 'update']);
             Route::delete('warehouses/{warehouse}', [WarehouseController::class, 'destroy']);
 
-            
+            // company timings routes
+            Route::get('timings', [TimingsController::class, 'index']);
+            Route::get('timings/{timing}', [TimingsController::class, 'show']);
+            Route::put('timings/sync', [TimingsController::class, 'update']);
         });
     });
 });

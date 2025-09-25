@@ -20,6 +20,7 @@ class TimingResource extends JsonResource
             'opens_at' => $this->opens_at,
             'closes_at' => $this->closes_at,
             'is_closed' => $this->is_closed,
+            'hours' => $this->hours,
         ];
     }
 }

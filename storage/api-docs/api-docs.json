@@ -1634,6 +1634,420 @@
                 ]
             }
         },
+        "/company/timings": {
+            "get": {
+                "tags": [
+                    "Timings"
+                ],
+                "summary": "Get company timings",
+                "description": "Fetch all timings for the authenticated company with optional filters, sorting, and pagination",
+                "operationId": "3dfc7771f94a8b157451497c83df134e",
+                "parameters": [
+                    {
+                        "name": "filters[day_of_week]",
+                        "in": "query",
+                        "description": "Filter by day of week (monday, tuesday, ...)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "filters[is_closed]",
+                        "in": "query",
+                        "description": "Filter by closed/open status",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "filters[opens_at]",
+                        "in": "query",
+                        "description": "Filter by opening time",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "time",
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "filters[closes_at]",
+                        "in": "query",
+                        "description": "Filter by closing time",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "time",
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sorting order: asc or desc",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "description": "Whether to paginate results",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Timings fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Timings fetched successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TimingResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "links": {
+                                                    "properties": {
+                                                        "first": {
+                                                            "type": "string",
+                                                            "example": "url_to_first_page"
+                                                        },
+                                                        "last": {
+                                                            "type": "string",
+                                                            "example": "url_to_last_page"
+                                                        },
+                                                        "prev": {
+                                                            "type": "string",
+                                                            "example": null
+                                                        },
+                                                        "next": {
+                                                            "type": "string",
+                                                            "example": null
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/company/timings/{id}": {
+            "get": {
+                "tags": [
+                    "Timings"
+                ],
+                "summary": "Get a single timing",
+                "description": "Fetch a specific timing for the authenticated company by ID",
+                "operationId": "648e5aa7fd263209a5833e66136d5414",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the timing",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Timing fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Timing fetched successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TimingResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Timing not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Timing not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/company/timings/sync": {
+            "put": {
+                "tags": [
+                    "Timings"
+                ],
+                "summary": "Sync company timings",
+                "description": "Delete old timings and create new weekly timings for the authenticated company. Only timings sent in the payload will exist after this operation.",
+                "operationId": "69a8034b9bcc9dd5579b0ea3cff9236b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "timings": {
+                                        "description": "Array of timings to sync for the week",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "day_of_week",
+                                                "opens_at",
+                                                "closes_at",
+                                                "is_closed"
+                                            ],
+                                            "properties": {
+                                                "day_of_week": {
+                                                    "description": "Day of the week (lowercase)",
+                                                    "type": "string",
+                                                    "example": "monday"
+                                                },
+                                                "opens_at": {
+                                                    "description": "Opening time",
+                                                    "type": "string",
+                                                    "format": "time",
+                                                    "example": "09:00:00"
+                                                },
+                                                "closes_at": {
+                                                    "description": "Closing time",
+                                                    "type": "string",
+                                                    "format": "time",
+                                                    "example": "18:00:00"
+                                                },
+                                                "is_closed": {
+                                                    "description": "Whether the day is closed",
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Timings synced successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Timing updated successfully"
+                                        },
+                                        "data": {
+                                            "description": "Array of updated timings",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TimingResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/company/warehouses": {
             "get": {
                 "tags": [
@@ -2946,6 +3360,10 @@
         {
             "name": "Payment Options",
             "description": "Payment Options"
+        },
+        {
+            "name": "Timings",
+            "description": "Timings"
         },
         {
             "name": "Warehouses",
