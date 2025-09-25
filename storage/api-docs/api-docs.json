@@ -861,6 +861,790 @@
                 ]
             }
         },
+        "/company/dumpster-sizes": {
+            "get": {
+                "tags": [
+                    "Dumpster Sizes"
+                ],
+                "summary": "Get all dumpster sizes",
+                "description": "Fetch all dumpster sizes for the authenticated company with optional filters, pagination, and sorting",
+                "operationId": "b5c2f4d4a198c4b28a74f27495ddca07",
+                "parameters": [
+                    {
+                        "name": "filters[id]",
+                        "in": "query",
+                        "description": "Filter by dumpster size ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[company_id]",
+                        "in": "query",
+                        "description": "Filter by company ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[name]",
+                        "in": "query",
+                        "description": "Filter by dumpster size name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[code]",
+                        "in": "query",
+                        "description": "Filter by dumpster size code (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[description]",
+                        "in": "query",
+                        "description": "Filter by description (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[min_rental_days]",
+                        "in": "query",
+                        "description": "Filter by minimum rental days",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[max_rental_days]",
+                        "in": "query",
+                        "description": "Filter by maximum rental days",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[base_rent]",
+                        "in": "query",
+                        "description": "Filter by base rent (>= value)",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "filters[extra_day_rent]",
+                        "in": "query",
+                        "description": "Filter by extra day rent (>= value)",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "filters[overdue_rent]",
+                        "in": "query",
+                        "description": "Filter by overdue rent (>= value)",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "filters[volume_cubic_yards]",
+                        "in": "query",
+                        "description": "Filter by volume (>= value)",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "filters[weight_limit_lbs]",
+                        "in": "query",
+                        "description": "Filter by weight limit (>= value)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[is_active]",
+                        "in": "query",
+                        "description": "Filter by active status (true/false)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort order: asc or desc (default: desc)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "description": "Whether to paginate the results (true/false, default: true)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of items per page when paginating",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dumpster sizes fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster sizes fetched successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DumpsterSizeResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "links": {
+                                                    "properties": {
+                                                        "first": {
+                                                            "type": "string"
+                                                        },
+                                                        "last": {
+                                                            "type": "string"
+                                                        },
+                                                        "prev": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        "next": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Dumpster Sizes"
+                ],
+                "summary": "Create a new dumpster size",
+                "description": "Create a new dumpster size for the authenticated company",
+                "operationId": "f3fbd5ea8d12e2bb8941b0eb4f7429da",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "company_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Large Dumpster"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "LD-10YD"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "10 cubic yard dumpster for large projects"
+                                    },
+                                    "min_rental_days": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "max_rental_days": {
+                                        "type": "integer",
+                                        "example": 14
+                                    },
+                                    "base_rent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 250
+                                    },
+                                    "extra_day_rent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 25
+                                    },
+                                    "overdue_rent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50
+                                    },
+                                    "volume_cubic_yards": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "weight_limit_lbs": {
+                                        "type": "integer",
+                                        "example": 2000
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "taxes": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Dumpster size created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size created successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DumpsterSizeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dumpster size already exists or validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size already exists"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size not created"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/company/dumpster-sizes/{id}": {
+            "get": {
+                "tags": [
+                    "Dumpster Sizes"
+                ],
+                "summary": "Get a single dumpster size",
+                "description": "Fetch a single dumpster size by its ID for the authenticated company",
+                "operationId": "5f1ae2e64af89dd17bb31375d2b49191",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the dumpster size",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dumpster size fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size fetched successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DumpsterSizeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dumpster size not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Dumpster Sizes"
+                ],
+                "summary": "Update a dumpster size",
+                "description": "Update an existing dumpster size for the authenticated company",
+                "operationId": "fe85c062f3ef2a94f7254b8276d41f28",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Dumpster size ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Large Dumpster"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "LD-10YD"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "10 cubic yard dumpster for large projects"
+                                    },
+                                    "min_rental_days": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "max_rental_days": {
+                                        "type": "integer",
+                                        "example": 14
+                                    },
+                                    "base_rent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 250
+                                    },
+                                    "extra_day_rent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 25
+                                    },
+                                    "overdue_rent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50
+                                    },
+                                    "volume_cubic_yards": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "weight_limit_lbs": {
+                                        "type": "integer",
+                                        "example": 2000
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "taxes": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dumpster size updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DumpsterSizeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size not updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Dumpster Sizes"
+                ],
+                "summary": "Delete a dumpster size",
+                "description": "Delete an existing dumpster size for the authenticated company",
+                "operationId": "ee46b564d38d36517df63eacf71a4688",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Dumpster size ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dumpster size deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dumpster size not deleted"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/company/general-settings": {
             "get": {
                 "tags": [
@@ -3768,6 +4552,84 @@
                 },
                 "type": "object"
             },
+            "DumpsterSizeResource": {
+                "title": "Dumpster Size",
+                "description": "Dumpster size resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Large Dumpster"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "LD-10YD"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "10 cubic yard dumpster for large projects"
+                    },
+                    "min_rental_days": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "max_rental_days": {
+                        "type": "integer",
+                        "example": 14
+                    },
+                    "base_rent": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 250
+                    },
+                    "extra_day_rent": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 25
+                    },
+                    "overdue_rent": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    },
+                    "volume_cubic_yards": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10
+                    },
+                    "weight_limit_lbs": {
+                        "type": "integer",
+                        "example": 2000
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "taxes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaxResource"
+                        }
+                    },
+                    "company": {
+                        "$ref": "#/components/schemas/Company"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T05:53:01.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T05:53:01.000000Z"
+                    }
+                },
+                "type": "object"
+            },
             "GeneralSettingResource": {
                 "title": "General Setting",
                 "description": "General setting resource response",
@@ -3992,6 +4854,10 @@
         {
             "name": "Company Details",
             "description": "Company Details"
+        },
+        {
+            "name": "Dumpster Sizes",
+            "description": "Dumpster Sizes"
         },
         {
             "name": "General Settings",
