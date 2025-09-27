@@ -3,22 +3,25 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Illuminate\Support\Facades\Storage;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\HasAddresses;
 
 class Customer extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use HasSlug;
     use Notifiable;
+    use HasAddresses;
 
     protected $fillable = [
         'full_name',
@@ -61,7 +64,7 @@ class Customer extends Authenticatable implements JWTSubject
         return SlugOptions::create()
             ->generateSlugsFrom('full_name')
             ->saveSlugsTo('slug');
-    }   
+    }
 
     // Relationships
     public function generalSettings(): MorphMany
@@ -86,7 +89,7 @@ class Customer extends Authenticatable implements JWTSubject
 
     public function companies()
     {
-        return $this->belongsToMany(Company::class)
+        return $this->belongsToMany(Company::class, 'company_customer')
             ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
             ->withTimestamps();
     }
@@ -101,20 +104,71 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphOne(LatestLocation::class, 'locatable');
     }
 
+    public function allContacts(): MorphMany
+    {
+        return $this->morphMany(Contact::class, 'contactable');
+    }
+
+    public function emergencyContacts(): MorphMany
+    {
+        return $this->morphMany(Contact::class, 'contactable')->where('type', 'emergency');
+    }
+
     // Accessors & Mutators
-    protected function image(): Attribute
+    public function image(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value) => $value ? Storage::disk('s3')->url($value) : null,
+            get: fn($value) => $value
+                ? (filter_var($value, FILTER_VALIDATE_URL)
+                    ? $value
+                    : Storage::disk('s3')->url($value))
+                : null,
         );
     }
 
-    protected function fullName(): Attribute
+    public function fullName(): Attribute
     {
         return Attribute::make(
             get: fn(string $value) => ucwords($value),
             set: fn(string $value) => strtolower(trim($value)),
         );
+    }
+
+    // scopes
+    public function scopeFilters(Builder $query, array $filters = [], ?int $companyId = null): Builder
+    {
+        // Join the pivot table to filter company-specific fields
+        if ($companyId) {
+            $query->join('company_customer', function ($join) use ($companyId) {
+                $join->on('customers.id', '=', 'company_customer.customer_id')
+                    ->where('company_customer.company_id', $companyId);
+            });
+        }
+
+        return $query
+            // Customer table filters
+            ->when(!empty($filters['full_name']), fn($q) => $q->where('full_name', 'like', '%' . $filters['full_name'] . '%'))
+            ->when(!empty($filters['email']), fn($q) => $q->where('email', 'like', '%' . $filters['email'] . '%'))
+            ->when(!empty($filters['phone']), fn($q) => $q->where('phone', 'like', '%' . $filters['phone'] . '%'))
+            ->when(!empty($filters['gender']), fn($q) => $q->where('gender', $filters['gender']))
+            ->when(!empty($filters['dob']), function ($q) use ($filters) {
+                if (is_array($filters['dob']) && isset($filters['dob']['from'], $filters['dob']['to'])) {
+                    $q->whereBetween('dob', [$filters['dob']['from'], $filters['dob']['to']]);
+                } else {
+                    $q->where('dob', $filters['dob']);
+                }
+            })
+
+            // Pivot table filters
+            ->when(isset($filters['is_active']), fn($q) => $q->where('company_customer.is_active', $filters['is_active']))
+            ->when(isset($filters['is_delinquent']), fn($q) => $q->where('company_customer.is_delinquent', $filters['is_delinquent']))
+            ->when(!empty($filters['delinquent_days']), function ($q) use ($filters) {
+                if (is_array($filters['delinquent_days']) && isset($filters['delinquent_days']['min'], $filters['delinquent_days']['max'])) {
+                    $q->whereBetween('company_customer.delinquent_days', [$filters['delinquent_days']['min'], $filters['delinquent_days']['max']]);
+                } else {
+                    $q->where('company_customer.delinquent_days', $filters['delinquent_days']);
+                }
+            });
     }
 
     // Helper methods    

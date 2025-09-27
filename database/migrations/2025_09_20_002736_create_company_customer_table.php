@@ -17,15 +17,20 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
 
-            $table->boolean('is_active')->default(true); // Company can deactivate a customer
-            $table->boolean('is_delinquent')->default(false); // Mark customer delinquent for this company
-            $table->integer('delinquent_days')->default(0); // Track number of overdue days
+            // Company-specific fields
+            $table->string('full_name')->nullable(); // optional company-specific name
+            $table->string('phone')->nullable();
+            $table->string('image')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_delinquent')->default(false);
+            $table->integer('delinquent_days')->default(0);
 
             $table->timestamps();
 
             $table->unique(['company_id', 'customer_id']); // prevent duplicates
         });
     }
+
 
     /**
      * Reverse the migrations.

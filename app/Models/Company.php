@@ -157,7 +157,7 @@ class Company extends Authenticatable implements JWTSubject
 
     public function customers()
     {
-        return $this->belongsToMany(Customer::class)
+        return $this->belongsToMany(Customer::class, 'company_customer')
             ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
             ->withTimestamps();
     }

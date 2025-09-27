@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\EmergencyContactResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyCustomerResource extends JsonResource
@@ -16,17 +17,22 @@ class CompanyCustomerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'customer_is_active' => $this->is_active, // From customer table
-            // Pivot fields
-            'company_is_active' => $this->pivot->is_active ?? null,
-            'company_is_delinquent' => $this->pivot->is_delinquent ?? null,
-            'company_delinquent_days' => $this->pivot->delinquent_days ?? null,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'full_name' => $this->pivot->full_name ?? $this->full_name, // Global name
+            'email' => $this->email, // Global email
+            'image' => $this->pivot->image ?? $this->image, // Company-specific or fallback
+            'phone' => $this->pivot->phone ?? $this->phone, // Company-specific or fallback
+
+            // Company-specific status fields
+            'is_active' => $this->pivot->is_active ?? true,
+            'is_delinquent' => $this->pivot->is_delinquent ?? false,
+            'delinquent_days' => $this->pivot->delinquent_days ?? 0,
+
+            // Emergency contacts
+            'emergency_contacts' => EmergencyContactResource::collection($this->emergencyContacts),
+
+            // Pivot timestamps if needed
+            'attached_at' => $this->pivot->created_at ?? null,
+            'updated_at' => $this->pivot->updated_at ?? null,
         ];
     }
 }

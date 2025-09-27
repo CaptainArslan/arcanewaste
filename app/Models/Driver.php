@@ -71,4 +71,9 @@ class Driver extends Authenticatable implements JWTSubject
     {
         return $this->morphOne(LatestLocation::class, 'locatable');
     }
+
+    public function emergencyContacts() : MorphMany
+    {
+        return $this->morphMany(Contact::class, 'contactable')->where('type', 'emergency');
+    }
 }
