@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Dumpster extends Model
 {
     use HasFactory;
+    use HasSlug;
 
     protected $fillable = [
         'company_id',
         'dumpster_size_id',
         'warehouse_id',
+        'name',
+        'slug',
         'serial_number',
         'status',
         'image',
@@ -24,6 +29,13 @@ class Dumpster extends Model
         'is_available',
         'is_active',
     ];
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
+    }
 
     // Relationships
     public function company(): BelongsTo
@@ -47,16 +59,18 @@ class Dumpster extends Model
         return $query->when(
             $filters,
             fn($q) => $q->when(isset($filters['id']), fn($q) => $q->where('id', $filters['id']))
-            ->when(isset($filters['company_id']), fn($q) => $q->where('company_id', $filters['company_id']))
-            ->when(isset($filters['dumpster_size_id']), fn($q) => $q->where('dumpster_size_id', $filters['dumpster_size_id']))
-            ->when(isset($filters['warehouse_id']), fn($q) => $q->where('warehouse_id', $filters['warehouse_id']))
-            ->when(isset($filters['serial_number']), fn($q) => $q->where('serial_number', $filters['serial_number']))
-            ->when(isset($filters['status']), fn($q) => $q->where('status', $filters['status']))
-            ->when(isset($filters['last_service_date']), fn($q) => $q->where('last_service_date', $filters['last_service_date']))
-            ->when(isset($filters['next_service_due']), fn($q) => $q->where('next_service_due', $filters['next_service_due']))
-            ->when(isset($filters['notes']), fn($q) => $q->where('notes', $filters['notes']))
-            ->when(isset($filters['is_available']), fn($q) => $q->where('is_available', $filters['is_available']))
-            ->when(isset($filters['is_active']), fn($q) => $q->where('is_active', $filters['is_active']))
+                ->when(isset($filters['company_id']), fn($q) => $q->where('company_id', $filters['company_id']))
+                ->when(isset($filters['dumpster_size_id']), fn($q) => $q->where('dumpster_size_id', $filters['dumpster_size_id']))
+                ->when(isset($filters['warehouse_id']), fn($q) => $q->where('warehouse_id', $filters['warehouse_id']))
+                ->when(isset($filters['name']), fn($q) => $q->where('name', $filters['name']))
+                ->when(isset($filters['slug']), fn($q) => $q->where('slug', $filters['slug']))
+                ->when(isset($filters['serial_number']), fn($q) => $q->where('serial_number', $filters['serial_number']))
+                ->when(isset($filters['status']), fn($q) => $q->where('status', $filters['status']))
+                ->when(isset($filters['last_service_date']), fn($q) => $q->where('last_service_date', $filters['last_service_date']))
+                ->when(isset($filters['next_service_due']), fn($q) => $q->where('next_service_due', $filters['next_service_due']))
+                ->when(isset($filters['notes']), fn($q) => $q->where('notes', $filters['notes']))
+                ->when(isset($filters['is_available']), fn($q) => $q->where('is_available', $filters['is_available']))
+                ->when(isset($filters['is_active']), fn($q) => $q->where('is_active', $filters['is_active']))
         );
     }
 

@@ -19,6 +19,8 @@ class DumpsterResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
             'serial_number' => $this->serial_number,
             'status' => $this->status,
             'last_service_date' => $this->last_service_date,
@@ -29,8 +31,6 @@ class DumpsterResource extends JsonResource
             'company' => new CompanyResource($this->company),
             'dumpster_size' => new DumpsterSizeResource($this->size),
             'warehouse' => new WarehouseResource($this->warehouse),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

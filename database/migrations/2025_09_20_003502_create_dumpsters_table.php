@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('dumpster_size_id')->constrained()->cascadeOnDelete();
             $table->foreignId('warehouse_id')->nullable()->constrained()->nullOnDelete();
 
+            $table->string('name')->nullable();
+            $table->string('slug')->nullable();
             $table->string('serial_number')->nullable()->unique(); // company asset tag
             $table->string('status')->default('available'); // available, rented, maintenance, inactive
             $table->string('image')->nullable();
@@ -32,6 +34,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['company_id', 'status']);
+            $table->index(['company_id', 'slug']);
         });
     }
 

@@ -25,6 +25,7 @@ class DumpsterCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name'             => ['required', 'string', 'max:255'],
             'company_id'       => ['required', 'exists:companies,id'],
             'dumpster_size_id' => ['required', 'exists:dumpster_sizes,id'],
             'warehouse_id'     => ['nullable', 'exists:warehouses,id'],

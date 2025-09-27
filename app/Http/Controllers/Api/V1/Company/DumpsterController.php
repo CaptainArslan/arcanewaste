@@ -51,10 +51,14 @@ class DumpsterController extends Controller
     }
 
     public function store(DumpsterCreateRequest $request)
-    { 
+    {
         $company = Auth::guard('company')->user();
 
         $dumpster = $this->dumpsterRepository->createDumpster($company, $request->all());
+
+        if (!$dumpster) {
+            return $this->sendErrorResponse('Dumpster not created', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         return response()->json([
             'success' => true,
@@ -67,6 +71,11 @@ class DumpsterController extends Controller
     {
         $company = Auth::guard('company')->user();
         $dumpster = $this->dumpsterRepository->updateDumpster($company, $id, $request->all());
+
+        if (!$dumpster) {
+            return $this->sendErrorResponse('Dumpster not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Dumpster updated successfully',
@@ -78,9 +87,15 @@ class DumpsterController extends Controller
     {
         $company = Auth::guard('company')->user();
         $dumpster = $this->dumpsterRepository->deleteDumpster($company, $id);
+
+        if (!$dumpster) {
+            return $this->sendErrorResponse('Dumpster not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Dumpster deleted successfully',
+            'data' => null,
         ], Response::HTTP_OK);
     }
 }

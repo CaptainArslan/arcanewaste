@@ -2333,8 +2333,13 @@
                                         "nullable": true
                                     },
                                     "is_approved": {
-                                        "type": "boolean",
-                                        "example": true
+                                        "type": "string",
+                                        "enum": [
+                                            "approved",
+                                            "pending",
+                                            "rejected"
+                                        ],
+                                        "example": "approved"
                                     },
                                     "is_active": {
                                         "type": "boolean",
@@ -2501,8 +2506,13 @@
                                         "example": "National holiday"
                                     },
                                     "is_approved": {
-                                        "type": "boolean",
-                                        "example": true
+                                        "type": "string",
+                                        "enum": [
+                                            "approved",
+                                            "pending",
+                                            "rejected"
+                                        ],
+                                        "example": "approved"
                                     },
                                     "is_active": {
                                         "type": "boolean",
@@ -5109,6 +5119,347 @@
                 },
                 "type": "object"
             },
+            "DumpsterSize": {
+                "title": "Dumpster Size",
+                "description": "Dumpster size specifications and pricing",
+                "properties": {
+                    "id": {
+                        "description": "Size ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Size name",
+                        "type": "string",
+                        "example": "10 Yard Dumpster"
+                    },
+                    "code": {
+                        "description": "Size code",
+                        "type": "string",
+                        "example": "10YD"
+                    },
+                    "description": {
+                        "description": "Size description",
+                        "type": "string",
+                        "example": "10 cubic yard dumpster for medium projects"
+                    },
+                    "min_rental_days": {
+                        "description": "Minimum rental period",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "max_rental_days": {
+                        "description": "Maximum rental period",
+                        "type": "integer",
+                        "example": 14
+                    },
+                    "base_rent": {
+                        "description": "Base rental cost",
+                        "type": "number",
+                        "format": "float",
+                        "example": 100
+                    },
+                    "extra_day_rent": {
+                        "description": "Cost per extra day",
+                        "type": "number",
+                        "format": "float",
+                        "example": 10
+                    },
+                    "overdue_rent": {
+                        "description": "Overdue penalty rate",
+                        "type": "number",
+                        "format": "float",
+                        "example": 20
+                    },
+                    "volume_cubic_yards": {
+                        "description": "Volume capacity",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "weight_limit_lbs": {
+                        "description": "Weight limit in pounds",
+                        "type": "integer",
+                        "example": 2000
+                    },
+                    "is_active": {
+                        "description": "Active status",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "Warehouse": {
+                "title": "Warehouse",
+                "description": "Warehouse information",
+                "properties": {
+                    "id": {
+                        "description": "Warehouse ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Warehouse name",
+                        "type": "string",
+                        "example": "Main Warehouse"
+                    },
+                    "code": {
+                        "description": "Warehouse code",
+                        "type": "string",
+                        "example": "WH-001"
+                    },
+                    "type": {
+                        "description": "Warehouse type",
+                        "type": "string",
+                        "example": "storage"
+                    },
+                    "capacity": {
+                        "description": "Storage capacity",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "is_active": {
+                        "description": "Active status",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyGeneralSettingResource": {
+                "title": "Company General Setting Resource",
+                "description": "General setting resource for company configuration",
+                "properties": {
+                    "id": {
+                        "description": "Unique setting identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "key": {
+                        "description": "Setting key identifier",
+                        "type": "string",
+                        "example": "business_hours"
+                    },
+                    "value": {
+                        "description": "Setting value",
+                        "type": "string",
+                        "example": "9:00-17:00"
+                    },
+                    "type": {
+                        "description": "Value data type",
+                        "type": "string",
+                        "enum": [
+                            "string",
+                            "integer",
+                            "boolean",
+                            "json",
+                            "array"
+                        ],
+                        "example": "string"
+                    },
+                    "description": {
+                        "description": "Setting description",
+                        "type": "string",
+                        "example": "Company business hours"
+                    },
+                    "is_active": {
+                        "description": "Whether setting is active",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyHolidayResource": {
+                "title": "Company Holiday Resource",
+                "description": "Company holiday resource response with polymorphic support",
+                "properties": {
+                    "id": {
+                        "description": "Unique holiday identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "company_id": {
+                        "description": "Company ID (from holidayable_id)",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "name": {
+                        "description": "Holiday name",
+                        "type": "string",
+                        "example": "Independence Day"
+                    },
+                    "date": {
+                        "description": "Specific holiday date for one-off holidays",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-08-14"
+                    },
+                    "recurrence_type": {
+                        "description": "Recurrence pattern",
+                        "type": "string",
+                        "enum": [
+                            "none",
+                            "weekly",
+                            "yearly"
+                        ],
+                        "example": "yearly"
+                    },
+                    "day_of_week": {
+                        "description": "Human-readable day name for weekly holidays",
+                        "type": "string",
+                        "example": "Friday"
+                    },
+                    "month_day": {
+                        "description": "Month-day format for yearly holidays (MM-DD)",
+                        "type": "string",
+                        "example": "08-14"
+                    },
+                    "reason": {
+                        "description": "Holiday description or reason",
+                        "type": "string",
+                        "example": "National holiday"
+                    },
+                    "is_approved": {
+                        "description": "Approval status",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                        ],
+                        "example": "approved"
+                    },
+                    "is_active": {
+                        "description": "Whether holiday is active",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyPaymentOptionResource": {
+                "title": "Company Payment Option Resource",
+                "description": "Payment option resource for company billing and customer payments",
+                "properties": {
+                    "id": {
+                        "description": "Unique payment option identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Payment option name",
+                        "type": "string",
+                        "example": "Credit Card"
+                    },
+                    "type": {
+                        "description": "Payment method type",
+                        "type": "string",
+                        "enum": [
+                            "credit_card",
+                            "debit_card",
+                            "bank_transfer",
+                            "cash",
+                            "check"
+                        ],
+                        "example": "credit_card"
+                    },
+                    "percentage": {
+                        "description": "Percentage of total amount this option covers",
+                        "type": "number",
+                        "format": "float",
+                        "example": 100
+                    },
+                    "description": {
+                        "description": "Payment option description",
+                        "type": "string",
+                        "example": "Accept all major credit cards"
+                    },
+                    "is_active": {
+                        "description": "Whether payment option is active",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyTaxResource": {
+                "title": "Company Tax Resource",
+                "description": "Tax resource for company pricing and billing",
+                "properties": {
+                    "id": {
+                        "description": "Unique tax identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Tax name",
+                        "type": "string",
+                        "example": "Sales Tax"
+                    },
+                    "type": {
+                        "description": "Tax calculation type",
+                        "type": "string",
+                        "enum": [
+                            "percentage",
+                            "fixed"
+                        ],
+                        "example": "percentage"
+                    },
+                    "rate": {
+                        "description": "Tax rate (percentage or fixed amount)",
+                        "type": "number",
+                        "format": "float",
+                        "example": 10
+                    },
+                    "is_active": {
+                        "description": "Whether tax is active",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "DefaultAddressResource": {
                 "title": "Default Address",
                 "description": "Default address resource response",
@@ -5256,6 +5607,10 @@
                     "is_active": {
                         "type": "boolean",
                         "example": true
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
                     },
                     "taxes": {
                         "type": "array",
