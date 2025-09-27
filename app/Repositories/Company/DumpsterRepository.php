@@ -4,7 +4,6 @@ namespace App\Repositories\Company;
 
 use App\Models\Company;
 use App\Models\Dumpster;
-use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -44,8 +43,7 @@ class DumpsterRepository
         if (!$dumpster) {
             return null;
         }
-        $dumpster->update($data);
-        return $dumpster;
+        return $dumpster->update($data);
     }
 
     public function deleteDumpster(Company $company, $id): ?bool
@@ -56,41 +54,5 @@ class DumpsterRepository
         }
         $dumpster->delete();
         return true;
-    }
-
-    public function attachTaxes(Dumpster $dumpster, array $taxes): ?Dumpster
-    {
-        $dumpster->taxes()->attach($taxes);
-        return $dumpster;
-    }
-
-    public function detachTaxes(Dumpster $dumpster): ?Dumpster
-    {
-        $dumpster->taxes()->detach();
-        return $dumpster;
-    }
-
-    public function attachPromotions(Dumpster $dumpster, array $promotions): ?Dumpster
-    {
-        $dumpster->promotions()->attach($promotions);
-        return $dumpster;
-    }
-
-    public function detachPromotions(Dumpster $dumpster): ?Dumpster
-    {
-        $dumpster->promotions()->detach();
-        return $dumpster;
-    }
-
-    public function attachWarehouse(Dumpster $dumpster, Warehouse $warehouse): ?Dumpster
-    {
-        $dumpster->warehouse()->associate($warehouse);
-        return $dumpster;
-    }
-
-    public function detachWarehouse(Dumpster $dumpster): ?Dumpster
-    {
-        $dumpster->warehouse()->dissociate();
-        return $dumpster;
     }
 }
