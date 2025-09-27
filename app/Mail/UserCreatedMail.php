@@ -10,20 +10,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CustomerCreatedMail extends Mailable implements ShouldQueue
+class UserCreatedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $customer;
-    public $password;
+    public string $name;
+    public string $password;
+    public string $email;
+    public ?string $webUrl;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Customer $customer, string $password)
+    public function __construct(string $name, string $email, string $password, ?string $webUrl = null)
     {
-        $this->customer = $customer;
+        $this->name = $name;
         $this->password = $password;
+        $this->email = $email;
+        // Optional web URL (useful only if a web interface exists)
+        $this->webUrl = $webUrl ?? null;
     }
 
     /**
@@ -32,7 +37,7 @@ class CustomerCreatedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Customer Created Mail',
+            subject: "🎉 Welcome to " . config('app.name') . " - {$this->name}"
         );
     }
 
@@ -44,16 +49,16 @@ class CustomerCreatedMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.account_created',
             with: [
-                'customer' => $this->customer,
+                'name' => $this->name,
+                'email' => $this->email,
                 'password' => $this->password,
+                'web_url' => $this->webUrl,
             ],
         );
     }
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

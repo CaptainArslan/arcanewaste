@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Mail\CustomerCreatedMail;
+use App\Mail\UserCreatedMail;
 use Illuminate\Support\Facades\Log;
 use App\Events\CustomerCreatedEvent;
 use Illuminate\Support\Facades\Mail;
@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Notifications\FcmDatabaseNotification;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-class CustomerCreateListener implements ShouldQueue, ShouldDispatchAfterCommit
+class CustomerCreatedListener implements ShouldQueue, ShouldDispatchAfterCommit
 {
     use InteractsWithQueue;
 
@@ -27,11 +27,12 @@ class CustomerCreateListener implements ShouldQueue, ShouldDispatchAfterCommit
                 'customer_name' => $customer->name,
                 'customer_email' => $customer->email,
                 'customer_phone' => $customer->phone,
-            ]
+            ],
+            false
         ));
 
         try {
-            Mail::to($customer->email)->send(new CustomerCreatedMail($customer, $password));
+            Mail::to($customer->email)->send(new UserCreatedMail($customer->full_name, $customer->email, $password, url('/')));
         } catch (\Throwable $th) {
             Log::error('Customer Created Mail Failed', [
                 'customer_id' => $customer->id,

@@ -11,6 +11,7 @@ class FcmDatabaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    public bool $shouldDispatchEvent = true;
     protected string $title;
     protected string $body;
     protected array $data;
@@ -18,12 +19,13 @@ class FcmDatabaseNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $title, string $body, array $data)
+    public function __construct(string $title, string $body, array $data, bool $shouldDispatchEvent = true)
     {
         //
         $this->title = $title;
         $this->body = $body;
         $this->data = $data;
+        $this->shouldDispatchEvent = $shouldDispatchEvent;
     }
 
     /**
@@ -42,12 +44,14 @@ class FcmDatabaseNotification extends Notification implements ShouldQueue
      */
     public function toDatabase(object $notifiable): array
     {
-        FcmNotificationEvent::dispatch(
-            $notifiable,
-            $this->title,
-            $this->body,
-            $this->data,
-        );
+        if ($this->shouldDispatchEvent) {
+            FcmNotificationEvent::dispatch(
+                $notifiable,
+                $this->title,
+                $this->body,
+                $this->data,
+            );
+        }
 
         return [
             'title' => $this->title,

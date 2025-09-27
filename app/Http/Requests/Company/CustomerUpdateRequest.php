@@ -2,7 +2,13 @@
 
 namespace App\Http\Requests\Company;
 
+use App\Enums\GenderEnum;
+use App\Rules\AddressRule;
+use App\Rules\EmergencyContactRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CustomerUpdateRequest extends FormRequest
 {
@@ -11,7 +17,7 @@ class CustomerUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +28,33 @@ class CustomerUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email'],
+            'phone' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'string', 'in:' . implode(',', GenderEnum::values())],
+            'dob' => ['required', 'date'],
+            'address' => ['required', 'array', new AddressRule],
+            'emergency_contacts' => ['required', 'array', new EmergencyContactRule],
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'full_name.required' => 'Full name is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'Email is invalid',
+        ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => implode(', ', $validator->errors()->all()),
+                'errors' => $validator->errors()->all(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY)
+        );
     }
 }

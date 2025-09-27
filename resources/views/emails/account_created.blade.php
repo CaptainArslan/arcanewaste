@@ -1,28 +1,30 @@
 @component('mail::message')
 # Welcome to {{ config('app.name') }}! 🎉
 
-Hi **{{ $customer->full_name }}**,
+Hi **{{ $name }}**,
 
 Your account has been successfully created. You can now access your account using the following credentials:
 
 @component('mail::panel')
-**Email:** {{ $customer->email }}  
-`**Temporary Password:** `{{ $password }}`  
+**Email:** {{ $email }}  
+**Temporary Password:** `{{ $password }}`
 @endcomponent
 
-> **Important:** This is a temporary password. For security reasons, please log in and change your password immediately after your first login.
+> **Important:** This is a temporary password. For security reasons, please change your password immediately using the mobile app or API.
 
 ---
 
 ## Getting Started
 
-1. Click the button below to log in.  
-2. Use the temporary password provided above.  
+1. Open your mobile app or API client.  
+2. Use the temporary password provided above to authenticate.  
 3. Update your password and complete your profile.
 
-@component('mail::button', ['url' => route('login'), 'color' => 'primary'])
+@if(isset($web_url))
+@component('mail::button', ['url' => $web_url, 'color' => 'primary'])
 Login to Your Account
 @endcomponent
+@endif
 
 ---
 

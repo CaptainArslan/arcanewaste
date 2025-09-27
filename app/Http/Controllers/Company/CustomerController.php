@@ -87,12 +87,11 @@ class CustomerController extends Controller
                 return $this->sendErrorResponse('Customer not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             DB::commit();
-            return ApiHelper::successResponse(
-                true,
-                new CompanyCustomerResource($customer),
-                'Customer updated successfully'
-            );
-
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer updated successfully',
+                'data' => new CompanyCustomerResource($customer),
+            ], Response::HTTP_OK);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -105,10 +104,15 @@ class CustomerController extends Controller
     {
         $company = Auth::guard('company')->user();
         $this->customerRepository->deleteCustomer($company, $customer->id);
-        return ApiHelper::successResponse(
-            true,
-            null,
-            'Customer deleted successfully'
-        );
+
+        if (!$customer) {
+            return $this->sendErrorResponse('Customer not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer deleted successfully',
+            'data' => null,
+        ], Response::HTTP_OK);
     }
 }

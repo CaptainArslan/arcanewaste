@@ -61,7 +61,6 @@ class CustomerRepository
             ]
         );
 
-
         // Only dispatch event if customer was newly created
         if ($customer->wasRecentlyCreated || ! $company->customers()->where('customers.id', $customer->id)->exists()) {
             $company->customers()->attach($customer->id, [
@@ -84,38 +83,37 @@ class CustomerRepository
         return $customer;
     }
 
-
-    public function generatePassword(): array
-    {
-        // Use a fixed password for local/testing environment
-        $plainPassword = app()->environment('local', 'testing') ? 'password' : Str::random(10);
-
-        // Hash the password
-        $hashedPassword = Hash::make($plainPassword);
-
-        // Return both plain and hashed password
-        return [
-            'plain' => $plainPassword,
-            'hashed' => $hashedPassword,
-        ];
-    }
-
-
     public function updateCustomer(Company $company, array $data, $id): ?Customer
     {
         $customer = $company->customers()->find($id);
         if (!$customer) {
             return null;
         }
-        $customer->update($data);
-        if (isset($data['address'])) {
-            $this->updateAddress($customer, $data['address']);
+
+        // Check if email is being updated
+        if (isset($data['email']) && $data['email'] !== $customer->email) {
+            $exists = Customer::where('email', $data['email'])
+                ->where('id', '!=', $customer->id)
+                ->exists();
+            if ($exists) {
+                throw new \Exception('Email already taken by another customer.');
+            }
         }
+
+        $customer->update($data);
+
+        if (isset($data['address'])) {
+            $this->updateAddress($customer, $data['address'], $data['address']['is_primary'] ?? false);
+        }
+
         if (isset($data['emergency_contacts'])) {
             $this->updateEmergencyContacts($customer, $data['emergency_contacts']);
         }
+
         return $customer;
     }
+
+
 
     public function deleteCustomer(Company $company, $id): ?bool
     {
@@ -123,12 +121,22 @@ class CustomerRepository
         if (!$customer) {
             return null;
         }
+
         $this->detachCustomerFromCompany($customer, $company);
-        $customer->delete();
         return true;
     }
 
-    // check for the customer if it is attached to the company
+    public function generatePassword(): array
+    {
+        $plainPassword = app()->environment('local', 'testing') ? 'password' : Str::random(10);
+
+        $hashedPassword = Hash::make($plainPassword);
+        return [
+            'plain' => $plainPassword,
+            'hashed' => $hashedPassword,
+        ];
+    }
+
     private function isCustomerAttachedToCompany(Customer $customer, Company $company): bool
     {
         return $company->customers()
@@ -178,13 +186,30 @@ class CustomerRepository
 
     private function attachEmergencyContacts(Customer $customer, array $data): void
     {
+        $customer->emergencyContacts()->delete();
         $customer->emergencyContacts()->createMany($data);
     }
 
-    private function updateEmergencyContacts(Customer $customer, array $data): void
+    private function updateEmergencyContacts(Customer $customer, array $contacts): void
     {
-        $customer->emergencyContacts()->updateMany($data);
+        foreach ($contacts as $contactData) {
+            if (isset($contactData['id'])) {
+                // Update existing contact
+                $customer->emergencyContacts()
+                    ->where('id', $contactData['id'])
+                    ->update([
+                        'name' => $contactData['name'] ?? null,
+                        'phone' => $contactData['phone'] ?? null,
+                        'relation' => $contactData['relation'] ?? null,
+                        'type' => $contactData['type'] ?? null,
+                    ]);
+            } else {
+                // Create new contact if no ID is provided
+                $customer->emergencyContacts()->create($contactData);
+            }
+        }
     }
+
 
     private function detachEmergencyContacts(Customer $customer): void
     {

@@ -29,7 +29,7 @@ class CustomerCreateRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:customers,email'],
+            'email' => ['required', 'email',],
             'phone' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'in:' . implode(',', GenderEnum::values())],
             'dob' => ['required', 'date'],
