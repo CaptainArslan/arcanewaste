@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->unique(['company_id', 'code']); // scoped uniqueness
             $table->text('description')->nullable();
+            $table->string('image')->nullable();
 
             // Rental rules
             $table->integer('min_rental_days')->default(1);

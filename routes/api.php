@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Company\TaxController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Company\HolidayController;
 use App\Http\Controllers\Api\V1\Company\TimingsController;
+use App\Http\Controllers\Api\V1\Company\DumpsterController;
 use App\Http\Controllers\Api\V1\Company\WarehouseController;
 use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
 use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
@@ -23,10 +24,7 @@ Route::prefix('v1')->group(function () {
     Route::post('media/upload', [MediaController::class, 'store']);
     Route::get('days-of-week-options', [HolidayController::class, 'daysOfWeekOptions']);
 
-    // Payment Methods Routes
-    // Route::get('payment-methods', [PaymentMethodController::class, 'index']);
-    // Route::get('payment-methods/{code}', [PaymentMethodController::class, 'show']);
-    // Route::get('payment-methods/{code}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
+
 
     // Company Routes
     Route::prefix('company')->group(function () {
@@ -45,6 +43,11 @@ Route::prefix('v1')->group(function () {
 
 
         Route::middleware([VerifyJwt::class, CheckJsonHeaders::class])->group(function () {
+            // Payment Methods Routes
+            // Route::get('payment-methods', [PaymentMethodController::class, 'index']);
+            // Route::get('payment-methods/{code}', [PaymentMethodController::class, 'show']);
+            // Route::get('payment-methods/{code}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
+
             Route::get('details', [CompanyAuthController::class, 'details']);
 
             // General Settings Routes
@@ -89,6 +92,13 @@ Route::prefix('v1')->group(function () {
             Route::post('dumpster-sizes', [DumpsterSizeController::class, 'store']);
             Route::put('dumpster-sizes/{dumpsterSize}', [DumpsterSizeController::class, 'update']);
             Route::delete('dumpster-sizes/{dumpsterSize}', [DumpsterSizeController::class, 'destroy']);
+
+            // company dumpsters routes
+            Route::get('dumpsters', [DumpsterController::class, 'index']);
+            Route::get('dumpsters/{dumpster}', [DumpsterController::class, 'show']);
+            Route::post('dumpsters', [DumpsterController::class, 'store']);
+            Route::put('dumpsters/{dumpster}', [DumpsterController::class, 'update']);
+            Route::delete('dumpsters/{dumpster}', [DumpsterController::class, 'destroy']);
         });
     });
 });

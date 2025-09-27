@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\HolidayApprovalStatusEnums;
 use App\Models\Driver;
 use App\Models\Company;
 use App\Enums\RecurrenceTypeEnum;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\HolidayApprovalStatusEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,7 +30,7 @@ class Holiday extends Model
 
     protected $casts = [
         'recurrence_type' => RecurrenceTypeEnum::class,
-        'is_approved' => HolidayApprovalStatusEnum::class,
+        'is_approved' => HolidayApprovalStatusEnums::class,
     ];
 
     // Relationships

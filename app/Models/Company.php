@@ -145,6 +145,11 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(DumpsterSize::class, 'company_id');
     }
 
+    public function dumpsters(): HasMany
+    {
+        return $this->hasMany(Dumpster::class, 'company_id');
+    }
+
     public function paymentOptions(): HasMany
     {
         return $this->hasMany(PaymentOption::class, 'company_id');

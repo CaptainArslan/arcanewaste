@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use App\Mail\OtpMail;
-use App\Models\Address;
 use App\Models\Company;
 use App\Models\Warehouse;
 use App\Models\PasswordResetTokens;
@@ -12,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\HolidayApprovalStatusEnum;
+use App\Enums\TaxEnums;
+use App\Enums\HolidayApprovalStatusEnums;
 use Illuminate\Database\Eloquent\Collection;
 
 class CompanyAuthenticationService
@@ -38,7 +37,8 @@ class CompanyAuthenticationService
         $this->createCompanyHolidays($company);
         $this->createCompanyGeneralSettings($company);
         $this->createCompanyPaymentOptions($company);
-
+        $this->createTaxes($company);
+        $this->createDumpsterSizes($company);
         return $company;
     }
 
@@ -178,7 +178,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'yearly',
                 'month_day'       => '01-01',
                 'reason'          => 'Public holiday',
-                'is_approved'     => HolidayApprovalStatusEnum::Approved,  // company holidays auto-approved
+                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,  // company holidays auto-approved
                 'is_active'       => true,
             ],
             [
@@ -187,7 +187,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'yearly',
                 'month_day'       => '03-23',
                 'reason'          => 'National holiday',
-                'is_approved'     => HolidayApprovalStatusEnum::Approved,
+                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,
                 'is_active'       => true,
             ],
             [
@@ -196,7 +196,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'yearly',
                 'month_day'       => '08-14',
                 'reason'          => 'National holiday',
-                'is_approved'     => HolidayApprovalStatusEnum::Approved,
+                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,
                 'is_active'       => true,
             ],
             [
@@ -204,7 +204,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'weekly',
                 'day_of_week'     => 5, // 0=Sunday ... 6=Saturday
                 'reason'          => 'Weekly company closure',
-                'is_approved'     => HolidayApprovalStatusEnum::Approved,
+                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,
                 'is_active'       => true,
             ],
         ];
@@ -258,6 +258,41 @@ class CompanyAuthenticationService
                 'percentage' => 0,
                 'description' => 'The percentage of the order amount that is paid after the completion of the order'
             ],
+        ]);
+    }
+
+    private function createTaxes(Company $company): Collection
+    {
+        return $company->taxes()->createMany([
+            [
+                'name' => 'Sales Tax',
+                'type' => TaxEnums::PERCENTAGE,
+                'rate' => 10,
+                'is_active' => true,
+            ]
+        ]);
+    }
+
+    private function createDumpsterSizes(Company $company): Collection
+    {
+        return $company->dumpsterSizes()->createMany([
+            [
+                'name' => '10 Yard Dumpster',
+                'code' => '10YD',
+                'description' => '10 cubic yard dumpster',
+                'min_rental_days' => 1,
+                'max_rental_days' => 14,
+                'base_rent' => 100,
+                'extra_day_rent' => 10,
+                'overdue_rent' => 20,
+                'volume_cubic_yards' => 10,
+                'weight_limit_lbs' => 2000,
+                'is_active' => true,
+                'image' => 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                'taxes' => [
+                    $company->taxes()->where('name', 'Sales Tax')->first()->id,
+                ],
+            ]
         ]);
     }
 

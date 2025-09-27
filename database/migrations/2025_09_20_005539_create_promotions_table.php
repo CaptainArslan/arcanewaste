@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('dumpster_size_id')->nullable()->constrained()->cascadeOnDelete();
-
+            $table->string('image')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
 

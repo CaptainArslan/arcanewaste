@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DumpsterSize extends Model
@@ -17,6 +19,7 @@ class DumpsterSize extends Model
         'name',
         'code',
         'description',
+        'image',
         'min_rental_days',
         'max_rental_days',
         'base_rent',
@@ -30,10 +33,10 @@ class DumpsterSize extends Model
     protected $casts = [
         'min_rental_days' => 'integer',
         'max_rental_days' => 'integer',
-        'base_rent' => 'decimal:2',
-        'extra_day_rent' => 'decimal:2',
-        'overdue_rent' => 'decimal:2',
-        'volume_cubic_yards' => 'decimal:2',
+        'base_rent' => 'float',
+        'extra_day_rent' => 'float',
+        'overdue_rent' => 'float',
+        'volume_cubic_yards' => 'float',
         'weight_limit_lbs' => 'integer',
     ];
 
@@ -51,6 +54,18 @@ class DumpsterSize extends Model
     public function promotions(): BelongsToMany
     {
         return $this->belongsToMany(Promotion::class, 'dumpster_size_promotion');
+    }
+
+    // Accessors and Mutators
+    public function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value
+                ? (filter_var($value, FILTER_VALIDATE_URL)
+                    ? $value
+                    : Storage::disk('s3')->url($value))
+                : null,
+        );
     }
 
     // Scopes

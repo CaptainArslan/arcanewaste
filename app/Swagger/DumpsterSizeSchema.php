@@ -20,6 +20,7 @@ namespace App\Swagger;
  *     @OA\Property(property="volume_cubic_yards", type="number", format="float", example=10.00),
  *     @OA\Property(property="weight_limit_lbs", type="integer", example=2000),
  *     @OA\Property(property="is_active", type="boolean", example=true),
+ *     @OA\Property(property="image", type="string", example="https://example.com/image.jpg"),
  *     @OA\Property(property="taxes", type="array", @OA\Items(ref="#/components/schemas/TaxResource")),
  *     @OA\Property(property="company", type="object", ref="#/components/schemas/Company"),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-25T05:53:01.000000Z"),

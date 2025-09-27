@@ -39,6 +39,7 @@ class CompanyDetailResource extends JsonResource
             // relationships
             // 'payment_methods' => $this->companyPaymentMethods ?? [],
             // 'merchant_onboarding_logs' => $this->merchantOnboardingLogs ?? [],
+            'default_address' => DefaultAddressResource::make($this->defaultAddress) ?? null,
             'general_settings' => GeneralSettingResource::collection($this->generalSettings) ?? [],
             'timings' => TimingResource::collection($this->timings) ?? [],
             'holidays' => CompanyHolidayResource::collection($this->holidays) ?? [],
@@ -47,7 +48,6 @@ class CompanyDetailResource extends JsonResource
             'latest_location' => LastestLocationResource::make($this->latestLocation) ?? null,
             'addresses' => AddressResource::collection($this->addresses) ?? [],
             'warehouses' => WarehouseResource::collection($this->warehouses) ?? [],
-            'company_default_address' => DefaultAddressResource::make($this->defaultAddress) ?? null,
         ];
     }
 }

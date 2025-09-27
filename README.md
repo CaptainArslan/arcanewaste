@@ -18,7 +18,7 @@ A comprehensive waste management platform built with Laravel 12, designed to str
 - **Waste Type Classification**: Support for different waste types including hazardous materials
 - **Pricing Management**: Dynamic pricing with taxes, discounts, and promotions
 - **Warehouse Management**: Multi-warehouse support with capacity tracking
-- **Holiday Management**: Company-specific holiday scheduling
+- **Holiday Management**: Advanced holiday scheduling with polymorphic support for companies and drivers
 - **Time Scheduling**: Flexible timing management for operations
 - **Device Token Management**: Push notification support for mobile apps
 
@@ -151,6 +151,7 @@ database/
 - **PaymentMethod**: Payment processing configuration
 - **WasteType**: Waste classification system
 - **Timing**: Flexible scheduling system
+- **Holiday**: Advanced holiday management with polymorphic relationships
 
 ## 🚀 Development
 
@@ -232,6 +233,138 @@ The application uses a comprehensive database schema supporting:
 - Audit trails and soft deletes
 - Flexible timing and scheduling
 - Complex order management with pricing and payments
+
+## 🎉 Holiday Management System
+
+The application features a sophisticated holiday management system that supports both company-wide holidays and individual driver leave requests through a polymorphic relationship structure.
+
+### Holiday Types & Usage
+
+#### ✅ When to use what
+
+**One-off holiday** → Store in `date` field (e.g., `2025-03-20`)
+- Use for specific dates that don't repeat
+- Examples: Company retreat, special events, one-time closures
+
+**Weekly holiday** → Store in `day_of_week` field (e.g., `5 = Friday`)
+- Use for recurring weekly holidays
+- Day values: `0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday`
+- Examples: Weekly maintenance day, recurring team meetings
+
+**Yearly holiday** → Store in `month_day` field (e.g., `03-23` for Pakistan Day, `08-14` for Independence Day)
+- Use for holidays that repeat annually on the same date
+- Format: `MM-DD` (e.g., `12-25` for Christmas, `01-01` for New Year)
+- Examples: National holidays, company anniversaries, religious observances
+
+### Database Structure
+
+```sql
+holidays table:
+├── id (primary key)
+├── holidayable_id (polymorphic - company_id or driver_id)
+├── holidayable_type (polymorphic - "App\Models\Company" or "App\Models\Driver")
+├── name (holiday name)
+├── date (one-off holiday date)
+├── recurrence_type (none, weekly, yearly)
+├── day_of_week (0-6 for weekly holidays)
+├── month_day (MM-DD format for yearly holidays)
+├── reason (description/justification)
+├── is_approved (pending, approved, rejected)
+├── is_active (boolean)
+└── timestamps
+```
+
+### Polymorphic Relationships
+
+The holiday system uses polymorphic relationships to support multiple entity types:
+
+- **Companies**: Can create company-wide holidays (auto-approved)
+- **Drivers**: Can request personal leave (requires approval)
+
+### API Endpoints
+
+#### Company Holidays
+- `GET /api/v1/company/holidays` - List company holidays
+- `GET /api/v1/company/holidays/{id}` - Get specific holiday
+- `POST /api/v1/company/holidays` - Create new holiday
+- `PUT /api/v1/company/holidays/{id}` - Update holiday
+- `DELETE /api/v1/company/holidays/{id}` - Delete holiday
+- `GET /api/v1/company/days-of-week-options` - Get day options for weekly holidays
+
+#### Query Parameters
+- `filters[name]` - Filter by holiday name
+- `filters[date]` - Filter by specific date
+- `filters[from_date]` - Filter from date range
+- `filters[to_date]` - Filter to date range
+- `filters[recurrence_type]` - Filter by recurrence type
+- `filters[day_of_week]` - Filter by day of week
+- `filters[month_day]` - Filter by month-day
+- `filters[is_active]` - Filter by active status
+- `filters[is_approved]` - Filter by approval status
+
+### Validation Rules
+
+#### Required Fields
+- `name` - Holiday name (string, max 255)
+- `date` - Holiday date (date format)
+- `recurrence_type` - Must be: `none`, `weekly`, or `yearly`
+
+#### Conditional Validation
+- **Weekly holidays**: `day_of_week` required (0-6)
+- **Yearly holidays**: `month_day` required (MM-DD format)
+- **Date consistency**: If both `date` and `day_of_week` provided, they must match
+
+### Approval Workflow
+
+#### Company Holidays
+- Automatically approved (`is_approved = 'approved'`)
+- Immediately active (`is_active = true`)
+
+#### Driver Leave Requests
+- Initially pending (`is_approved = 'pending'`)
+- Requires manual approval by company admin
+- Can be approved or rejected
+
+### Examples
+
+#### Creating a One-off Holiday
+```json
+{
+  "name": "Company Retreat",
+  "date": "2025-03-20",
+  "recurrence_type": "none",
+  "reason": "Annual company team building event"
+}
+```
+
+#### Creating a Weekly Holiday
+```json
+{
+  "name": "Maintenance Day",
+  "date": "2025-01-03",
+  "recurrence_type": "weekly",
+  "day_of_week": 5,
+  "reason": "Weekly equipment maintenance"
+}
+```
+
+#### Creating a Yearly Holiday
+```json
+{
+  "name": "Independence Day",
+  "date": "2025-08-14",
+  "recurrence_type": "yearly",
+  "month_day": "08-14",
+  "reason": "National holiday"
+}
+```
+
+### Business Logic
+
+- **Duplicate Prevention**: System prevents creating duplicate holidays for the same date
+- **Automatic Approval**: Company holidays are auto-approved, driver requests require approval
+- **Flexible Filtering**: Advanced filtering capabilities for holiday management
+- **Polymorphic Design**: Single table supports multiple entity types efficiently
 
 ## 🚀 Deployment
 

@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use App\Models\Company;
 use App\Models\Driver;
 use App\Models\Holiday;
-use App\Enums\HolidayApprovalStatusEnum;
+use App\Enums\HolidayApprovalStatusEnums;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -45,12 +45,12 @@ class HolidayRepository
         }
 
         if ($holidayable instanceof Company) {
-            $data['is_approved'] = HolidayApprovalStatusEnum::Approved;
+            $data['is_approved'] = HolidayApprovalStatusEnums::APPROVED;
             $data['is_active'] = true;
         }
 
         if ($holidayable instanceof Driver) {
-            $data['is_approved'] = HolidayApprovalStatusEnum::Pending;
+            $data['is_approved'] = HolidayApprovalStatusEnums::PENDING;
             $data['is_active'] = true;
         }
 

@@ -19,6 +19,7 @@ return new class extends Migration
 
             $table->string('serial_number')->nullable()->unique(); // company asset tag
             $table->string('status')->default('available');
+            $table->string('image')->nullable();
             // available, rented, maintenance, inactive
 
             $table->date('last_service_date')->nullable();

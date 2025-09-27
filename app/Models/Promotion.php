@@ -14,6 +14,7 @@ class Promotion extends Model
     protected $fillable = [
         'company_id',
         'dumpster_size_id',
+        'image',
         'title',
         'description',
         'discount_type',
