@@ -130,6 +130,11 @@ class Company extends Authenticatable implements JWTSubject
         return $this->morphMany(Timing::class, 'timeable');
     }
 
+    public function holidays(): MorphMany
+    {
+        return $this->morphMany(Holiday::class, 'holidayable');
+    }
+
     public function taxes(): HasMany
     {
         return $this->hasMany(Tax::class, 'company_id');
@@ -138,11 +143,6 @@ class Company extends Authenticatable implements JWTSubject
     public function dumpsterSizes(): HasMany
     {
         return $this->hasMany(DumpsterSize::class, 'company_id');
-    }
-
-    public function holidays(): HasMany
-    {
-        return $this->hasMany(CompanyHoliday::class, 'company_id');
     }
 
     public function paymentOptions(): HasMany

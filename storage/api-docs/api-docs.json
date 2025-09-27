@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Rogue Insider API Documentation",
+        "title": "Arcane Waste Management API Documentation",
         "description": "Media endpoints for media upload and management.",
         "version": "1.0.0"
     },
@@ -1980,6 +1980,601 @@
                                         "message": {
                                             "type": "string",
                                             "example": "General setting not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/days-of-week-options": {
+            "get": {
+                "tags": [
+                    "Company Holidays"
+                ],
+                "summary": "Get days of week options",
+                "description": "Fetches all days of the week as options with numeric values and string labels.",
+                "operationId": "4d19c0b2f1eee9681eff82194a6c46be",
+                "responses": {
+                    "200": {
+                        "description": "Days of week options fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company days of week options fetched successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "value": {
+                                                        "description": "Numeric representation of the day (0=Sunday, 6=Saturday)",
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    },
+                                                    "label": {
+                                                        "description": "Readable name of the day",
+                                                        "type": "string",
+                                                        "example": "Sunday"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/company/holidays": {
+            "get": {
+                "tags": [
+                    "Company Holidays"
+                ],
+                "summary": "Get company holidays",
+                "description": "Fetch a list of holidays for the authenticated company with filtering, sorting, and pagination.",
+                "operationId": "77aa4adb8be3c715a66d5207d9d0729d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "driver_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Christmas",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-12-25",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "from_date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-01-01",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "to_date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-12-31",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "recurrence_type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "none",
+                                "weekly",
+                                "monthly",
+                                "yearly"
+                            ],
+                            "example": "yearly",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "day_of_week",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "description": "0=Sunday .. 6=Saturday",
+                            "type": "integer",
+                            "example": 1,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "month_day",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "description": "Day of month (1-31)",
+                            "type": "integer",
+                            "example": 25,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "is_approved",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true,
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Company holidays fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company holidays fetched successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CompanyHolidayResourceSchema"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Company Holidays"
+                ],
+                "summary": "Create a company holiday",
+                "description": "Create a new holiday record for the authenticated company.",
+                "operationId": "1925d26f934d89e0da8d256f3f63cfe3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "date",
+                                    "recurrence_type"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Independence Day"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-08-14"
+                                    },
+                                    "recurrence_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "none",
+                                            "weekly",
+                                            "yearly"
+                                        ],
+                                        "example": "yearly"
+                                    },
+                                    "day_of_week": {
+                                        "description": "0=Sunday ... 6=Saturday",
+                                        "type": "integer",
+                                        "maximum": 6,
+                                        "minimum": 0,
+                                        "example": 5,
+                                        "nullable": true
+                                    },
+                                    "month_day": {
+                                        "description": "Used when recurrence_type is yearly",
+                                        "type": "string",
+                                        "example": "08-14",
+                                        "nullable": true
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "National holiday",
+                                        "nullable": true
+                                    },
+                                    "is_approved": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Company holiday created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company holiday created successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CompanyHolidayResourceSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/company/holidays/{id}": {
+            "get": {
+                "tags": [
+                    "Company Holidays"
+                ],
+                "summary": "Get a specific company holiday",
+                "description": "Fetch a single holiday record for the authenticated company by its ID.",
+                "operationId": "fb4d7001b946fe48c04bedf64133d389",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the holiday to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Company holiday fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company holiday fetched successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CompanyHolidayResourceSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Holiday not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Company Holidays"
+                ],
+                "summary": "Update a company holiday",
+                "description": "Update an existing company holiday for the authenticated company.",
+                "operationId": "updateCompanyHoliday",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Holiday ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Independence Day"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-08-14"
+                                    },
+                                    "recurrence_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "none",
+                                            "weekly",
+                                            "yearly"
+                                        ],
+                                        "example": "yearly"
+                                    },
+                                    "day_of_week": {
+                                        "type": "integer",
+                                        "maximum": 6,
+                                        "minimum": 0,
+                                        "example": null,
+                                        "nullable": true
+                                    },
+                                    "month_day": {
+                                        "type": "string",
+                                        "example": "08-14",
+                                        "nullable": true
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "National holiday"
+                                    },
+                                    "is_approved": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Company holiday updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Company holiday updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CompanyHolidayResourceSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Holiday not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Holiday not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name field is required."
+                                                ]
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -4422,6 +5017,60 @@
                 },
                 "type": "object"
             },
+            "CompanyHolidayResourceSchema": {
+                "title": "Company Holiday",
+                "description": "Company holiday resource response",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "company_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Christmas"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-12-25"
+                    },
+                    "day_of_week": {
+                        "type": "string",
+                        "example": "Monday"
+                    },
+                    "recurrence_type": {
+                        "type": "string",
+                        "example": "yearly"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "example": "Christmas holiday"
+                    },
+                    "is_approved": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-25T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "Company": {
                 "title": "Company",
                 "description": "Company resource response",
@@ -4667,20 +5316,57 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Holiday"
+                        "example": "New Year's Day"
                     },
-                    "holiday_date": {
+                    "date": {
+                        "description": "Specific holiday date if one-off",
                         "type": "string",
                         "format": "date",
-                        "example": "2025-01-01"
+                        "example": "2025-01-01",
+                        "nullable": true
                     },
-                    "description": {
+                    "recurrence_type": {
+                        "description": "Recurrence pattern of the holiday",
                         "type": "string",
-                        "example": "Holiday description"
+                        "enum": [
+                            "none",
+                            "weekly",
+                            "yearly"
+                        ],
+                        "example": "yearly"
                     },
-                    "is_recurring": {
-                        "type": "boolean",
-                        "example": false
+                    "day_of_week": {
+                        "description": "0=Sunday .. 6=Saturday (for weekly recurrence)",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "day_of_week_name": {
+                        "description": "Human-readable day of week",
+                        "type": "string",
+                        "example": "Monday",
+                        "nullable": true
+                    },
+                    "month_day": {
+                        "description": "Month and day for yearly recurrence (MM-DD)",
+                        "type": "string",
+                        "example": "01-01",
+                        "nullable": true
+                    },
+                    "reason": {
+                        "type": "string",
+                        "example": "Public holiday",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-01T12:00:00Z"
                     }
                 },
                 "type": "object"
@@ -4862,6 +5548,10 @@
         {
             "name": "General Settings",
             "description": "General Settings"
+        },
+        {
+            "name": "Company Holidays",
+            "description": "Company Holidays"
         },
         {
             "name": "Payment Options",

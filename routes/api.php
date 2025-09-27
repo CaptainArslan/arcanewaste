@@ -7,6 +7,7 @@ use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\Company\TaxController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Company\HolidayController;
 use App\Http\Controllers\Api\V1\Company\TimingsController;
 use App\Http\Controllers\Api\V1\Company\WarehouseController;
 use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
@@ -20,6 +21,7 @@ Route::get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     Route::post('media/upload', [MediaController::class, 'store']);
+    Route::get('days-of-week-options', [HolidayController::class, 'daysOfWeekOptions']);
 
     // Payment Methods Routes
     // Route::get('payment-methods', [PaymentMethodController::class, 'index']);
@@ -40,6 +42,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('logout', [CompanyAuthController::class, 'logout']);
                 });
             });
+
 
         Route::middleware([VerifyJwt::class, CheckJsonHeaders::class])->group(function () {
             Route::get('details', [CompanyAuthController::class, 'details']);
@@ -65,6 +68,13 @@ Route::prefix('v1')->group(function () {
             Route::get('timings', [TimingsController::class, 'index']);
             Route::get('timings/{timing}', [TimingsController::class, 'show']);
             Route::put('timings/sync', [TimingsController::class, 'update']);
+
+            // company holidays routes
+            Route::get('holidays', [HolidayController::class, 'index']);
+            Route::get('holidays/{holiday}', [HolidayController::class, 'show']);
+            Route::post('holidays', [HolidayController::class, 'store']);
+            Route::put('holidays/{holiday}', [HolidayController::class, 'update']);
+            Route::delete('holidays/{holiday}', [HolidayController::class, 'destroy']);
 
             // company taxes routes
             Route::get('taxes', [TaxController::class, 'index']);

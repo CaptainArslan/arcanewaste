@@ -2,18 +2,19 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Mail\OtpMail;
 use App\Models\Address;
 use App\Models\Company;
-use App\Models\PasswordResetTokens;
 use App\Models\Warehouse;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\PasswordResetTokens;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Model;
+use App\Enums\HolidayApprovalStatusEnum;
+use Illuminate\Database\Eloquent\Collection;
 
 class CompanyAuthenticationService
 {
@@ -51,7 +52,7 @@ class CompanyAuthenticationService
             'is_active' => true,
         ]);
 
-        $this->createAddress($warehouse, $company->defaultAddress->toArray() ?? [], true);
+        $warehouse->createAddress($warehouse, $company->defaultAddress->toArray() ?? [], true);
         // $this->createWarehouseTimings($warehouse);
 
         return $warehouse;
@@ -171,12 +172,46 @@ class CompanyAuthenticationService
     private function createCompanyHolidays(Company $company): Collection
     {
         $holidays = [
-            ['name' => 'New Year', 'holiday_date' => now()->year . '-01-01', 'is_recurring' => true],
-            ['name' => 'Independence Day', 'holiday_date' => now()->year . '-03-14', 'is_recurring' => true],
+            [
+                'name'            => 'New Year',
+                'date'            => now()->year . '-01-01',
+                'recurrence_type' => 'yearly',
+                'month_day'       => '01-01',
+                'reason'          => 'Public holiday',
+                'is_approved'     => HolidayApprovalStatusEnum::Approved,  // company holidays auto-approved
+                'is_active'       => true,
+            ],
+            [
+                'name'            => 'Pakistan Day',
+                'date'            => now()->year . '-03-23',
+                'recurrence_type' => 'yearly',
+                'month_day'       => '03-23',
+                'reason'          => 'National holiday',
+                'is_approved'     => HolidayApprovalStatusEnum::Approved,
+                'is_active'       => true,
+            ],
+            [
+                'name'            => 'Independence Day',
+                'date'            => now()->year . '-08-14',
+                'recurrence_type' => 'yearly',
+                'month_day'       => '08-14',
+                'reason'          => 'National holiday',
+                'is_approved'     => HolidayApprovalStatusEnum::Approved,
+                'is_active'       => true,
+            ],
+            [
+                'name'            => 'Friday Weekly Holiday',
+                'recurrence_type' => 'weekly',
+                'day_of_week'     => 5, // 0=Sunday ... 6=Saturday
+                'reason'          => 'Weekly company closure',
+                'is_approved'     => HolidayApprovalStatusEnum::Approved,
+                'is_active'       => true,
+            ],
         ];
 
         return $company->holidays()->createMany($holidays);
     }
+
 
     private function createCompanyGeneralSettings(Company $company): Collection
     {

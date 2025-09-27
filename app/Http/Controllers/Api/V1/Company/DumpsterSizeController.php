@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1\Company;
 
+use App\Helpers\ApiHelper;
 use App\Models\DumpsterSize;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\DumpsterSizeResource;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repositories\Company\DumpsterSizeRepository;
 use App\Http\Requests\Company\DumpsterSizeCreateRequest;
 use App\Http\Requests\Company\DumpsterSizeUpdateRequest;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class DumpsterSizeController extends Controller
 {
@@ -190,31 +190,11 @@ class DumpsterSizeController extends Controller
 
         $dumpsterSizes = $this->dumpsterSizeRepository->getAllDumpsterSizes($company, $filters, $sort, $paginate, $perPage);
 
-        if ($paginate) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Dumpster sizes fetched successfully',
-                'data' => DumpsterSizeResource::collection($dumpsterSizes),
-                'meta' => [
-                    'current_page' => $dumpsterSizes->currentPage(),
-                    'last_page' => $dumpsterSizes->lastPage(),
-                    'per_page' => $dumpsterSizes->perPage(),
-                    'total' => $dumpsterSizes->total(),
-                    'links' => [
-                        'first' => $dumpsterSizes->url(1),
-                        'last' => $dumpsterSizes->url($dumpsterSizes->lastPage()),
-                        'prev' => $dumpsterSizes->previousPageUrl(),
-                        'next' => $dumpsterSizes->nextPageUrl(),
-                    ],
-                ],
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Dumpster sizes fetched successfully',
-            'data' => DumpsterSizeResource::collection($dumpsterSizes),
-        ]);
+        return ApiHelper::successResponse(
+            $paginate,
+            DumpsterSizeResource::collection($dumpsterSizes),
+            'Dumpster sizes fetched successfully'
+        );
     }
 
     /**

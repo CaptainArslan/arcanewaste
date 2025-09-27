@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Company;
 
+use App\Helpers\ApiHelper;
 use Illuminate\Http\Request;
 use App\Models\GeneralSetting;
 use App\Http\Controllers\Controller;
@@ -121,11 +122,11 @@ class GeneralSettingController extends Controller
      */
     public function index(Request $request)
     {
-        $company = Auth::guard('company')->user();
-        $filters = $request->filters ?? [];
-        $sort = $request->sort ?? 'desc';
+        $company  = Auth::guard('company')->user();
+        $filters  = $request->filters ?? [];
+        $sort     = $request->sort ?? 'desc';
         $paginate = toBoolean($request->paginate ?? true);
-        $perPage = (int) $request->limit ?? getPaginated();
+        $perPage  = (int) $request->limit ?? getPaginated();
 
         $generalSettings = $this->generalSettingRepository->getAllGeneralSettings(
             $company,
@@ -135,34 +136,13 @@ class GeneralSettingController extends Controller
             $perPage
         );
 
-        if ($paginate) {
-            return response()->json([
-                'success' => true,
-                'message' => 'General settings fetched successfully',
-                'data'    => GeneralSettingResource::collection($generalSettings),
-                'meta'    => [
-                    'current_page' => $generalSettings->currentPage(),
-                    'last_page'    => $generalSettings->lastPage(),
-                    'per_page'     => $generalSettings->perPage(),
-                    'total'        => $generalSettings->total(),
-                    'links'        => [
-                        'first' => $generalSettings->url(1),
-                        'last'  => $generalSettings->url($generalSettings->lastPage()),
-                        'prev'  => $generalSettings->previousPageUrl(),
-                        'next'  => $generalSettings->nextPageUrl(),
-                    ],
-                ],
-            ]);
-        }
-
-
-        // Non-paginated response
-        return response()->json([
-            'success' => true,
-            'message' => 'General settings fetched successfully',
-            'data'    => GeneralSettingResource::collection($generalSettings)
-        ]);
+        return ApiHelper::successResponse(
+            $paginate,
+            GeneralSettingResource::collection($generalSettings),
+            'General settings fetched successfully'
+        );
     }
+
 
     /**
      * @OA\Get(

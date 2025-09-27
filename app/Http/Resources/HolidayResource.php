@@ -17,9 +17,13 @@ class HolidayResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'holiday_date' => $this->holiday_date,
-            'description' => $this->description,
-            'is_recurring' => $this->is_recurring,
+            'date' => $this->date,
+            'recurrence_type' => $this->recurrence_type,
+            'day_of_week' => $this->day_of_week,
+            'month_day' => $this->month_day,
+            'reason' => $this->reason,
+            'is_approved' => $this->is_approved,
+            'is_active' => $this->is_active,
         ];
     }
 }

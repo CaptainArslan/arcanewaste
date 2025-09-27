@@ -14,7 +14,7 @@ class MediaController extends Controller
     /**
      * @OA\Info(
      *     version="1.0.0",
-     *     title="Rogue Insider API Documentation",
+     *     title="Arcane Waste Management API Documentation",
      *     description="Media endpoints for media upload and management."
      * )
      *
