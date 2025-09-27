@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->nullable()->constrained()->nullOnDelete();
 
             $table->string('serial_number')->nullable()->unique(); // company asset tag
-            $table->string('status')->default('available');
+            $table->string('status')->default('available'); // available, rented, maintenance, inactive
             $table->string('image')->nullable();
             // available, rented, maintenance, inactive
 

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Enums\TaxEnums;
-use App\Enums\HolidayApprovalStatusEnums;
+use App\Enums\HolidayApprovalStatusEnum;
 use Illuminate\Database\Eloquent\Collection;
 
 class CompanyAuthenticationService
@@ -178,7 +178,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'yearly',
                 'month_day'       => '01-01',
                 'reason'          => 'Public holiday',
-                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,  // company holidays auto-approved
+                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,  // company holidays auto-approved
                 'is_active'       => true,
             ],
             [
@@ -187,7 +187,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'yearly',
                 'month_day'       => '03-23',
                 'reason'          => 'National holiday',
-                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,
+                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,
                 'is_active'       => true,
             ],
             [
@@ -196,7 +196,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'yearly',
                 'month_day'       => '08-14',
                 'reason'          => 'National holiday',
-                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,
+                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,
                 'is_active'       => true,
             ],
             [
@@ -204,7 +204,7 @@ class CompanyAuthenticationService
                 'recurrence_type' => 'weekly',
                 'day_of_week'     => 5, // 0=Sunday ... 6=Saturday
                 'reason'          => 'Weekly company closure',
-                'is_approved'     => HolidayApprovalStatusEnums::APPROVED,
+                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,
                 'is_active'       => true,
             ],
         ];

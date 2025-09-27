@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum NotifiocationEnums: string
+enum NotifiocationEnum: string
 {
     case COMPANY_ONBOARDING_COMPLETED = 'company_onboarding_completed';
     case COMPANY_ONBOARDING_FAILED = 'company_onboarding_failed';

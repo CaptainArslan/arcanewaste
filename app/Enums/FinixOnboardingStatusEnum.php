@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum FinixOnboardingStatusEnums: string
+enum FinixOnboardingStatusEnum: string
 {
     case PENDING = 'pending';
     case IN_PROGRESS = 'in_progress';

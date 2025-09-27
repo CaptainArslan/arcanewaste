@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\HolidayApprovalStatusEnums;
+use App\Enums\HolidayApprovalStatusEnum;
 use App\Models\Driver;
 use App\Models\Company;
 use App\Enums\RecurrenceTypeEnum;
@@ -30,7 +30,7 @@ class Holiday extends Model
 
     protected $casts = [
         'recurrence_type' => RecurrenceTypeEnum::class,
-        'is_approved' => HolidayApprovalStatusEnums::class,
+        'is_approved' => HolidayApprovalStatusEnum::class,
     ];
 
     // Relationships
