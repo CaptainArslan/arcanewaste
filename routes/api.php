@@ -5,6 +5,7 @@ use App\Http\Middleware\VerifyJwt;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckJsonHeaders;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Company\CustomerController;
 use App\Http\Controllers\Api\V1\Company\TaxController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Company\HolidayController;
@@ -99,6 +100,13 @@ Route::prefix('v1')->group(function () {
             Route::post('dumpsters', [DumpsterController::class, 'store']);
             Route::put('dumpsters/{dumpster}', [DumpsterController::class, 'update']);
             Route::delete('dumpsters/{dumpster}', [DumpsterController::class, 'destroy']);
+
+            // company customers routes
+            Route::get('customers', [CustomerController::class, 'index']);
+            Route::get('customers/{customer}', [CustomerController::class, 'show']);
+            Route::post('customers', [CustomerController::class, 'store']);
+            Route::put('customers/{customer}', [CustomerController::class, 'update']);
+            Route::delete('customers/{customer}', [CustomerController::class, 'destroy']);
         });
     });
 });

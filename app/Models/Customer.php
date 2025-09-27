@@ -3,32 +3,39 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Customer extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\CustomerFactory> */
     use HasFactory;
-
+    use HasSlug;
     use Notifiable;
 
     protected $fillable = [
-        'name',
+        'full_name',
         'slug',
         'email',
-        'password',
         'phone',
-        'is_active',
+        'image',
+        'system_generated_password',
+        'gender',
+        'dob',
+        'password',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'system_generated_password' => 'boolean',
+        'dob' => 'date',
+        'email_verified_at' => 'datetime',
         'remember_token' => 'string',
     ];
 
@@ -49,10 +56,22 @@ class Customer extends Authenticatable implements JWTSubject
         ];
     }
 
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('full_name')
+            ->saveSlugsTo('slug');
+    }   
+
     // Relationships
     public function generalSettings(): MorphMany
     {
         return $this->morphMany(GeneralSetting::class, 'settingable');
+    }
+
+    public function devices(): MorphMany
+    {
+        return $this->morphMany(DeviceToken::class, 'deviceable');
     }
 
     public function addresses(): MorphMany
@@ -65,10 +84,10 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
     }
 
-    public function companies(): BelongsToMany
+    public function companies()
     {
-        return $this->belongsToMany(Company::class, 'company_customer')
-            ->withPivot('payment_option_id')
+        return $this->belongsToMany(Company::class)
+            ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
             ->withTimestamps();
     }
 
@@ -82,11 +101,50 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphOne(LatestLocation::class, 'locatable');
     }
 
-    // Helper methods
-    public function paymentOptionForCompany($companyId): ?int
+    // Accessors & Mutators
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => $value ? Storage::disk('s3')->url($value) : null,
+        );
+    }
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => ucwords($value),
+            set: fn(string $value) => strtolower(trim($value)),
+        );
+    }
+
+    // Helper methods    
+    public function getDeviceTokens(): array
+    {
+        return $this->devices()->pluck('device_token')->toArray();
+    }
+
+    public function isActiveForCompany(Company $company): bool
     {
         return $this->companies()
-            ->where('company_id', $companyId)
-            ->first()?->pivot->payment_option_id;
+            ->where('company_id', $company->id)
+            ->wherePivot('is_active', true)
+            ->exists();
+    }
+
+    public function isDelinquentForCompany(Company $company): bool
+    {
+        return $this->companies()
+            ->where('company_id', $company->id)
+            ->wherePivot('is_delinquent', true)
+            ->exists();
+    }
+
+    public function getDelinquentDaysForCompany(Company $company): int
+    {
+        $pivot = $this->companies()
+            ->where('company_id', $company->id)
+            ->first();
+
+        return $pivot ? $pivot->pivot->delinquent_days : 0;
     }
 }

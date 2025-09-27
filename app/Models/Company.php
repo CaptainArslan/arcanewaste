@@ -95,6 +95,21 @@ class Company extends Authenticatable implements JWTSubject
         return $this->morphMany(DeviceToken::class, 'deviceable');
     }
 
+    public function paymentOptions(): HasMany
+    {
+        return $this->hasMany(PaymentOption::class, 'company_id');
+    }
+
+    public function companyPaymentMethods(): HasMany
+    {
+        return $this->hasMany(CompantPaymentMethod::class, 'company_id');
+    }
+
+    public function merchantOnboardingLogs(): HasMany
+    {
+        return $this->hasMany(MerchantOnboardingLog::class, 'company_id');
+    }
+
     public function generalSettings(): MorphMany
     {
         return $this->morphMany(GeneralSetting::class, 'settingable');
@@ -113,16 +128,6 @@ class Company extends Authenticatable implements JWTSubject
     public function warehouses(): HasMany
     {
         return $this->hasMany(Warehouse::class);
-    }
-
-    public function companyPaymentMethods(): HasMany
-    {
-        return $this->hasMany(CompantPaymentMethod::class, 'company_id');
-    }
-
-    public function merchantOnboardingLogs(): HasMany
-    {
-        return $this->hasMany(MerchantOnboardingLog::class, 'company_id');
     }
 
     public function timings(): MorphMany
@@ -150,26 +155,16 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(Dumpster::class, 'company_id');
     }
 
-    public function paymentOptions(): HasMany
+    public function customers()
     {
-        return $this->hasMany(PaymentOption::class, 'company_id');
-    }
-
-    public function customers(): BelongsToMany
-    {
-        return $this->belongsToMany(Customer::class, 'company_customer')
-            ->withPivot('payment_option_id')
+        return $this->belongsToMany(Customer::class)
+            ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
             ->withTimestamps();
     }
 
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
-    }
-
-    public function latestLocation(): MorphOne
-    {
-        return $this->morphOne(LatestLocation::class, 'locatable');
     }
 
     // Accessors & Mutators

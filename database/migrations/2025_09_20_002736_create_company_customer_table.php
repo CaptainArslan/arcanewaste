@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('company_customer', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('payment_option_id')->nullable()->constrained('payment_options')->nullOnDelete();
+
+            $table->boolean('is_active')->default(true); // Company can deactivate a customer
+            $table->boolean('is_delinquent')->default(false); // Mark customer delinquent for this company
+            $table->integer('delinquent_days')->default(0); // Track number of overdue days
 
             $table->timestamps();
 
