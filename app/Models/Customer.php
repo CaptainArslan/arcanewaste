@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Traits\HasAddresses;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Authenticatable implements JWTSubject
 {
@@ -112,6 +113,11 @@ class Customer extends Authenticatable implements JWTSubject
     public function emergencyContacts(): MorphMany
     {
         return $this->morphMany(Contact::class, 'contactable')->where('type', 'emergency');
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 
     // Accessors & Mutators

@@ -103,6 +103,14 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $company = Auth::guard('company')->user();
+
+        if ($customer->orders()->where('company_id', $company->id)->exists()) {
+            return $this->sendErrorResponse(
+                'Cannot delete customer: customer has orders for this company.',
+                Response::HTTP_FORBIDDEN
+            );
+        }
+        
         $this->customerRepository->deleteCustomer($company, $customer->id);
 
         if (!$customer) {
