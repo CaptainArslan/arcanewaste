@@ -90,15 +90,25 @@ class DriverRepository
         return $driver;
     }
 
-    public function updateDriver(Company $company, array $data, $id): ?Driver
+    public function updateDriver(Company $company, array $data, Driver $driver): ?Driver
     {
-        $driver = $company->drivers()->find($id);
-        if (! $driver) {
+        if (! $this->isAssociatedWithCompany($driver, $company)) {
             return null;
         }
-        $company->drivers()->syncWithoutDetaching([$driver->id => $data]);
+        $pivotData = [
+            'full_name' => $data['full_name'] ?? $driver->full_name,
+            'phone' => $data['phone'] ?? $driver->phone,
+            'image' => $data['image'] ?? $driver->image,
+            'is_active' => $data['is_active'] ?? true,
+            'hired_at' => $data['hired_at'] ?? Carbon::now(),
+            'hourly_rate' => $data['hourly_rate'] ?? Driver::DEFAULT_HOURLY_RATE,
+            'duty_hours' => $data['duty_hours'] ?? Driver::DEFAULT_DUTY_HOURS,
+            'employment_type' => $data['employment_type'] ?? EmploymentTypeEnum::FULL_TIME->value,
+            'terminated_at' => $data['terminated_at'] ?? null,
+        ];
+        $company->drivers()->syncWithoutDetaching([$driver->id => $pivotData]);
 
-        return $driver;
+        return $driver->fresh(['companies']);
     }
 
     public function deleteDriver(Company $company, $id): ?bool
@@ -113,16 +123,19 @@ class DriverRepository
 
     public function terminateDriver(Company $company, int $driverId): bool
     {
-        $driver = $company->drivers()->where('drivers.id', $driverId)->first();
-
+        $driver = $company->drivers()->find($driverId);
         if (! $driver) {
             return false;
         }
 
-        $company->drivers()->updateExistingPivot($driver->id, [
+        if (! $this->isAssociatedWithCompany($driver, $company)) {
+            return false;
+        }
+
+        $company->drivers()->syncWithoutDetaching([$driver->id => [
             'is_active' => 0,
             'terminated_at' => Carbon::now(),
-        ]);
+        ]]);
 
         return true;
     }

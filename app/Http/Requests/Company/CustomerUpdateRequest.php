@@ -5,10 +5,10 @@ namespace App\Http\Requests\Company;
 use App\Enums\GenderEnum;
 use App\Rules\AddressRule;
 use App\Rules\EmergencyContactRule;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CustomerUpdateRequest extends FormRequest
 {
@@ -28,22 +28,26 @@ class CustomerUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'full_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email'],
-            'phone' => ['required', 'string', 'max:255'],
-            'gender' => ['required', 'string', 'in:'.implode(',', GenderEnum::values())],
-            'dob' => ['required', 'date'],
-            'address' => ['required', 'array', new AddressRule],
-            'emergency_contacts' => ['required', 'array', new EmergencyContactRule],
+            'full_name' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'dob' => ['nullable', 'date'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_delinquent' => ['nullable', 'boolean'],
+            'delinquent_days' => ['nullable', 'integer'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'full_name.required' => 'Full name is required',
-            'email.required' => 'Email is required',
-            'email.email' => 'Email is invalid',
+            'full_name.string' => 'Full name must be a string',
+            'full_name.max' => 'Full name must be less than 255 characters',
+            'phone.string' => 'Phone must be a string',
+            'phone.max' => 'Phone must be less than 255 characters',
+            'dob.date' => 'Date of birth must be a date',
+            'is_active.boolean' => 'Is active must be a boolean',
+            'is_delinquent.boolean' => 'Is delinquent must be a boolean',
+            'delinquent_days.integer' => 'Delinquent days must be an integer',
         ];
     }
 

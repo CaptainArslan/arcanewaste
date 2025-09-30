@@ -92,41 +92,31 @@ class CustomerRepository
     public function updateCustomer(Company $company, array $data, Customer $customer): ?Customer
     {
         if (! $this->isAssociatedWithCompany($customer, $company)) {
-            return null;
+            throw new \Exception('Customer is not associated with this company');
         }
 
-        if (isset($data['email']) && $data['email'] !== $customer->email) {
-            $exists = Customer::where('email', $data['email'])
-                ->where('id', '!=', $customer->id)
-                ->exists();
-            if ($exists) {
-                throw new \Exception('Email already taken by another customer.');
-            }
-        }
+        $pivotData = [
+            'full_name'       => $data['full_name'] ?? null,
+            'phone'           => $data['phone'] ?? null,
+            'image'           => $data['image'] ?? null,
+            'is_active'       => $data['is_active'] ?? 1,
+            'is_delinquent'   => $data['is_delinquent'] ?? 0,
+            'delinquent_days' => $data['delinquent_days'] ?? 0,
+        ];
 
-        $customer->update($data);
+        $company->customers()->syncWithoutDetaching([$customer->id => $pivotData]);
 
-        if (isset($data['address'])) {
-            $customer->updateAddress($data['address'], $data['address']['is_primary'] ?? false);
-        }
-
-        if (isset($data['emergency_contacts'])) {
-            $customer->updateEmergencyContacts($data['emergency_contacts']);
-        }
-
-        return $customer;
+        return $customer->fresh(['companies']);
     }
 
-    public function deleteCustomer(Company $company, $id): ?bool
+
+    public function deleteCustomer(Company $company, Customer $customer): ?bool
     {
-        $customer = $company->customers()->find($id);
-        if (! $customer) {
-            return null;
+        if (! $this->isAssociatedWithCompany($customer, $company)) {
+            throw new \Exception('Customer is not associated with this company');
         }
-
-        $customer->companies()->detach($company);
-
-        return true;
+        
+        return $this->detachCustomerFromCompany($customer, $company);
     }
 
     private function isAssociatedWithCompany(Customer $customer, Company $company): bool

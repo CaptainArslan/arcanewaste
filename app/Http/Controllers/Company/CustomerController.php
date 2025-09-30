@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 class CustomerController extends Controller
 {
     private $customerRepository;
-
     public function __construct(CustomerRepository $customerRepository)
     {
         $this->customerRepository = $customerRepository;
@@ -111,7 +110,7 @@ class CustomerController extends Controller
             );
         }
 
-        $this->customerRepository->deleteCustomer($company, $customer->id);
+        $this->customerRepository->deleteCustomer($company, $customer);
 
         if (! $customer) {
             return $this->sendErrorResponse('Customer not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
