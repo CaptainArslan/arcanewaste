@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\EmploymentTypeEnum;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->json('duty_hours')->nullable();
             // example: {"monday": ["08:00-12:00","13:00-17:00"], "tuesday": [...]}
 
-            $table->enum('employment_type', ['full_time', 'part_time', 'contract'])->default('full_time');
+            $table->string('employment_type')->default(EmploymentTypeEnum::FULL_TIME->value);
             $table->date('hired_at')->nullable();
             $table->date('terminated_at')->nullable();
 

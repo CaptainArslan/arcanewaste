@@ -107,6 +107,13 @@ Route::prefix('v1')->group(function () {
             Route::post('customers', [CustomerController::class, 'store']);
             Route::put('customers/{customer}', [CustomerController::class, 'update']);
             Route::delete('customers/{customer}', [CustomerController::class, 'destroy']);
+
+            // company documents routes
+            Route::get('documents', [DocumentController::class, 'index']);
+            Route::get('documents/{document}', [DocumentController::class, 'show']);
+            Route::post('documents', [DocumentController::class, 'store']);
+            Route::put('documents/{document}', [DocumentController::class, 'update']);
+            Route::delete('documents/{document}', [DocumentController::class, 'destroy']);
         });
     });
 });
