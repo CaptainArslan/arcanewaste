@@ -112,6 +112,7 @@ Route::prefix('v1')->group(function () {
             Route::post('drivers', [DriverController::class, 'store']);
             Route::put('drivers/{driver}', [DriverController::class, 'update']);
             Route::delete('drivers/{driver}', [DriverController::class, 'destroy']);
+            Route::put('drivers/{driver}/terminate', [DriverController::class, 'terminate']);
         });
     });
 });

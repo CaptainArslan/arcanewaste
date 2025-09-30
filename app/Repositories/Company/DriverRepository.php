@@ -111,6 +111,22 @@ class DriverRepository
         return $this->detachCompany($driver, $company);
     }
 
+    public function terminateDriver(Company $company, int $driverId): bool
+    {
+        $driver = $company->drivers()->where('drivers.id', $driverId)->first();
+
+        if (! $driver) {
+            return false;
+        }
+
+        $company->drivers()->updateExistingPivot($driver->id, [
+            'is_active' => 0,
+            'terminated_at' => Carbon::now(),
+        ]);
+
+        return true;
+    }
+
     public function attachCompany(Driver $driver, Company $company): void
     {
         $driver->companies()->attach($company);

@@ -89,14 +89,28 @@ class DriverController extends Controller
     public function destroy(Driver $driver)
     {
         $company = Auth::guard('company')->user();
-        $this->driverRepository->deleteDriver($company, $driver->id);
-        if (! $driver) {
+        $isDeleted = $this->driverRepository->deleteDriver($company, $driver->id);
+        if (! $isDeleted) {
             return $this->sendErrorResponse('Driver not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Driver deleted successfully',
+        ], Response::HTTP_OK);
+    }
+
+    public function terminate(Driver $driver)
+    {
+        $company = Auth::guard('company')->user();
+        $isTerminated = $this->driverRepository->terminateDriver($company, $driver->id);
+        if (! $isTerminated) {
+            return $this->sendErrorResponse('Driver not terminated', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Driver terminated successfully',
         ], Response::HTTP_OK);
     }
 }

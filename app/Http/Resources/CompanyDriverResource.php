@@ -16,24 +16,28 @@ class CompanyDriverResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $pivot = $this->pivot ?? null;
+
         return [
-            'id' => $this->id,
-            'name' => $this->full_name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'dob' => $this->dob ?? null,
-            'gender' => $this->gender ?? null,
-            'image' => $this->image ?? null,
-            'license_number' => $this->license_number,
-            'license_expires_at' => $this->license_expires_at ?? null,
-            'identity_document' => $this->identity_document ?? null,
-            'identity_expires_at' => $this->identity_expires_at ?? null,
-            'hired_at' => $this->pivot->hired_at ?? null,
-            'terminated_at' => $this->pivot->terminated_at ?? null,
-            'hourly_rate' => (float) $this->pivot->hourly_rate ?? Driver::DEFAULT_HOURLY_RATE,
-            'duty_hours' => (float) $this->pivot->duty_hours ?? Driver::DEFAULT_DUTY_HOURS,
-            'employment_type' => $this->pivot->employment_type ?? EmploymentTypeEnum::FULL_TIME->value,
-            'is_active' => $this->pivot->is_active ?? true,
+            'id'               => $this->id,
+            'name'             => $this->full_name,
+            'email'            => $this->email,
+            'phone'            => $this->phone,
+            'dob'              => $this->dob,
+            'gender'           => $this->gender,
+            'image'            => $this->image,
+            'license_number'   => $this->license_number,
+            'license_expires_at' => $this->license_expires_at,
+            'identity_document'  => $this->identity_document,
+            'identity_expires_at' => $this->identity_expires_at,
+
+            // Pivot fields (safe fallback if pivot is null)
+            'hired_at'        => $pivot->hired_at ?? null,
+            'terminated_at'   => $pivot->terminated_at ?? null,
+            'hourly_rate'     => $pivot?->hourly_rate ? (float) $pivot->hourly_rate : Driver::DEFAULT_HOURLY_RATE,
+            'duty_hours'      => $pivot?->duty_hours ? (float) $pivot->duty_hours : Driver::DEFAULT_DUTY_HOURS,
+            'employment_type' => $pivot->employment_type ?? EmploymentTypeEnum::FULL_TIME->value,
+            'is_active'       => $pivot->is_active ?? true,
         ];
     }
 }
