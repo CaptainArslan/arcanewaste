@@ -7,7 +7,6 @@ use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-
 class WarehouseRepository
 {
     public function getAllWarehouses(
@@ -38,13 +37,14 @@ class WarehouseRepository
         $address = $data['address'];
         $warehouse = $company->warehouses()->create($data);
         $warehouse->createAddress($warehouse, $address, true);
+
         return $warehouse;
     }
 
     public function updateWarehouse(Company $company, $id, array $data): ?Warehouse
     {
         $warehouse = $company->warehouses()->find($id);
-        if (!$warehouse) {
+        if (! $warehouse) {
             return null;
         }
 
@@ -66,7 +66,7 @@ class WarehouseRepository
     public function deleteWarehouse(Company $company, $id): ?Warehouse
     {
         $warehouse = $company->warehouses()->find($id);
-        if (!$warehouse) {
+        if (! $warehouse) {
             return null;
         }
         if ($warehouse->dumpsters()->exists()) {
@@ -76,6 +76,7 @@ class WarehouseRepository
         $warehouse->addresses()->delete();
         $warehouse->timings()->delete();
         $warehouse->documents()->delete();
+
         return $warehouse;
     }
 }

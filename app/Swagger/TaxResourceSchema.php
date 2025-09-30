@@ -9,7 +9,7 @@ namespace App\Swagger;
  *     title="Tax",
  *     description="Tax resource response",
  *
- *     @OA\Property(property="id", type="integer", example=1),  
+ *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Tax"),
  *     @OA\Property(property="type", type="string", example="type"),
  *     @OA\Property(property="rate", type="number", example=10),

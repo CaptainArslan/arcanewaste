@@ -227,6 +227,7 @@ class AuthController extends Controller
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return $this->sendErrorResponse($th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -301,7 +302,6 @@ class AuthController extends Controller
             'addresses',
             'defaultAddress',
             'documents',
-            'latestLocation',
             'warehouses',
             'paymentOptions',
             'timings',
@@ -367,7 +367,6 @@ class AuthController extends Controller
             'addresses',
             'defaultAddress',
             'documents',
-            'latestLocation',
             'warehouses',
             'paymentOptions',
             'timings',

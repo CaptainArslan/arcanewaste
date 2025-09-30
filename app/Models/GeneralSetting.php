@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class GeneralSetting extends Model
 {
@@ -41,13 +41,14 @@ class GeneralSetting extends Model
         return $this->morphTo();
     }
 
-    // Scopes 
+    // Scopes
     public function value(): Attribute
     {
         return Attribute::make(
             get: function ($value) {
                 // Try to decode JSON, return original if it's not valid JSON
                 $decoded = json_decode($value, true);
+
                 return (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value;
             },
             set: function ($value) {
@@ -67,11 +68,11 @@ class GeneralSetting extends Model
     {
         return $query->when($filters, function ($query, $filters) {
             return $query
-                ->when(isset($filters['key']), fn($q) => $q->where('key', $filters['key']))
-                ->when(isset($filters['id']), fn($q) => $q->where('id', $filters['id']))
-                ->when(isset($filters['value']), fn($q) => $q->where('value', $filters['value']))
-                ->when(isset($filters['type']), fn($q) => $q->where('type', $filters['type']))
-                ->when(isset($filters['description']), fn($q) => $q->where('description', $filters['description']));
+                ->when(isset($filters['key']), fn ($q) => $q->where('key', $filters['key']))
+                ->when(isset($filters['id']), fn ($q) => $q->where('id', $filters['id']))
+                ->when(isset($filters['value']), fn ($q) => $q->where('value', $filters['value']))
+                ->when(isset($filters['type']), fn ($q) => $q->where('type', $filters['type']))
+                ->when(isset($filters['description']), fn ($q) => $q->where('description', $filters['description']));
         });
     }
 

@@ -2,18 +2,21 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
 use App\Events\FcmNotificationEvent;
-use Illuminate\Notifications\Notification;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class FcmDatabaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public bool $shouldDispatchEvent = true;
+
     protected string $title;
+
     protected string $body;
+
     protected array $data;
 
     /**
@@ -37,6 +40,7 @@ class FcmDatabaseNotification extends Notification implements ShouldQueue
     {
         return ['database'];
     }
+
     /**
      * Get the array representation of the notification.
      *

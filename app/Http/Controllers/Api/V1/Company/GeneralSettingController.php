@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Company;
 
 use App\Helpers\ApiHelper;
-use Illuminate\Http\Request;
-use App\Models\GeneralSetting;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\GeneralSettingResource;
-use App\Repositories\GeneralSettingRepository;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Company\GeneralSettingUpdateRequest;
+use App\Http\Resources\GeneralSettingResource;
+use App\Models\GeneralSetting;
+use App\Repositories\GeneralSettingRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class GeneralSettingController extends Controller
 {
@@ -35,62 +35,79 @@ class GeneralSettingController extends Controller
      *         in="query",
      *         description="Filter settings by key",
      *         required=false,
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[value]",
      *         in="query",
      *         description="Filter settings by value",
      *         required=false,
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[type]",
      *         in="query",
      *         description="Filter settings by type",
      *         required=false,
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="sort",
      *         in="query",
      *         description="Sort order: 'asc' or 'desc'",
      *         required=false,
+     *
      *         @OA\Schema(type="string", default="desc")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="paginate",
      *         in="query",
      *         description="Whether to paginate the results (true/false)",
      *         required=false,
+     *
      *         @OA\Schema(type="boolean", default=true)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="limit",
      *         in="query",
      *         description="Number of items per page if pagination is enabled",
      *         required=false,
+     *
      *         @OA\Schema(type="integer", default=25)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
      *         description="Page number if pagination is enabled",
      *         required=false,
+     *
      *         @OA\Schema(type="integer", default=1)
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="General settings fetched successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="General settings fetched successfully"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(ref="#/components/schemas/GeneralSettingResource")
      *             ),
+     *
      *             @OA\Property(
      *                 property="meta",
      *                 type="object",
@@ -110,10 +127,13 @@ class GeneralSettingController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthorized")
      *         )
@@ -122,11 +142,11 @@ class GeneralSettingController extends Controller
      */
     public function index(Request $request)
     {
-        $company  = Auth::guard('company')->user();
-        $filters  = $request->filters ?? [];
-        $sort     = $request->sort ?? 'desc';
+        $company = Auth::guard('company')->user();
+        $filters = $request->filters ?? [];
+        $sort = $request->sort ?? 'desc';
         $paginate = toBoolean($request->paginate ?? true);
-        $perPage  = (int) $request->limit ?? getPaginated();
+        $perPage = (int) $request->limit ?? getPaginated();
 
         $generalSettings = $this->generalSettingRepository->getAllGeneralSettings(
             $company,
@@ -143,7 +163,6 @@ class GeneralSettingController extends Controller
         );
     }
 
-
     /**
      * @OA\Get(
      *     path="/company/general-settings/{id}",
@@ -157,13 +176,16 @@ class GeneralSettingController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the general setting",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="General setting fetched successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="General setting fetched successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/GeneralSettingResource")
@@ -173,7 +195,9 @@ class GeneralSettingController extends Controller
      *     @OA\Response(
      *         response=404,
      *         description="General setting not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="General setting not found")
      *         )
@@ -184,10 +208,11 @@ class GeneralSettingController extends Controller
     {
         $company = Auth::guard('company')->user();
         $generalSetting = $this->generalSettingRepository->getGeneralSettingById($company, $generalSetting->id);
+
         return response()->json([
             'success' => true,
             'message' => 'General setting fetched successfully',
-            'data'    => GeneralSettingResource::make($generalSetting)
+            'data' => GeneralSettingResource::make($generalSetting),
         ]);
     }
 
@@ -199,43 +224,56 @@ class GeneralSettingController extends Controller
      *     tags={"General Settings"},
      *     security={{"bearerAuth": {}}},
 
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="ID of the general setting",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="key",
      *         in="path",
      *         required=true,
      *         description="Key of the general setting to update",
+     *
      *         @OA\Schema(type="string", example="order_cancelation_time_limit")
      *     ),
 
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             required={"value"},
+     *
      *             @OA\Property(property="value", type="string", example="30")
      *         )
      *     ),
 
+     *
      *     @OA\Response(
      *         response=200,
      *         description="General setting updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="General setting updated successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/GeneralSettingResource")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="General setting not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="General setting not found")
      *         )
@@ -247,14 +285,14 @@ class GeneralSettingController extends Controller
         $company = Auth::guard('company')->user();
         $generalSetting = $this->generalSettingRepository->updateGeneralSetting($company, $request->all(), $generalSetting->id, $key);
 
-        if (!$generalSetting) {
+        if (! $generalSetting) {
             return $this->sendErrorResponse('Setting not found', Response::HTTP_NOT_FOUND);
         }
 
         return response()->json([
             'success' => true,
             'message' => 'General setting updated successfully',
-            'data'    => GeneralSettingResource::make($generalSetting)
+            'data' => GeneralSettingResource::make($generalSetting),
         ]);
     }
 }

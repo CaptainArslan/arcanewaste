@@ -2,11 +2,10 @@
 
 namespace App\Repositories;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TimingRepsitory
 {
@@ -33,7 +32,7 @@ class TimingRepsitory
         // Delete old timings
         $timingable->timings()->delete();
 
-        $results = new EloquentCollection();
+        $results = new EloquentCollection;
 
         foreach ($timings as $timingData) {
             // Calculate hours if not closed

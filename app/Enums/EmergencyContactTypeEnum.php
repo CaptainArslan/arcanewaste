@@ -7,6 +7,25 @@ enum EmergencyContactTypeEnum: string
     case EMERGENCY = 'emergency';
     case SECONDARY = 'secondary';
     case OTHER = 'other';
+    case FAMILY = 'family';
+    case EXTENDED_FAMILY = 'extended_family';
+    case FRIEND = 'friend';
+    case WORK = 'work';
+    case MEDICAL = 'medical';
+
+    public static function all(): array
+    {
+        return [
+            self::EMERGENCY,
+            self::SECONDARY,
+            self::FAMILY,
+            self::EXTENDED_FAMILY,
+            self::FRIEND,
+            self::WORK,
+            self::MEDICAL,
+            self::OTHER,
+        ];
+    }
 
     /**
      * Get all values as array

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 if (! function_exists('normalizeS3Key')) {
@@ -12,8 +13,8 @@ if (! function_exists('normalizeS3Key')) {
             $parsed = parse_url($pathOrUrl, PHP_URL_PATH) ?: '';
             $key = ltrim(urldecode($parsed), '/');
 
-            if ($bucket && Str::startsWith($key, $bucket . '/')) {
-                $key = Str::after($key, $bucket . '/');
+            if ($bucket && Str::startsWith($key, $bucket.'/')) {
+                $key = Str::after($key, $bucket.'/');
             }
         } else {
             $key = ltrim($pathOrUrl, '/');
@@ -23,7 +24,7 @@ if (! function_exists('normalizeS3Key')) {
     }
 }
 
-if (!function_exists('toBoolean')) {
+if (! function_exists('toBoolean')) {
     function toBoolean($value): bool
     {
         if (is_bool($value)) {
@@ -40,9 +41,23 @@ if (!function_exists('toBoolean')) {
     }
 }
 
-if (!function_exists('getPaginated')) {
+if (! function_exists('getPaginated')) {
     function getPaginated($perpage = null)
     {
         return $perpage !== null ? (int) $perpage : 25;
+    }
+}
+
+if (! function_exists('generatePassword')) {
+    function generatePassword(): array
+    {
+        $plainPassword = app()->environment('local', 'testing') ? 'password' : Str::random(10);
+
+        $hashedPassword = Hash::make($plainPassword);
+
+        return [
+            'plain' => $plainPassword,
+            'hashed' => $hashedPassword,
+        ];
     }
 }

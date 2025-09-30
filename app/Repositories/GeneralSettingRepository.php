@@ -2,13 +2,12 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
 class GeneralSettingRepository
 {
-
     public function getAllGeneralSettings(
         Model $generalSettingable,
         $filters = [],
@@ -38,7 +37,7 @@ class GeneralSettingRepository
             ->where('key', $key)
             ->find($id);
 
-        if (!$generalSetting) {
+        if (! $generalSetting) {
             return false;
         }
 

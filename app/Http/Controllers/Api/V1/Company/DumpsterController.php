@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Api\V1\Company;
 
 use App\Helpers\ApiHelper;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\DumpsterResource;
-use Symfony\Component\HttpFoundation\Response;
-use App\Repositories\Company\DumpsterRepository;
 use App\Http\Requests\Company\DumpsterCreateRequest;
-
+use App\Http\Resources\DumpsterResource;
+use App\Repositories\Company\DumpsterRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class DumpsterController extends Controller
 {
@@ -56,7 +55,7 @@ class DumpsterController extends Controller
 
         $dumpster = $this->dumpsterRepository->createDumpster($company, $request->all());
 
-        if (!$dumpster) {
+        if (! $dumpster) {
             return $this->sendErrorResponse('Dumpster not created', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -72,7 +71,7 @@ class DumpsterController extends Controller
         $company = Auth::guard('company')->user();
         $dumpster = $this->dumpsterRepository->updateDumpster($company, $id, $request->all());
 
-        if (!$dumpster) {
+        if (! $dumpster) {
             return $this->sendErrorResponse('Dumpster not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -88,7 +87,7 @@ class DumpsterController extends Controller
         $company = Auth::guard('company')->user();
         $dumpster = $this->dumpsterRepository->deleteDumpster($company, $id);
 
-        if (!$dumpster) {
+        if (! $dumpster) {
             return $this->sendErrorResponse('Dumpster not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

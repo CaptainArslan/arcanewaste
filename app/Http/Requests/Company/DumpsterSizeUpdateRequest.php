@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Validation\Rule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class DumpsterSizeUpdateRequest extends FormRequest
 {

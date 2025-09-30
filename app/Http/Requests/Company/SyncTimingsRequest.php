@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Company;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Validation\Rule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class SyncTimingsRequest extends FormRequest
 {
@@ -54,7 +54,6 @@ class SyncTimingsRequest extends FormRequest
             'timings.*.is_closed.boolean' => 'Is closed must be a boolean value.',
         ];
     }
-
 
     public function failedValidation(Validator $validator)
     {

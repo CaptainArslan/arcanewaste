@@ -2,22 +2,22 @@
 
 namespace App\Events;
 
-use App\Models\Customer;
+use App\Models\Driver;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CustomerCreatedEvent
+class DriverCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $customer;
+    public $driver;
 
     public $password;
 
-    public function __construct(Customer $customer, string $password)
+    public function __construct(Driver $driver, string $password)
     {
-        $this->customer = $customer;
+        $this->driver = $driver;
         $this->password = $password;
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Requests\Company;
 
 use App\Rules\AddressRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class WareHouseCreateRequest extends FormRequest
@@ -31,7 +31,7 @@ class WareHouseCreateRequest extends FormRequest
             'type' => ['required', 'string', 'max:255'],
             'capacity' => ['required', 'integer'],
             'is_active' => ['required', 'boolean'],
-            'address' => ['required', 'array', new AddressRule()],
+            'address' => ['required', 'array', new AddressRule],
         ];
     }
 

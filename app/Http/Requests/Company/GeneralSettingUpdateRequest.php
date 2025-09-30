@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 class GeneralSettingUpdateRequest extends FormRequest
 {
@@ -28,7 +27,7 @@ class GeneralSettingUpdateRequest extends FormRequest
         return [
             'value' => [
                 'required',
-            ]
+            ],
         ];
     }
 

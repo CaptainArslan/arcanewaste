@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Company;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -58,14 +58,13 @@ class HolidayUpdateRequest extends FormRequest
         ];
     }
 
-
     public function withValidator(Validator $validator): void
     {
         $validator->after(function ($validator) {
             $recurrence = $this->input('recurrence_type');
-            $dayOfWeek  = $this->input('day_of_week');
-            $date       = $this->input('date');
-            $monthDay   = $this->input('month_day');
+            $dayOfWeek = $this->input('day_of_week');
+            $date = $this->input('date');
+            $monthDay = $this->input('month_day');
 
             // Weekly requires day_of_week
             if ($recurrence === 'weekly' && is_null($dayOfWeek)) {
@@ -78,7 +77,7 @@ class HolidayUpdateRequest extends FormRequest
             }
 
             // If both date and day_of_week provided, they must match
-            if ($date && !is_null($dayOfWeek)) {
+            if ($date && ! is_null($dayOfWeek)) {
                 $carbonDate = Carbon::parse($date);
                 if ($carbonDate->dayOfWeek !== (int) $dayOfWeek) {
                     $validator->errors()->add(

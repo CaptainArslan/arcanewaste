@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,23 +25,22 @@ class DumpsterCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'             => ['required', 'string', 'max:255'],
-            'company_id'       => ['required', 'exists:companies,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'company_id' => ['required', 'exists:companies,id'],
             'dumpster_size_id' => ['required', 'exists:dumpster_sizes,id'],
-            'warehouse_id'     => ['nullable', 'exists:warehouses,id'],
+            'warehouse_id' => ['nullable', 'exists:warehouses,id'],
 
-            'serial_number'    => ['nullable', 'string', 'max:255', 'unique:dumpsters,serial_number'],
-            'status'           => ['nullable', 'string', 'in:available,rented,maintenance,inactive'],
+            'serial_number' => ['nullable', 'string', 'max:255', 'unique:dumpsters,serial_number'],
+            'status' => ['nullable', 'string', 'in:available,rented,maintenance,inactive'],
 
             'last_service_date' => ['nullable', 'date'],
-            'next_service_due'  => ['nullable', 'date'],
+            'next_service_due' => ['nullable', 'date'],
 
-            'notes'        => ['nullable', 'string'],
+            'notes' => ['nullable', 'string'],
             'is_available' => ['nullable', 'boolean'],
-            'is_active'    => ['nullable', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
-
 
     public function messages(): array
     {

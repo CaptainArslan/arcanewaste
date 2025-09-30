@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Enums\PaymentOptionTypeEnum;
 use App\Models\Company;
 use App\Models\PaymentOption;
-use App\Enums\PaymentOptionTypeEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -41,16 +41,17 @@ class PaymentOptionRepository
 
         if (in_array($type, [
             PaymentOptionTypeEnum::UPFRONT_FULL->value,
-            PaymentOptionTypeEnum::AFTER_COMPLETION->value
+            PaymentOptionTypeEnum::AFTER_COMPLETION->value,
         ])) {
             throw new \Exception('You can only update partial option.');
         }
 
-        if (!$paymentOption) {
+        if (! $paymentOption) {
             return null;
         }
 
         $paymentOption->update($data);
+
         return $paymentOption;
     }
 }

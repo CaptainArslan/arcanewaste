@@ -2,9 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use App\Enums\FinixOnboardingStatusEnum;
-use App\Http\Resources\CompanyHolidayResource;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyDetailResource extends JsonResource
@@ -45,7 +44,6 @@ class CompanyDetailResource extends JsonResource
             'holidays' => CompanyHolidayResource::collection($this->holidays) ?? [],
             'payment_options' => PaymentOptionResource::collection($this->paymentOptions) ?? [],
             'documents' => DocumentResource::collection($this->documents) ?? [],
-            'latest_location' => LastestLocationResource::make($this->latestLocation) ?? null,
             'addresses' => AddressResource::collection($this->addresses) ?? [],
             'warehouses' => WarehouseResource::collection($this->warehouses) ?? [],
         ];

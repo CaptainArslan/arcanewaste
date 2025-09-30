@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use Carbon\Carbon;
+use App\Enums\HolidayApprovalStatusEnum;
+use App\Enums\TaxEnums;
 use App\Mail\OtpMail;
 use App\Models\Company;
-use App\Models\Warehouse;
 use App\Models\PasswordResetTokens;
-use Illuminate\Support\Facades\Log;
+use App\Models\Warehouse;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Enums\TaxEnums;
-use App\Enums\HolidayApprovalStatusEnum;
-use Illuminate\Database\Eloquent\Collection;
 
 class CompanyAuthenticationService
 {
@@ -31,28 +31,29 @@ class CompanyAuthenticationService
         ]);
 
         // create default address
-        $address = $company->createAddress($company, $address, true);
-        $company->createDocuments($company, $data['documents'] ?? []);
+        $address = $company->createAddress($address, true);
+        $company->createDocuments($data['documents'] ?? []);
         $this->createCompanyTimings($company);
         $this->createCompanyHolidays($company);
         $this->createCompanyGeneralSettings($company);
         $this->createCompanyPaymentOptions($company);
         $this->createTaxes($company);
         $this->createDumpsterSizes($company);
+
         return $company;
     }
 
     public function registerWarehouse(Company $company): Warehouse
     {
         $warehouse = $company->warehouses()->create([
-            'name' => $company->name . ' Warehouse',
-            'code' => $company->name . '-' . $company->id . ' Warehouse',
+            'name' => $company->name.' Warehouse',
+            'code' => $company->name.'-'.$company->id.' Warehouse',
             'type' => 'storage',
             'capacity' => 1000,
             'is_active' => true,
         ]);
 
-        $warehouse->createAddress($warehouse, $company->defaultAddress->toArray() ?? [], true);
+        $warehouse->createAddress($company->defaultAddress->toArray() ?? [], true);
         // $this->createWarehouseTimings($warehouse);
 
         return $warehouse;
@@ -120,98 +121,48 @@ class CompanyAuthenticationService
         return $warehouse->timings()->createMany($newTimings);
     }
 
-    // private function createAddress(Model $addressable, array $address = [], bool $isPrimary = false): Address
-    // {
-    //     if (empty($address)) {
-    //         return $addressable->addresses()->where('is_primary', true)->first();
-    //     }
-
-    //     // If another primary exists and we are not overriding, force false
-    //     if (! $isPrimary && $addressable->addresses()->where('is_primary', true)->exists()) {
-    //         $isPrimary = false;
-    //     }
-
-    //     return $addressable->addresses()->create([
-    //         'address_line1' => $address['address_line1'] ?? null,
-    //         'address_line2' => $address['address_line2'] ?? null,
-    //         'city' => $address['city'] ?? null,
-    //         'state' => $address['state'] ?? null,
-    //         'postal_code' => $address['postal_code'] ?? null,
-    //         'country' => $address['country'] ?? null,
-    //         'latitude' => $address['latitude'] ?? null,
-    //         'longitude' => $address['longitude'] ?? null,
-    //         'is_primary' => $isPrimary,
-    //     ]);
-    // }
-
-    // private function createDocuments(Model $documentable, array $documents = []): Collection
-    // {
-    //     if (empty($documents)) {
-    //         return $documentable->documents()->get();
-    //     }
-
-    //     $newDocuments = [];
-    //     foreach ($documents as $document) {
-    //         $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
-    //         if (! in_array($document['file_path'], $existingDocuments)) {
-    //             $newDocuments[] = [
-    //                 'name' => $document['name'],
-    //                 'type' => $document['type'],
-    //                 'file_path' => $document['file_path'],
-    //                 'mime_type' => $document['mime_type'],
-    //                 'issued_at' => $document['issued_at'],
-    //                 'expires_at' => $document['expires_at'],
-    //                 'is_verified' => $document['is_verified'],
-    //             ];
-    //         }
-    //     }
-
-    //     return $documentable->documents()->createMany($newDocuments);
-    // }
-
     private function createCompanyHolidays(Company $company): Collection
     {
         $holidays = [
             [
-                'name'            => 'New Year',
-                'date'            => now()->year . '-01-01',
+                'name' => 'New Year',
+                'date' => now()->year.'-01-01',
                 'recurrence_type' => 'yearly',
-                'month_day'       => '01-01',
-                'reason'          => 'Public holiday',
-                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,  // company holidays auto-approved
-                'is_active'       => true,
+                'month_day' => '01-01',
+                'reason' => 'Public holiday',
+                'is_approved' => HolidayApprovalStatusEnum::APPROVED,  // company holidays auto-approved
+                'is_active' => true,
             ],
             [
-                'name'            => 'Pakistan Day',
-                'date'            => now()->year . '-03-23',
+                'name' => 'Pakistan Day',
+                'date' => now()->year.'-03-23',
                 'recurrence_type' => 'yearly',
-                'month_day'       => '03-23',
-                'reason'          => 'National holiday',
-                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,
-                'is_active'       => true,
+                'month_day' => '03-23',
+                'reason' => 'National holiday',
+                'is_approved' => HolidayApprovalStatusEnum::APPROVED,
+                'is_active' => true,
             ],
             [
-                'name'            => 'Independence Day',
-                'date'            => now()->year . '-08-14',
+                'name' => 'Independence Day',
+                'date' => now()->year.'-08-14',
                 'recurrence_type' => 'yearly',
-                'month_day'       => '08-14',
-                'reason'          => 'National holiday',
-                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,
-                'is_active'       => true,
+                'month_day' => '08-14',
+                'reason' => 'National holiday',
+                'is_approved' => HolidayApprovalStatusEnum::APPROVED,
+                'is_active' => true,
             ],
             [
-                'name'            => 'Friday Weekly Holiday',
+                'name' => 'Friday Weekly Holiday',
                 'recurrence_type' => 'weekly',
-                'day_of_week'     => 5, // 0=Sunday ... 6=Saturday
-                'reason'          => 'Weekly company closure',
-                'is_approved'     => HolidayApprovalStatusEnum::APPROVED,
-                'is_active'       => true,
+                'day_of_week' => 5, // 0=Sunday ... 6=Saturday
+                'reason' => 'Weekly company closure',
+                'is_approved' => HolidayApprovalStatusEnum::APPROVED,
+                'is_active' => true,
             ],
         ];
 
         return $company->holidays()->createMany($holidays);
     }
-
 
     private function createCompanyGeneralSettings(Company $company): Collection
     {
@@ -220,19 +171,19 @@ class CompanyAuthenticationService
                 'key' => 'default_timezone',
                 'value' => env('DEFAULT_TIMEZONE', 'Asia/Karachi'),
                 'type' => 'string',
-                'description' => 'The default timezone for the company'
+                'description' => 'The default timezone for the company',
             ],
             [
                 'key' => 'order_cancelation_time_limit',
                 'value' => 24,
                 'type' => 'integer',
-                'description' => 'The time limit for canceling an order in hours'
+                'description' => 'The time limit for canceling an order in hours',
             ],
             [
                 'key' => 'default_driver_hourly_rate',
                 'value' => 10,
                 'type' => 'float',
-                'description' => 'The default hourly rate for a driver in USD'
+                'description' => 'The default hourly rate for a driver in USD',
             ],
         ]);
     }
@@ -244,19 +195,19 @@ class CompanyAuthenticationService
                 'name' => 'Full Upfront',
                 'type' => 'upfront_full',
                 'percentage' => 100,
-                'description' => 'The percentage of the order amount that is paid upfront'
+                'description' => 'The percentage of the order amount that is paid upfront',
             ],
             [
                 'name' => 'Partial Upfront',
                 'type' => 'partial_upfront',
                 'percentage' => 50,
-                'description' => 'The percentage of the order amount that is paid upfront'
+                'description' => 'The percentage of the order amount that is paid upfront',
             ],
             [
                 'name' => 'After Completion',
                 'type' => 'after_completion',
                 'percentage' => 0,
-                'description' => 'The percentage of the order amount that is paid after the completion of the order'
+                'description' => 'The percentage of the order amount that is paid after the completion of the order',
             ],
         ]);
     }
@@ -269,7 +220,7 @@ class CompanyAuthenticationService
                 'type' => TaxEnums::PERCENTAGE,
                 'rate' => 10,
                 'is_active' => true,
-            ]
+            ],
         ]);
     }
 
@@ -292,7 +243,7 @@ class CompanyAuthenticationService
                 'taxes' => [
                     $company->taxes()->where('name', 'Sales Tax')->first()->id,
                 ],
-            ]
+            ],
         ]);
     }
 
@@ -334,7 +285,7 @@ class CompanyAuthenticationService
 
             return true;
         } catch (\Throwable $th) {
-            Log::error('Failed to send OTP email: ' . $th->getMessage());
+            Log::error('Failed to send OTP email: '.$th->getMessage());
 
             return false;
         }

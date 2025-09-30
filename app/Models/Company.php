@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasAddresses;
+use App\Traits\HasDocuments;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,13 +16,11 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use App\Traits\HasAddresses;
-use App\Traits\HasDocuments;
 
 class Company extends Authenticatable implements JWTSubject
 {
-    use HasFactory, HasSlug, Notifiable, SoftDeletes;
     use HasAddresses, HasDocuments;
+    use HasFactory, HasSlug, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -152,11 +150,18 @@ class Company extends Authenticatable implements JWTSubject
             ->withTimestamps();
     }
 
+    public function drivers()
+    {
+        return $this->belongsToMany(Driver::class, 'company_driver')
+            ->withPivot('is_active', 'hourly_rate', 'duty_hours', 'employment_type', 'hired_at', 'terminated_at')
+            ->withTimestamps();
+    }
+
     // Accessors & Mutators
     protected function logo(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => Storage::disk('s3')->url($value),
+            get: fn (string $value) => Storage::disk('s3')->url($value),
         );
     }
 

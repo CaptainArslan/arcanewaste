@@ -18,6 +18,7 @@ class TaxRepository
         if ($paginate) {
             return $query->paginate($perPage);
         }
+
         return $query->get();
     }
 
@@ -34,17 +35,18 @@ class TaxRepository
     public function updateTax(Company $company, array $data, $id): ?Tax
     {
         $tax = $company->taxes()->find($id);
-        if (!$tax) {
+        if (! $tax) {
             return null;
         }
         $tax->update($data);
+
         return $tax;
     }
 
     public function deleteTax(Company $company, $id): ?bool
     {
         $tax = $company->taxes()->find($id);
-        if (!$tax) {
+        if (! $tax) {
             return null;
         }
 
@@ -54,4 +56,4 @@ class TaxRepository
 
         return $tax->delete();
     }
-}   
+}

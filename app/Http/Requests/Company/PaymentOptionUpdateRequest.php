@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 class PaymentOptionUpdateRequest extends FormRequest
 {
@@ -28,7 +27,7 @@ class PaymentOptionUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'percentage' => ['required', 'numeric', 'min:0', 'max:100'],
-            'description' => ['nullable', 'string',],
+            'description' => ['nullable', 'string'],
             'is_active' => ['required', 'boolean'],
         ];
     }

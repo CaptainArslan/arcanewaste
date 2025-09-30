@@ -1,21 +1,22 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Http\Middleware\VerifyJwt;
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckJsonHeaders;
-use App\Http\Controllers\Api\V1\MediaController;
-use App\Http\Controllers\Company\CustomerController;
-use App\Http\Controllers\Api\V1\Company\TaxController;
-use App\Http\Controllers\Api\V1\PaymentMethodController;
-use App\Http\Controllers\Api\V1\Company\HolidayController;
-use App\Http\Controllers\Api\V1\Company\TimingsController;
-use App\Http\Controllers\Api\V1\Company\DumpsterController;
-use App\Http\Controllers\Api\V1\Company\WarehouseController;
-use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
-use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
-use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
 use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
+use App\Http\Controllers\Api\V1\Company\DriverController;
+use App\Http\Controllers\Api\V1\Company\DumpsterController;
+use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
+use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
+use App\Http\Controllers\Api\V1\Company\HolidayController;
+use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
+use App\Http\Controllers\Api\V1\Company\TaxController;
+use App\Http\Controllers\Api\V1\Company\TimingsController;
+use App\Http\Controllers\Api\V1\Company\WarehouseController;
+use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Company\CustomerController;
+use App\Http\Middleware\CheckJsonHeaders;
+use App\Http\Middleware\VerifyJwt;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,8 +25,6 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::post('media/upload', [MediaController::class, 'store']);
     Route::get('days-of-week-options', [HolidayController::class, 'daysOfWeekOptions']);
-
-
 
     // Company Routes
     Route::prefix('company')->group(function () {
@@ -42,12 +41,11 @@ Route::prefix('v1')->group(function () {
                 });
             });
 
-
         Route::middleware([VerifyJwt::class, CheckJsonHeaders::class])->group(function () {
             // Payment Methods Routes
-            // Route::get('payment-methods', [PaymentMethodController::class, 'index']);
-            // Route::get('payment-methods/{code}', [PaymentMethodController::class, 'show']);
-            // Route::get('payment-methods/{code}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
+            Route::get('payment-methods', [PaymentMethodController::class, 'index']);
+            Route::get('payment-methods/{code}', [PaymentMethodController::class, 'show']);
+            Route::get('payment-methods/{code}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
 
             Route::get('details', [CompanyAuthController::class, 'details']);
 
@@ -108,7 +106,12 @@ Route::prefix('v1')->group(function () {
             Route::put('customers/{customer}', [CustomerController::class, 'update']);
             Route::delete('customers/{customer}', [CustomerController::class, 'destroy']);
 
-
+            // company drivers routes
+            Route::get('drivers', [DriverController::class, 'index']);
+            Route::get('drivers/{driver}', [DriverController::class, 'show']);
+            Route::post('drivers', [DriverController::class, 'store']);
+            Route::put('drivers/{driver}', [DriverController::class, 'update']);
+            Route::delete('drivers/{driver}', [DriverController::class, 'destroy']);
         });
     });
 });

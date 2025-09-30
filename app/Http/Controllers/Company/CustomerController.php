@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Company;
 
-use App\Models\Customer;
 use App\Helpers\ApiHelper;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
-use App\Http\Resources\CompanyCustomerResource;
-use App\Repositories\Company\CustomerRepository;
 use App\Http\Requests\Company\CustomerCreateRequest;
 use App\Http\Requests\Company\CustomerUpdateRequest;
+use App\Http\Resources\CompanyCustomerResource;
+use App\Models\Customer;
+use App\Repositories\Company\CustomerRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerController extends Controller
 {
@@ -61,10 +61,11 @@ class CustomerController extends Controller
         try {
             DB::beginTransaction();
             $customer = $this->customerRepository->createCustomer($company, $request->all());
-            if (!$customer) {
+            if (! $customer) {
                 return $this->sendErrorResponse('Customer not created', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Customer created successfully',
@@ -72,8 +73,9 @@ class CustomerController extends Controller
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('Customer creation failed: ' . $th->getMessage());
-            return $this->sendErrorResponse('Customer not created' . $th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Customer creation failed: '.$th->getMessage());
+
+            return $this->sendErrorResponse('Customer not created'.$th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -82,11 +84,12 @@ class CustomerController extends Controller
         try {
             DB::beginTransaction();
             $company = Auth::guard('company')->user();
-            $customer = $this->customerRepository->updateCustomer($company, $request->all(), $customer->id);
-            if (!$customer) {
+            $customer = $this->customerRepository->updateCustomer($company, $request->all(), $customer);
+            if (! $customer) {
                 return $this->sendErrorResponse('Customer not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Customer updated successfully',
@@ -95,7 +98,8 @@ class CustomerController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('Customer update failed: ' . $th->getMessage());
+            Log::error('Customer update failed: '.$th->getMessage());
+
             return $this->sendErrorResponse('Customer not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -110,10 +114,10 @@ class CustomerController extends Controller
                 Response::HTTP_FORBIDDEN
             );
         }
-        
+
         $this->customerRepository->deleteCustomer($company, $customer->id);
 
-        if (!$customer) {
+        if (! $customer) {
             return $this->sendErrorResponse('Customer not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

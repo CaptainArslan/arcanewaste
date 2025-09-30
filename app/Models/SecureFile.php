@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SecureFile extends Model
 {
-
     protected $fillable = [
         'credentials',
         'content_type',

@@ -8,6 +8,7 @@ namespace App\Swagger;
  *     type="object",
  *     title="Dumpster Size",
  *     description="Dumpster size resource response",
+ *
  *     @OA\Property(property="id", type="integer", example=2),
  *     @OA\Property(property="name", type="string", example="Large Dumpster"),
  *     @OA\Property(property="code", type="string", example="LD-10YD"),

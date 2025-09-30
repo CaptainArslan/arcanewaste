@@ -3,9 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\TaxResource;
-use App\Http\Resources\PromotionResource;
-use App\Http\Resources\CompanyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DumpsterSizeResource extends JsonResource

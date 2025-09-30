@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1\Company;
 
-use App\Models\Warehouse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\WarehouseResource;
-use App\Repositories\WarehouseRepository;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Company\WareHouseCreateRequest;
 use App\Http\Requests\Company\WareHouseUpdateRequest;
+use App\Http\Resources\WarehouseResource;
+use App\Models\Warehouse;
+use App\Repositories\WarehouseRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class WarehouseController extends Controller
 {
@@ -37,67 +37,86 @@ class WarehouseController extends Controller
      *         in="query",
      *         required=false,
      *         description="Filter by warehouse name (partial match). Default: null",
+     *
      *         @OA\Schema(type="string", example=null)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[code]",
      *         in="query",
      *         required=false,
      *         description="Filter by warehouse code (partial match). Default: null",
+     *
      *         @OA\Schema(type="string", example=null)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[type]",
      *         in="query",
      *         required=false,
      *         description="Filter by warehouse type (partial match). Default: null",
+     *
      *         @OA\Schema(type="string", example=null)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[capacity]",
      *         in="query",
      *         required=false,
      *         description="Filter by warehouse capacity (partial match). Default: null",
+     *
      *         @OA\Schema(type="integer", example=null)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[is_active]",
      *         in="query",
      *         required=false,
      *         description="Filter by active status (0 = inactive, 1 = active). Default: null",
+     *
      *         @OA\Schema(type="integer", enum={0,1}, example=null)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="sort",
      *         in="query",
      *         required=false,
      *         description="Sort order (asc or desc). Default: desc",
+     *
      *         @OA\Schema(type="string", enum={"asc","desc"}, example="desc")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="paginate",
      *         in="query",
      *         required=false,
      *         description="Whether to paginate results (true/false). Default: true",
+     *
      *         @OA\Schema(type="boolean", example=true)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="limit",
      *         in="query",
      *         required=false,
      *         description="Number of results per page (if paginate=true). Default: 15",
+     *
      *         @OA\Schema(type="integer", example=15)
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="Warehouses fetched successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Warehouses fetched successfully"),
      *             @OA\Property(property="data", type="array",
+     *
      *                 @OA\Items(ref="#/components/schemas/WarehouseResource")
      *             ),
+     *
      *             @OA\Property(property="meta", type="object",
      *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="last_page", type="integer", example=5),
@@ -128,17 +147,17 @@ class WarehouseController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Warehouses fetched successfully',
-                'data'    => WarehouseResource::collection($warehouses),
-                'meta'    => [
+                'data' => WarehouseResource::collection($warehouses),
+                'meta' => [
                     'current_page' => $warehouses->currentPage(),
-                    'last_page'    => $warehouses->lastPage(),
-                    'per_page'     => $warehouses->perPage(),
-                    'total'        => $warehouses->total(),
-                    'links'        => [
+                    'last_page' => $warehouses->lastPage(),
+                    'per_page' => $warehouses->perPage(),
+                    'total' => $warehouses->total(),
+                    'links' => [
                         'first' => $warehouses->url(1),
-                        'last'  => $warehouses->url($warehouses->lastPage()),
-                        'prev'  => $warehouses->previousPageUrl(),
-                        'next'  => $warehouses->nextPageUrl(),
+                        'last' => $warehouses->url($warehouses->lastPage()),
+                        'prev' => $warehouses->previousPageUrl(),
+                        'next' => $warehouses->nextPageUrl(),
                     ],
                 ],
             ]);
@@ -147,7 +166,7 @@ class WarehouseController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Warehouses fetched successfully',
-            'data'    => WarehouseResource::collection($warehouses)
+            'data' => WarehouseResource::collection($warehouses),
         ]);
     }
 
@@ -164,13 +183,16 @@ class WarehouseController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the warehouse",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="Warehouse fetched successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Warehouse fetched successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/WarehouseResource")
@@ -180,7 +202,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=404,
      *         description="Warehouse not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Warehouse not found")
      *         )
@@ -191,13 +215,14 @@ class WarehouseController extends Controller
     {
         $company = Auth::guard('company')->user();
         $warehouse = $this->warehouseRepository->getWarehouseById($company, $warehouse->id);
-        if (!$warehouse) {
+        if (! $warehouse) {
             return $this->sendErrorResponse('Warehouse not found', Response::HTTP_NOT_FOUND);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Warehouse fetched successfully',
-            'data'    => new WarehouseResource($warehouse)
+            'data' => new WarehouseResource($warehouse),
         ]);
     }
 
@@ -211,7 +236,9 @@ class WarehouseController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="Main Warehouse"),
      *             @OA\Property(property="code", type="string", example="WH001"),
      *             @OA\Property(property="type", type="string", example="Dumpster"),
@@ -234,7 +261,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=201,
      *         description="Warehouse created successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Warehouse created successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/WarehouseResource")
@@ -244,7 +273,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=422,
      *         description="Validation failed",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="The name field is required."),
      *             @OA\Property(property="errors", type="array", @OA\Items(type="string"))
@@ -259,19 +290,21 @@ class WarehouseController extends Controller
             DB::beginTransaction();
             $warehouse = $this->warehouseRepository->createWarehouse($company, $request->validated());
 
-            if (!$warehouse) {
+            if (! $warehouse) {
                 return $this->sendErrorResponse('Warehouse not created', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
             DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Warehouse created successfully',
-                'data'    => new WarehouseResource($warehouse)
+                'data' => new WarehouseResource($warehouse),
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('Warehouse creation failed: ' . $th->getMessage());
+            Log::error('Warehouse creation failed: '.$th->getMessage());
+
             return $this->sendErrorResponse('Warehouse not created', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -289,12 +322,15 @@ class WarehouseController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the warehouse to update",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="Main Warehouse"),
      *             @OA\Property(property="code", type="string", example="WH001"),
      *             @OA\Property(property="type", type="string", example="Dumpster"),
@@ -317,7 +353,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Warehouse updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Warehouse updated successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/WarehouseResource")
@@ -327,7 +365,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=404,
      *         description="Warehouse not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Warehouse not found")
      *         )
@@ -336,7 +376,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=422,
      *         description="Validation failed",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="The code field is required."),
      *             @OA\Property(property="errors", type="array", @OA\Items(type="string"))
@@ -350,15 +392,16 @@ class WarehouseController extends Controller
         DB::beginTransaction();
         $warehouse = $this->warehouseRepository->updateWarehouse($company, $warehouse->id, $request->validated());
 
-        if (!$warehouse) {
+        if (! $warehouse) {
             return $this->sendErrorResponse('Warehouse not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         DB::commit();
+
         return response()->json([
             'success' => true,
             'message' => 'Warehouse updated successfully',
-            'data'    => new WarehouseResource($warehouse)
+            'data' => new WarehouseResource($warehouse),
         ]);
     }
 
@@ -375,13 +418,16 @@ class WarehouseController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the warehouse to delete",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="Warehouse deleted successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Warehouse deleted successfully"),
      *             @OA\Property(property="data", type="null", example=null)
@@ -391,7 +437,9 @@ class WarehouseController extends Controller
      *     @OA\Response(
      *         response=500,
      *         description="Warehouse not deleted",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Warehouse not deleted")
      *         )
@@ -402,13 +450,14 @@ class WarehouseController extends Controller
     {
         $company = Auth::guard('company')->user();
         $warehouse = $this->warehouseRepository->deleteWarehouse($company, $warehouse->id);
-        if (!$warehouse) {
+        if (! $warehouse) {
             return $this->sendErrorResponse('Warehouse not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Warehouse deleted successfully',
-            'data' => null
+            'data' => null,
         ]);
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ApiHelper
 {
-    public static function successResponse($paginate = true, $data, $message = 'Success', $status = 200)
+    public static function successResponse($paginate, $data, $message = 'Success', $status = 200)
     {
         $response = [
             'success' => true,
@@ -18,14 +18,14 @@ class ApiHelper
             $response['data'] = $data->items(); // raw items (models/arrays)
             $response['meta'] = [
                 'current_page' => $data->currentPage(),
-                'last_page'    => $data->lastPage(),
-                'per_page'     => $data->perPage(),
-                'total'        => $data->total(),
-                'links'        => [
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+                'links' => [
                     'first' => $data->url(1),
-                    'last'  => $data->url($data->lastPage()),
-                    'prev'  => $data->previousPageUrl(),
-                    'next'  => $data->nextPageUrl(),
+                    'last' => $data->url($data->lastPage()),
+                    'prev' => $data->previousPageUrl(),
+                    'next' => $data->nextPageUrl(),
                 ],
             ];
         } else {

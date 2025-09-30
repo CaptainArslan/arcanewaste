@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1\Company;
 
-use App\Models\Tax;
-use Illuminate\Http\Request;
-use App\Http\Resources\TaxResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Repositories\Company\TaxRepository;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Company\TaxCreateRequest;
 use App\Http\Requests\Company\TaxUpdateRequest;
+use App\Http\Resources\TaxResource;
+use App\Models\Tax;
+use App\Repositories\Company\TaxRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class TaxController extends Controller
 {
@@ -29,74 +29,95 @@ class TaxController extends Controller
      *     description="Retrieve all taxes for the authenticated company with optional filters, sorting, and pagination",
      *     tags={"Taxes"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="filters[id]",
      *         in="query",
      *         description="Filter by tax ID",
      *         required=false,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[name]",
      *         in="query",
      *         description="Filter by tax name",
      *         required=false,
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[type]",
      *         in="query",
      *         description="Filter by tax type (percentage or fixed)",
      *         required=false,
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[rate]",
      *         in="query",
      *         description="Filter by tax rate",
      *         required=false,
+     *
      *         @OA\Schema(type="number", format="float")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="filters[is_active]",
      *         in="query",
      *         description="Filter by active status",
      *         required=false,
+     *
      *         @OA\Schema(type="boolean")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="sort",
      *         in="query",
      *         description="Sort order (asc or desc), default desc",
      *         required=false,
+     *
      *         @OA\Schema(type="string", example="desc")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="paginate",
      *         in="query",
      *         description="Whether to paginate results (true/false)",
      *         required=false,
+     *
      *         @OA\Schema(type="boolean", default=true)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="limit",
      *         in="query",
      *         description="Number of results per page",
      *         required=false,
+     *
      *         @OA\Schema(type="integer", default=10)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Taxes retrieved successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Taxes fetched successfully"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(ref="#/components/schemas/TaxResource")
      *             ),
+     *
      *             @OA\Property(
      *                 property="meta",
      *                 type="object",
@@ -116,11 +137,14 @@ class TaxController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
@@ -156,10 +180,11 @@ class TaxController extends Controller
                 ],
             ]);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Taxes fetched successfully',
-            'data' => TaxResource::collection($taxes)
+            'data' => TaxResource::collection($taxes),
         ]);
     }
 
@@ -170,18 +195,23 @@ class TaxController extends Controller
      *     description="Retrieve a tax by ID for the authenticated company",
      *     tags={"Taxes"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="ID of the tax",
      *         required=true,
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Tax fetched successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Tax fetched successfully"),
      *             @OA\Property(
@@ -190,20 +220,26 @@ class TaxController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Tax not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Tax not found")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
@@ -214,13 +250,13 @@ class TaxController extends Controller
     {
         $company = Auth::guard('company')->user();
         $tax = $this->taxRepository->getTaxById($company, $tax->id);
+
         return response()->json([
             'success' => true,
             'message' => 'Tax fetched successfully',
-            'data' => new TaxResource($tax)
+            'data' => new TaxResource($tax),
         ]);
     }
-
 
     /**
      * @OA\Post(
@@ -229,41 +265,53 @@ class TaxController extends Controller
      *     description="Create a tax for the authenticated company",
      *     tags={"Taxes"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="name", type="string", example="VAT"),
      *             @OA\Property(property="type", type="string", enum={"percentage","fixed"}, example="percentage"),
      *             @OA\Property(property="rate", type="number", format="float", example=10),
      *             @OA\Property(property="is_active", type="boolean", example=true)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Tax created successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Tax created successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/TaxResource")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error or tax already exists",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Tax already exists"),
      *             @OA\Property(property="errors", type="array", @OA\Items(type="string"))
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
@@ -282,10 +330,11 @@ class TaxController extends Controller
         }
 
         $tax = $this->taxRepository->createTax($company, $request->all());
+
         return response()->json([
             'success' => true,
             'message' => 'Tax created successfully',
-            'data' => new TaxResource($tax)
+            'data' => new TaxResource($tax),
         ]);
     }
 
@@ -296,48 +345,62 @@ class TaxController extends Controller
      *     description="Update a tax for the authenticated company",
      *     tags={"Taxes"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="tax",
      *         in="path",
      *         description="ID of the tax to update",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="name", type="string", example="VAT"),
      *             @OA\Property(property="type", type="string", enum={"percentage","fixed"}, example="percentage"),
      *             @OA\Property(property="rate", type="number", format="float", example=10),
      *             @OA\Property(property="is_active", type="boolean", example=true)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Tax updated successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Tax updated successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/TaxResource")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="The given data was invalid."),
      *             @OA\Property(property="errors", type="array", @OA\Items(type="string"))
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
@@ -348,13 +411,13 @@ class TaxController extends Controller
     {
         $company = Auth::guard('company')->user();
         $tax = $this->taxRepository->updateTax($company, $request->all(), $tax->id);
+
         return response()->json([
             'success' => true,
             'message' => 'Tax updated successfully',
-            'data' => new TaxResource($tax)
+            'data' => new TaxResource($tax),
         ]);
     }
-
 
     /**
      * @OA\Delete(
@@ -363,37 +426,48 @@ class TaxController extends Controller
      *     description="Delete a tax for the authenticated company",
      *     tags={"Taxes"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="tax",
      *         in="path",
      *         description="ID of the tax to delete",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Tax deleted successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Tax deleted successfully"),
      *             @OA\Property(property="data", type="null", example=null)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Tax not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Tax not found")
      *         )
@@ -404,10 +478,11 @@ class TaxController extends Controller
     {
         $company = Auth::guard('company')->user();
         $tax = $this->taxRepository->deleteTax($company, $tax->id);
+
         return response()->json([
             'success' => true,
             'message' => 'Tax deleted successfully',
-            'data' => null
+            'data' => null,
         ]);
     }
 }

@@ -40,19 +40,21 @@ class DumpsterRepository
     public function updateDumpster(Company $company, $id, array $data): ?Dumpster
     {
         $dumpster = $company->dumpsters()->find($id);
-        if (!$dumpster) {
+        if (! $dumpster) {
             return null;
         }
+
         return $dumpster->update($data);
     }
 
     public function deleteDumpster(Company $company, $id): ?bool
     {
         $dumpster = $company->dumpsters()->find($id);
-        if (!$dumpster) {
+        if (! $dumpster) {
             return null;
         }
         $dumpster->delete();
+
         return true;
     }
 }

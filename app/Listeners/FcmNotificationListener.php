@@ -2,18 +2,15 @@
 
 namespace App\Listeners;
 
-use Exception;
-use App\Models\Driver;
-use App\Models\Company;
-use App\Models\Customer;
-use Google_Client as GoogleClient;
-use Illuminate\Support\Facades\Log;
 use App\Events\FcmNotificationEvent;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Exception;
+use Google_Client as GoogleClient;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
-class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
+class FcmNotificationListener implements ShouldDispatchAfterCommit, ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -26,7 +23,6 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
         $rawData = $event->data ?? [];
 
         // save the notification to the database
-
 
         // Initialize statistics
         $stats = [
@@ -72,21 +68,23 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
             // Validate credentials file content
             $credentialsContent = file_get_contents($credentialsFilePath);
             $credentials = json_decode($credentialsContent, true);
-            
+
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::error('❌ FCM credentials file is not valid JSON', [
                     'path' => $credentialsFilePath,
                     'json_error' => json_last_error_msg(),
                 ]);
+
                 return;
             }
 
             if (empty($credentials['private_key']) || strpos($credentials['private_key'], '...') !== false) {
                 Log::error('❌ FCM credentials file has invalid or truncated private key', [
                     'path' => $credentialsFilePath,
-                    'has_private_key' => !empty($credentials['private_key']),
+                    'has_private_key' => ! empty($credentials['private_key']),
                     'is_truncated' => strpos($credentials['private_key'], '...') !== false,
                 ]);
+
                 return;
             }
 
@@ -174,7 +172,7 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
 
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     Log::error("❌ JSON encoding failed for token {$tokenIndex}", [
-                        'token' => substr($fcm, 0, 20) . '...',
+                        'token' => substr($fcm, 0, 20).'...',
                         'json_error' => json_last_error_msg(),
                         'message_structure' => $message,
                     ]);
@@ -188,7 +186,7 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
                 $decodedPayload = json_decode($payload, true);
                 if (! isset($decodedPayload['message']['token']) || ! isset($decodedPayload['message']['notification'])) {
                     Log::error("❌ Invalid payload structure for token {$tokenIndex}", [
-                        'token' => substr($fcm, 0, 20) . '...',
+                        'token' => substr($fcm, 0, 20).'...',
                         'payload_structure' => $decodedPayload,
                     ]);
                     $stats['other_errors']++;
@@ -224,7 +222,7 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
                 // Handle different response scenarios
                 if ($err) {
                     Log::error("❌ cURL error for token {$tokenIndex}", [
-                        'token' => substr($fcm, 0, 20) . '...',
+                        'token' => substr($fcm, 0, 20).'...',
                         'error' => $err,
                         'curl_info' => [
                             'total_time' => $curlInfo['total_time'],
@@ -236,7 +234,7 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
                     $stats['failed']++;
                 } elseif ($httpCode >= 200 && $httpCode < 300 && isset($responseBody['name'])) {
                     Log::info('✅ FCM sent successfully', [
-                        'token' => substr($fcm, 0, 20) . '...',
+                        'token' => substr($fcm, 0, 20).'...',
                         'message_id' => $responseBody['name'],
                     ]);
                     $stats['successful']++;
@@ -270,11 +268,11 @@ class FcmNotificationListener implements ShouldQueue, ShouldDispatchAfterCommit
                 'total' => $stats['total_tokens'],
                 'successful' => $stats['successful'],
                 'failed' => $stats['failed'],
-                'success_rate' => $successRate . '%',
+                'success_rate' => $successRate.'%',
                 'invalid_tokens' => $stats['invalid_tokens'],
             ]);
         } catch (Exception $e) {
-            Log::error('🔥 FCM Exception: ' . $e->getMessage(), [
+            Log::error('🔥 FCM Exception: '.$e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ]);

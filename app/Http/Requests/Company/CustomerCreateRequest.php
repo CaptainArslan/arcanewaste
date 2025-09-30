@@ -5,10 +5,10 @@ namespace App\Http\Requests\Company;
 use App\Enums\GenderEnum;
 use App\Rules\AddressRule;
 use App\Rules\EmergencyContactRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerCreateRequest extends FormRequest
 {
@@ -29,9 +29,9 @@ class CustomerCreateRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email',],
+            'email' => ['required', 'email'],
             'phone' => ['required', 'string', 'max:255'],
-            'gender' => ['required', 'string', 'in:' . implode(',', GenderEnum::values())],
+            'gender' => ['required', 'string', 'in:'.implode(',', GenderEnum::values())],
             'dob' => ['required', 'date'],
             'address' => ['required', 'array', new AddressRule],
             'emergency_contacts' => ['required', 'array', new EmergencyContactRule],

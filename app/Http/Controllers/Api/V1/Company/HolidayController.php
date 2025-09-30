@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\V1\Company;
 
 use App\Helpers\ApiHelper;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\CompanyHolidayResource;
-use App\Repositories\Company\HolidayRepository;
 use App\Http\Requests\Company\HolidayCreateRequest;
 use App\Http\Requests\Company\HolidayUpdateRequest;
+use App\Http\Resources\CompanyHolidayResource;
+use App\Repositories\Company\HolidayRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HolidayController extends Controller
 {
@@ -30,15 +30,19 @@ class HolidayController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Days of week options fetched successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Company days of week options fetched successfully"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="object",
+     *
      *                     @OA\Property(property="value", type="integer", example=0, description="Numeric representation of the day (0=Sunday, 6=Saturday)"),
      *                     @OA\Property(property="label", type="string", example="Sunday", description="Readable name of the day")
      *                 )
@@ -50,10 +54,11 @@ class HolidayController extends Controller
     public function daysOfWeekOptions()
     {
         $daysOfWeekOptions = $this->holidayRepository->getDaysOfWeekOptions();
+
         return response()->json([
             'success' => true,
             'message' => 'Company days of week options fetched successfully',
-            'data'    => $daysOfWeekOptions
+            'data' => $daysOfWeekOptions,
         ]);
     }
 
@@ -74,13 +79,14 @@ class HolidayController extends Controller
      *     @OA\Parameter(name="to_date", in="query", required=false, @OA\Schema(type="string", format="date", nullable=true, example="2025-12-31")),
      *     @OA\Parameter(
      *         name="recurrence_type", in="query", required=false,
+     *
      *         @OA\Schema(type="string", nullable=true, enum={"none","weekly","monthly","yearly"}, example="yearly")
      *     ),
+     *
      *     @OA\Parameter(name="day_of_week", in="query", required=false, @OA\Schema(type="integer", nullable=true, example=1, description="0=Sunday .. 6=Saturday")),
      *     @OA\Parameter(name="month_day", in="query", required=false, @OA\Schema(type="integer", nullable=true, example=25, description="Day of month (1-31)")),
      *     @OA\Parameter(name="is_active", in="query", required=false, @OA\Schema(type="boolean", nullable=true, example=true)),
      *     @OA\Parameter(name="is_approved", in="query", required=false, @OA\Schema(type="boolean", nullable=true, example=true)),
-     *
      *     @OA\Parameter(name="sort", in="query", required=false, @OA\Schema(type="string", enum={"asc","desc"}, default="desc")),
      *     @OA\Parameter(name="paginate", in="query", required=false, @OA\Schema(type="boolean", default=true, example=true)),
      *     @OA\Parameter(name="limit", in="query", required=false, @OA\Schema(type="integer", default=10, example=10)),
@@ -88,14 +94,18 @@ class HolidayController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Company holidays fetched successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Company holidays fetched successfully"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(ref="#/components/schemas/CompanyHolidayResourceSchema")
      *             ),
+     *
      *             @OA\Property(property="meta", type="object",
      *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="last_page", type="integer", example=5),
@@ -104,11 +114,10 @@ class HolidayController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthorized")
      * )
      */
-
-
     public function index(Request $request)
     {
         $company = Auth::guard('company')->user();
@@ -116,7 +125,6 @@ class HolidayController extends Controller
         $sort = $request->sort ?? 'desc';
         $paginate = toBoolean($request->paginate ?? true);
         $perPage = (int) $request->limit ?? getPaginated();
-
 
         $holidays = $this->holidayRepository->getAllHolidays($company, $filters, $sort, $paginate, $perPage);
 
@@ -140,23 +148,26 @@ class HolidayController extends Controller
      *         in="path",
      *         description="ID of the holiday to fetch",
      *         required=true,
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="Company holiday fetched successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Company holiday fetched successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/CompanyHolidayResourceSchema")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthorized"),
      *     @OA\Response(response=404, description="Holiday not found")
      * )
      */
-
     public function show($id)
     {
         $company = Auth::guard('company')->user();
@@ -165,7 +176,7 @@ class HolidayController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Company holiday fetched successfully',
-            'data'    => CompanyHolidayResource::make($holiday)
+            'data' => CompanyHolidayResource::make($holiday),
         ]);
     }
 
@@ -179,8 +190,10 @@ class HolidayController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name","date","recurrence_type"},
+     *
      *             @OA\Property(property="name", type="string", example="Independence Day"),
      *             @OA\Property(property="date", type="string", format="date", example="2025-08-14"),
      *             @OA\Property(property="recurrence_type", type="string", enum={"none","weekly","yearly"}, example="yearly"),
@@ -195,12 +208,15 @@ class HolidayController extends Controller
      *     @OA\Response(
      *         response=201,
      *         description="Company holiday created successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Company holiday created successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/CompanyHolidayResourceSchema")
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, description="Validation error"),
      *     @OA\Response(response=401, description="Unauthorized")
      * )
@@ -209,10 +225,11 @@ class HolidayController extends Controller
     {
         $company = Auth::guard('company')->user();
         $holiday = $this->holidayRepository->createHoliday($company, $request->all());
+
         return response()->json([
             'success' => true,
             'message' => 'Company holiday created successfully',
-            'data'    => CompanyHolidayResource::make($holiday)
+            'data' => CompanyHolidayResource::make($holiday),
         ]);
     }
 
@@ -230,13 +247,16 @@ class HolidayController extends Controller
      *         in="path",
      *         required=true,
      *         description="Holiday ID",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="name", type="string", example="Independence Day"),
      *             @OA\Property(property="date", type="string", format="date", example="2025-08-14"),
      *             @OA\Property(property="recurrence_type", type="string", enum={"none","weekly","yearly"}, example="yearly"),
@@ -251,8 +271,10 @@ class HolidayController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Company holiday updated successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Company holiday updated successfully"),
      *             @OA\Property(
@@ -262,20 +284,26 @@ class HolidayController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Holiday not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Holiday not found")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="message", type="string", example="The given data was invalid."),
      *             @OA\Property(
      *                 property="errors",
@@ -290,22 +318,23 @@ class HolidayController extends Controller
     {
         $company = Auth::guard('company')->user();
         $holiday = $this->holidayRepository->updateHoliday($company, $request->all(), $id);
+
         return response()->json([
             'success' => true,
             'message' => 'Company holiday updated successfully',
-            'data'    => CompanyHolidayResource::make($holiday)
+            'data' => CompanyHolidayResource::make($holiday),
         ]);
     }
 
-    
     public function destroy($id)
     {
         $company = Auth::guard('company')->user();
         $this->holidayRepository->deleteHoliday($company, $id);
+
         return response()->json([
             'success' => true,
             'message' => 'Company holiday deleted successfully',
-            'data'    => null
+            'data' => null,
         ]);
     }
 }

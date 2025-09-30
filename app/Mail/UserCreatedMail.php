@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\Customer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -15,8 +14,11 @@ class UserCreatedMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public string $name;
+
     public string $password;
+
     public string $email;
+
     public ?string $webUrl;
 
     /**
@@ -37,7 +39,7 @@ class UserCreatedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "🎉 Welcome to " . config('app.name') . " - {$this->name}"
+            subject: '🎉 Welcome to '.config('app.name')." - {$this->name}"
         );
     }
 

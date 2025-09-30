@@ -2,71 +2,96 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Models\Document;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Collection;
 
 trait HasDocuments
 {
+    /**
+     * Polymorphic relationship: documents
+     */
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
     }
 
-    public function createDocuments(Model $documentable, array $documents = []): Collection
+    /**
+     * Create new documents (ignores duplicates by file_path)
+     */
+    public function createDocuments(array $documents = []): Collection
     {
         if (empty($documents)) {
-            return $documentable->documents()->get();
+            return $this->documents()->get();
         }
 
         $newDocuments = [];
-        $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
+        $existingDocuments = $this->documents()->pluck('file_path')->toArray();
 
         foreach ($documents as $document) {
             if (! in_array($document['file_path'], $existingDocuments)) {
-                $newDocuments[] = [
-                    'name' => $document['name'],
-                    'type' => $document['type'],
-                    'file_path' => $document['file_path'],
-                    'mime_type' => $document['mime_type'],
-                    'issued_at' => $document['issued_at'] ?? null,
-                    'expires_at' => $document['expires_at'] ?? null,
-                    'is_verified' => $document['is_verified'] ?? false,
-                ];
+                $newDocuments[] = $this->filterDocumentData($document);
             }
         }
 
-        return $documentable->documents()->createMany($newDocuments);
+        return $this->documents()->createMany($newDocuments);
     }
 
-    public function updateDocuments(Model $documentable, array $documents = []): Collection
+    /**
+     * Update existing documents or create if not exists (by file_path)
+     */
+    public function updateDocuments(array $documents = []): Collection
     {
         if (empty($documents)) {
-            return $documentable->documents()->get();
+            return $this->documents()->get();
         }
 
-        $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
-
         foreach ($documents as $document) {
-            if (! in_array($document['file_path'], $existingDocuments)) {
-                $documentable->documents()->create($document);
+            $data = $this->filterDocumentData($document);
+
+            $docModel = $this->documents()->where('file_path', $document['file_path'])->first();
+
+            if ($docModel) {
+                $docModel->update($data);
             } else {
-                $documentable->documents()->update($document);
+                $this->documents()->create($data);
             }
         }
 
-        return $documentable->documents()->get();
+        return $this->documents()->get();
     }
 
-    public function deleteDocuments(Model $documentable, array $documents = []): Collection
+    /**
+     * Delete specific documents by file_path
+     */
+    public function deleteDocuments(array $documents = []): Collection
     {
         if (empty($documents)) {
-            return $documentable->documents()->get();
+            return $this->documents()->get();
         }
 
-        $documentable->documents()->delete();
+        $filePaths = collect($documents)->pluck('file_path')->toArray();
 
-        return $documentable->documents()->get();
+        $this->documents()->whereIn('file_path', $filePaths)->delete();
+
+        return $this->documents()->get();
+    }
+
+    /**
+     * Whitelist allowed document fields
+     */
+    protected function filterDocumentData(array $document): array
+    {
+        $allowed = [
+            'name',
+            'type',
+            'file_path',
+            'mime_type',
+            'issued_at',
+            'expires_at',
+            'is_verified',
+        ];
+
+        return array_intersect_key($document, array_flip($allowed));
     }
 }

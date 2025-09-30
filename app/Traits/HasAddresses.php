@@ -2,13 +2,17 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Address;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait HasAddresses
 {
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
+
     public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');
@@ -19,17 +23,17 @@ trait HasAddresses
         return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
     }
 
-    public function createAddress(Model $addressable, array $address = [], bool $isPrimary = false): ?Address
+    public function createAddress(array $address = [], bool $isPrimary = false): ?Address
     {
         if (empty($address)) {
-            return $addressable->addresses()->where('is_primary', true)->first();
+            return $this->addresses()->where('is_primary', true)->first();
         }
 
         if ($isPrimary) {
-            $addressable->addresses()->where('is_primary', true)->update(['is_primary' => false]);
+            $this->addresses()->where('is_primary', true)->update(['is_primary' => false]);
         }
 
-        return $addressable->addresses()->create([
+        return $this->addresses()->create([
             'address_line1' => $address['address_line1'] ?? null,
             'address_line2' => $address['address_line2'] ?? null,
             'city' => $address['city'] ?? null,
@@ -42,14 +46,16 @@ trait HasAddresses
         ]);
     }
 
-    public function updateAddress(Model $addressable, array $address, bool $isPrimary = false): ?Address
+    public function updateAddress(array $address, bool $isPrimary = false): ?Address
     {
-        $addressModel = $addressable->addresses()->find($address['id'] ?? null);
-        if (! $addressModel) return null;
+        $addressModel = $this->addresses()->find($address['id'] ?? null);
+        if (! $addressModel) {
+            return null;
+        }
 
         if ($isPrimary) {
             // Reset other primary addresses
-            $addressable->addresses()->where('is_primary', true)->update(['is_primary' => false]);
+            $this->addresses()->where('is_primary', true)->update(['is_primary' => false]);
             $address['is_primary'] = true;
         }
 

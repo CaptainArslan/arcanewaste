@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,7 +41,6 @@ class DumpsterSizeCreateRequest extends FormRequest
             'taxes.*' => ['integer', 'exists:taxes,id'],
         ];
     }
-
 
     public function messages(): array
     {

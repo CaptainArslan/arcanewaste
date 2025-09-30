@@ -2,16 +2,16 @@
 
 namespace App\Listeners;
 
-use App\Mail\UserCreatedMail;
-use Illuminate\Support\Facades\Log;
 use App\Events\CustomerCreatedEvent;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Mail\UserCreatedMail;
 use App\Notifications\FcmDatabaseNotification;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
-class CustomerCreatedListener implements ShouldQueue, ShouldDispatchAfterCommit
+class CustomerCreatedListener implements ShouldDispatchAfterCommit, ShouldQueue
 {
     use InteractsWithQueue;
 

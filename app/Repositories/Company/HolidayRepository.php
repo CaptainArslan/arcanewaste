@@ -2,11 +2,11 @@
 
 namespace App\Repositories\Company;
 
-use Carbon\Carbon;
+use App\Enums\HolidayApprovalStatusEnum;
 use App\Models\Company;
 use App\Models\Driver;
 use App\Models\Holiday;
-use App\Enums\HolidayApprovalStatusEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -60,11 +60,12 @@ class HolidayRepository
     public function updateHoliday(Model $holidayable, array $data, $id): ?Holiday
     {
         $holiday = $holidayable->holidays()->find($id);
-        if (!$holiday) {
+        if (! $holiday) {
             return null;
         }
 
         $holiday->update($data);
+
         return $holiday;
     }
 
@@ -73,7 +74,7 @@ class HolidayRepository
         return $holidayable->holidays()->find($id)->delete();
     }
 
-    function getDaysOfWeekOptions(): array
+    public function getDaysOfWeekOptions(): array
     {
         return collect(range(0, 6))->map(function ($day) {
             return [

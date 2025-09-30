@@ -2,11 +2,11 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Queue\SerializesModels;
 
 class FcmNotificationEvent implements ShouldBroadcast
@@ -14,9 +14,13 @@ class FcmNotificationEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Model $model;
+
     public array $deviceTokens;
+
     public string $title;
+
     public string $body;
+
     public array $data;
 
     public function __construct(Model $model, string $title, string $body, array $data = [])
@@ -34,7 +38,7 @@ class FcmNotificationEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         $modelType = class_basename($this->model);
-        $modelId   = $this->model->getKey();
+        $modelId = $this->model->getKey();
 
         return [
             new PrivateChannel("fcm-notification-{$modelType}-{$modelId}-channel"),

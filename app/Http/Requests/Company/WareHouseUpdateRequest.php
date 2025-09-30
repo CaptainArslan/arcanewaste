@@ -3,11 +3,11 @@
 namespace App\Http\Requests\Company;
 
 use App\Rules\AddressRule;
-use Illuminate\Validation\Rule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class WareHouseUpdateRequest extends FormRequest
 {
@@ -32,7 +32,7 @@ class WareHouseUpdateRequest extends FormRequest
             'type' => ['nullable', 'string', 'max:255'],
             'capacity' => ['nullable', 'integer'],
             'is_active' => ['nullable', 'boolean'],
-            'address' => ['nullable', 'array', new AddressRule()],
+            'address' => ['nullable', 'array', new AddressRule],
         ];
     }
 

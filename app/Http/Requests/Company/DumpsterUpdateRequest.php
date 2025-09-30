@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Company;
 
+use App\Enums\DumpsterStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Enums\DumpsterStatusEnum;
 
 class DumpsterUpdateRequest extends FormRequest
 {
@@ -24,16 +24,16 @@ class DumpsterUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'             => ['nullable', 'string', 'max:255'],
-            'slug'             => ['nullable', 'string', 'max:255'],
-            'serial_number'    => ['nullable', 'string', 'max:255'],
-            'status'           => ['nullable', 'string', Rule::in(DumpsterStatusEnum::values())],
-            'image'            => ['nullable', 'string'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
+            'serial_number' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', Rule::in(DumpsterStatusEnum::values())],
+            'image' => ['nullable', 'string'],
             'last_service_date' => ['nullable', 'date'],
-            'next_service_due'  => ['nullable', 'date'],
-            'notes'             => ['nullable', 'string'],
-            'is_available'     => ['nullable', 'boolean'],
-            'is_active'        => ['nullable', 'boolean'],
+            'next_service_due' => ['nullable', 'date'],
+            'notes' => ['nullable', 'string'],
+            'is_available' => ['nullable', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
 }
