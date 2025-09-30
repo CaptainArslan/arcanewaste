@@ -1,22 +1,23 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
-use App\Http\Controllers\Api\V1\Company\DriverController;
-use App\Http\Controllers\Api\V1\Company\DumpsterController;
-use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
-use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
-use App\Http\Controllers\Api\V1\Company\HolidayController;
-use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
-use App\Http\Controllers\Api\V1\Company\TaxController;
-use App\Http\Controllers\Api\V1\Company\TimingsController;
-use App\Http\Controllers\Api\V1\Company\WarehouseController;
-use App\Http\Controllers\Api\V1\MediaController;
-use App\Http\Controllers\Api\V1\PaymentMethodController;
-use App\Http\Controllers\Company\CustomerController;
-use App\Http\Middleware\CheckJsonHeaders;
-use App\Http\Middleware\VerifyJwt;
 use Illuminate\Http\Request;
+use App\Http\Middleware\VerifyJwt;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckJsonHeaders;
+use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Company\CustomerController;
+use App\Http\Controllers\Api\V1\Company\TaxController;
+use App\Http\Controllers\Api\V1\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Company\DriverController;
+use App\Http\Controllers\Api\V1\Company\HolidayController;
+use App\Http\Controllers\Api\V1\Company\TimingsController;
+use App\Http\Controllers\Api\V1\Company\DumpsterController;
+use App\Http\Controllers\Api\V1\Company\PromotionController;
+use App\Http\Controllers\Api\V1\Company\WarehouseController;
+use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
+use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
+use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
+use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -113,6 +114,13 @@ Route::prefix('v1')->group(function () {
             Route::put('drivers/{driver}', [DriverController::class, 'update']);
             Route::delete('drivers/{driver}', [DriverController::class, 'destroy']);
             Route::put('drivers/{driver}/terminate', [DriverController::class, 'terminate']);
+
+            // promotions routes
+            Route::get('promotions', [PromotionController::class, 'index']);
+            Route::get('promotions/{promotion}', [PromotionController::class, 'show']);
+            Route::post('promotions', [PromotionController::class, 'store']);
+            Route::put('promotions/{promotion}', [PromotionController::class, 'update']);
+            Route::delete('promotions/{promotion}', [PromotionController::class, 'destroy']);
         });
     });
 });
