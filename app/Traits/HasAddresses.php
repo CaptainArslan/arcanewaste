@@ -4,9 +4,21 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Address;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait HasAddresses
 {
+    public function addresses(): MorphMany
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
+
+    public function defaultAddress(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
+    }
+
     public function createAddress(Model $addressable, array $address = [], bool $isPrimary = false): ?Address
     {
         if (empty($address)) {

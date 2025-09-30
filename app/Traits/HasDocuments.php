@@ -4,16 +4,16 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Document;
 
 trait HasDocuments
 {
-    /**
-     * Create or get documents for any model.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $documentable
-     * @param  array  $documents
-     * @return \Illuminate\Support\Collection
-     */
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
     public function createDocuments(Model $documentable, array $documents = []): Collection
     {
         if (empty($documents)) {
@@ -38,5 +38,35 @@ trait HasDocuments
         }
 
         return $documentable->documents()->createMany($newDocuments);
+    }
+
+    public function updateDocuments(Model $documentable, array $documents = []): Collection
+    {
+        if (empty($documents)) {
+            return $documentable->documents()->get();
+        }
+
+        $existingDocuments = $documentable->documents()->pluck('file_path')->toArray();
+
+        foreach ($documents as $document) {
+            if (! in_array($document['file_path'], $existingDocuments)) {
+                $documentable->documents()->create($document);
+            } else {
+                $documentable->documents()->update($document);
+            }
+        }
+
+        return $documentable->documents()->get();
+    }
+
+    public function deleteDocuments(Model $documentable, array $documents = []): Collection
+    {
+        if (empty($documents)) {
+            return $documentable->documents()->get();
+        }
+
+        $documentable->documents()->delete();
+
+        return $documentable->documents()->get();
     }
 }

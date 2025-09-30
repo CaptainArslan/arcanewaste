@@ -115,16 +115,6 @@ class Company extends Authenticatable implements JWTSubject
         return $this->morphMany(GeneralSetting::class, 'settingable');
     }
 
-    public function defaultAddress(): MorphOne
-    {
-        return $this->morphOne(Address::class, 'addressable')->where('is_primary', true);
-    }
-
-    public function addresses(): MorphMany
-    {
-        return $this->morphMany(Address::class, 'addressable');
-    }
-
     public function warehouses(): HasMany
     {
         return $this->hasMany(Warehouse::class);
@@ -160,11 +150,6 @@ class Company extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Customer::class, 'company_customer')
             ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
             ->withTimestamps();
-    }
-
-    public function documents(): MorphMany
-    {
-        return $this->morphMany(Document::class, 'documentable');
     }
 
     // Accessors & Mutators
