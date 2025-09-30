@@ -18,16 +18,6 @@ class CustomerRepository
         $perPage = 10
     ): Collection|LengthAwarePaginator {
         $query = $company->customers()
-            ->withPivot([
-                'full_name',
-                'phone',
-                'image',
-                'is_active',
-                'is_delinquent',
-                'delinquent_days',
-                'created_at',
-                'updated_at',
-            ])
             ->filters($filters)
             ->orderBy('id', $sort);
 
@@ -40,22 +30,33 @@ class CustomerRepository
 
     public function getCustomerById(Company $company, $id): ?Customer
     {
-        return $company->customers()->find($id);
+        $customer = $company->customers()
+            ->where('customers.id', $id)
+            ->first();
+
+        if (! $customer) {
+            throw new \Exception('Customer not found');
+        }
+
+        return $customer;
     }
 
     public function createCustomer(Company $company, array $data): Customer
     {
         $password = generatePassword();
+
         $customer = Customer::where('email', $data['email'])->first();
 
         if (! $customer) {
-            $customer = Customer::Create([
+            $customer = Customer::create([
                 'email' => $data['email'],
                 'full_name' => $data['full_name'] ?? 'Unknown',
                 'phone' => $data['phone'] ?? null,
                 'image' => $data['image'] ?? null,
                 'password' => $password['hashed'],
                 'system_generated_password' => true,
+                'gender' => $data['gender'] ?? null,
+                'dob' => $data['dob'] ?? null,
             ]);
         }
 
@@ -63,7 +64,6 @@ class CustomerRepository
             throw new \Exception('Customer already exists');
         }
 
-        // Attach or update pivot data
         $pivotData = [
             'full_name' => $data['full_name'] ?? $customer->full_name,
             'phone' => $data['phone'] ?? $customer->phone,
@@ -73,17 +73,20 @@ class CustomerRepository
             'delinquent_days' => $data['delinquent_days'] ?? 0,
         ];
 
-        // Sync without detaching (avoids duplicate attach)
         $company->customers()->syncWithoutDetaching([$customer->id => $pivotData]);
 
-        // Only dispatch event if customer was just created
-        if ($customer->wasRecentlyCreated) {
-            CustomerCreatedEvent::dispatch($customer, $password['plain']);
+        // Safe address creation
+        if (!empty($data['address'])) {
+            $customer->createAddress($data['address'], $data['address']['is_primary'] ?? false);
         }
 
-        // Attach emergency contacts if provided
-        if (! empty($data['emergency_contacts'])) {
+        // Safe emergency contacts attachment
+        if (!empty($data['emergency_contacts'])) {
             $this->attachEmergencyContacts($customer, $data['emergency_contacts']);
+        }
+
+        if ($customer->wasRecentlyCreated) {
+            CustomerCreatedEvent::dispatch($customer, $password['plain']);
         }
 
         return $customer;
@@ -95,28 +98,30 @@ class CustomerRepository
             throw new \Exception('Customer is not associated with this company');
         }
 
-        $pivotData = [
-            'full_name'       => $data['full_name'] ?? null,
-            'phone'           => $data['phone'] ?? null,
-            'image'           => $data['image'] ?? null,
-            'is_active'       => $data['is_active'] ?? 1,
-            'is_delinquent'   => $data['is_delinquent'] ?? 0,
-            'delinquent_days' => $data['delinquent_days'] ?? 0,
-        ];
+        // Update pivot
+        $company->customers()->syncWithoutDetaching([$customer->id => $data]);
 
-        $company->customers()->syncWithoutDetaching([$customer->id => $pivotData]);
-
-        return $customer->fresh(['companies']);
+        // Reload customer with pivot for this company
+        return $company->customers()
+            ->where('customers.id', $customer->id)
+            ->first();
     }
 
-
-    public function deleteCustomer(Company $company, Customer $customer): ?bool
+    public function deleteCustomer(Company $company, Customer $customer): bool
     {
         if (! $this->isAssociatedWithCompany($customer, $company)) {
             throw new \Exception('Customer is not associated with this company');
         }
-        
+
+        // Only detach the customer from this company
         return $this->detachCustomerFromCompany($customer, $company);
+    }
+
+    private function detachCustomerFromCompany(Customer $customer, Company $company): bool
+    {
+        // detach returns number of rows affected
+        $detached = $customer->companies()->detach($company->id);
+        return $detached > 0;
     }
 
     private function isAssociatedWithCompany(Customer $customer, Company $company): bool
@@ -125,11 +130,6 @@ class CustomerRepository
             ->wherePivot('company_id', $company->id)
             ->wherePivot('customer_id', $customer->id)
             ->exists();
-    }
-
-    private function detachCustomerFromCompany(Customer $customer, Company $company): void
-    {
-        $customer->companies()->detach($company);
     }
 
     private function attachEmergencyContacts(Customer $customer, array $data): void

@@ -14,28 +14,22 @@ class CompanyCustomerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $pivot = $this->pivot; // direct pivot access, safe in belongsToMany
+        $pivot = $this->pivot;
 
         return [
             'id' => $this->id,
-
-            // Company-specific overrides, fallback to global if not present
             'full_name' => $pivot->full_name ?? $this->full_name,
             'email' => $this->email,
             'image' => $pivot->image ?? $this->image,
             'phone' => $pivot->phone ?? $this->phone,
-
-            // Company-specific status
+            'gender' => $pivot->gender ?? $this->gender,
+            'dob' => $pivot->dob ?? $this->dob,
             'is_active' => $pivot->is_active ?? true,
-            'is_delinquent' => $pivot->is_delinquent ?? false,
+            'is_delinquent' => $pivot->is_delinquent,
             'delinquent_days' => $pivot->delinquent_days ?? 0,
-
-            // Emergency contacts
             'emergency_contacts' => EmergencyContactResource::collection(
                 $this->whenLoaded('emergencyContacts')
             ),
-
-            // Pivot timestamps
             'attached_at' => $pivot->created_at ?? null,
             'updated_at' => $pivot->updated_at ?? null,
         ];

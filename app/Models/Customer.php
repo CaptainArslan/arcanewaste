@@ -92,7 +92,6 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Company::class, 'company_customer')
             ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
-            ->withTimestamps()
             ->withTimestamps();
     }
 

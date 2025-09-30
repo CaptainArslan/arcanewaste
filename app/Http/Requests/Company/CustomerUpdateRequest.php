@@ -30,7 +30,6 @@ class CustomerUpdateRequest extends FormRequest
         return [
             'full_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:255'],
-            'dob' => ['nullable', 'date'],
             'is_active' => ['nullable', 'boolean'],
             'is_delinquent' => ['nullable', 'boolean'],
             'delinquent_days' => ['nullable', 'integer'],

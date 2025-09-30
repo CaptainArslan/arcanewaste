@@ -42,6 +42,13 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
+        $company = Auth::guard('company')->user();
+        $customer = $this->customerRepository->getCustomerById($company, $customer->id);
+
+        if (! $customer) {
+            return $this->sendErrorResponse('Customer not found', Response::HTTP_NOT_FOUND);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Customer fetched successfully',
@@ -55,11 +62,17 @@ class CustomerController extends Controller
 
         try {
             DB::beginTransaction();
+
             $customer = $this->customerRepository->createCustomer($company, $request->all());
+
             if (! $customer) {
                 return $this->sendErrorResponse('Customer not created', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
+
             DB::commit();
+
+            // Ensure pivot and relations are loaded
+            $customer->load('companies', 'emergencyContacts');
 
             return response()->json([
                 'success' => true,
@@ -70,7 +83,7 @@ class CustomerController extends Controller
             DB::rollBack();
             Log::error('Customer creation failed: ' . $th->getMessage());
 
-            return $this->sendErrorResponse('Customer not created' . $th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->sendErrorResponse('Customer not created: ' . $th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -103,6 +116,7 @@ class CustomerController extends Controller
     {
         $company = Auth::guard('company')->user();
 
+        // Prevent deletion if customer has orders for this company
         if ($customer->orders()->where('company_id', $company->id)->exists()) {
             return $this->sendErrorResponse(
                 'Cannot delete customer: customer has orders for this company.',
@@ -110,16 +124,25 @@ class CustomerController extends Controller
             );
         }
 
-        $this->customerRepository->deleteCustomer($company, $customer);
+        try {
+            $deleted = $this->customerRepository->deleteCustomer($company, $customer);
 
-        if (! $customer) {
-            return $this->sendErrorResponse('Customer not deleted', Response::HTTP_INTERNAL_SERVER_ERROR);
+            if (! $deleted) {
+                return $this->sendErrorResponse('Customer not deleted for this company', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer deleted successfully for this company',
+                'data' => null,
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error('Customer deletion failed: ' . $th->getMessage());
+
+            return $this->sendErrorResponse(
+                'Customer not deleted: ' . $th->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Customer deleted successfully',
-            'data' => null,
-        ], Response::HTTP_OK);
     }
 }
