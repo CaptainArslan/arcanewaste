@@ -54,10 +54,6 @@ class CustomerController extends Controller
     {
         $company = Auth::guard('company')->user();
 
-        if ($company->customers()->where('email', $request->email)->exists()) {
-            return $this->sendErrorResponse('Customer already exists', Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
         try {
             DB::beginTransaction();
             $customer = $this->customerRepository->createCustomer($company, $request->all());
@@ -73,9 +69,9 @@ class CustomerController extends Controller
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('Customer creation failed: '.$th->getMessage());
+            Log::error('Customer creation failed: ' . $th->getMessage());
 
-            return $this->sendErrorResponse('Customer not created'.$th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->sendErrorResponse('Customer not created' . $th->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -98,7 +94,7 @@ class CustomerController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('Customer update failed: '.$th->getMessage());
+            Log::error('Customer update failed: ' . $th->getMessage());
 
             return $this->sendErrorResponse('Customer not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
         }

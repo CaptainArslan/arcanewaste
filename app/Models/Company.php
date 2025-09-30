@@ -147,6 +147,7 @@ class Company extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Customer::class, 'company_customer')
             ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
+            ->withTimestamps()
             ->withTimestamps();
     }
 
@@ -154,6 +155,7 @@ class Company extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Driver::class, 'company_driver')
             ->withPivot('is_active', 'hourly_rate', 'duty_hours', 'employment_type', 'hired_at', 'terminated_at')
+            ->withTimestamps()
             ->withTimestamps();
     }
 
@@ -161,7 +163,7 @@ class Company extends Authenticatable implements JWTSubject
     protected function logo(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Storage::disk('s3')->url($value),
+            get: fn(string $value) => Storage::disk('s3')->url($value),
         );
     }
 

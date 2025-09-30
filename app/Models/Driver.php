@@ -67,6 +67,7 @@ class Driver extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Company::class, 'company_driver')
             ->withPivot('is_active', 'hourly_rate', 'duty_hours', 'employment_type', 'hired_at', 'terminated_at')
+            ->withTimestamps()
             ->withTimestamps();
     }
 
@@ -84,7 +85,7 @@ class Driver extends Authenticatable implements JWTSubject
     public function image(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value
+            get: fn($value) => $value
                 ? (filter_var($value, FILTER_VALIDATE_URL)
                     ? $value
                     : Storage::disk('s3')->url($value))
@@ -95,11 +96,11 @@ class Driver extends Authenticatable implements JWTSubject
     // Scopes
     public function scopeFilters(Builder $query, $filters = []): Builder
     {
-        return $query->when(isset($filters['company_id']), fn ($q) => $q->whereHas('companies', fn ($q) => $q->where('company_id', $filters['company_id'])))
-            ->when(isset($filters['full_name']), fn ($q) => $q->where('name', 'like', '%'.$filters['full_name'].'%'))
-            ->when(isset($filters['email']), fn ($q) => $q->where('email', 'like', '%'.$filters['email'].'%'))
-            ->when(isset($filters['phone']), fn ($q) => $q->where('phone', 'like', '%'.$filters['phone'].'%'))
-            ->when(isset($filters['gender']), fn ($q) => $q->where('gender', $filters['gender']))
+        return $query->when(isset($filters['company_id']), fn($q) => $q->whereHas('companies', fn($q) => $q->where('company_id', $filters['company_id'])))
+            ->when(isset($filters['full_name']), fn($q) => $q->where('name', 'like', '%' . $filters['full_name'] . '%'))
+            ->when(isset($filters['email']), fn($q) => $q->where('email', 'like', '%' . $filters['email'] . '%'))
+            ->when(isset($filters['phone']), fn($q) => $q->where('phone', 'like', '%' . $filters['phone'] . '%'))
+            ->when(isset($filters['gender']), fn($q) => $q->where('gender', $filters['gender']))
             ->when(isset($filters['dob']), function ($q) use ($filters) {
                 if (is_array($filters['dob']) && isset($filters['dob']['from'], $filters['dob']['to'])) {
                     $q->whereBetween('dob', [$filters['dob']['from'], $filters['dob']['to']]);

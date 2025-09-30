@@ -46,21 +46,17 @@ class CustomerRepository
     public function createCustomer(Company $company, array $data): Customer
     {
         $password = generatePassword();
-
         $customer = Customer::where('email', $data['email'])->first();
 
-        // Create or fetch existing customer globally
         if (! $customer) {
-            $customer = Customer::Create(
-                ['email' => $data['email']],
-                [
-                    'full_name' => $data['full_name'] ?? 'Unknown',
-                    'phone' => $data['phone'] ?? null,
-                    'image' => $data['image'] ?? null,
-                    'password' => $password['hashed'],
-                    'system_generated_password' => true,
-                ]
-            );
+            $customer = Customer::Create([
+                'email' => $data['email'],
+                'full_name' => $data['full_name'] ?? 'Unknown',
+                'phone' => $data['phone'] ?? null,
+                'image' => $data['image'] ?? null,
+                'password' => $password['hashed'],
+                'system_generated_password' => true,
+            ]);
         }
 
         if ($this->isAssociatedWithCompany($customer, $company)) {

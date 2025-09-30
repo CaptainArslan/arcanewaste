@@ -92,6 +92,7 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Company::class, 'company_customer')
             ->withPivot('is_active', 'is_delinquent', 'delinquent_days')
+            ->withTimestamps()
             ->withTimestamps();
     }
 
@@ -124,7 +125,7 @@ class Customer extends Authenticatable implements JWTSubject
     public function image(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value
+            get: fn($value) => $value
                 ? (filter_var($value, FILTER_VALIDATE_URL)
                     ? $value
                     : Storage::disk('s3')->url($value))
@@ -135,8 +136,8 @@ class Customer extends Authenticatable implements JWTSubject
     public function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucwords($value),
-            set: fn (string $value) => strtolower(trim($value)),
+            get: fn(string $value) => ucwords($value),
+            set: fn(string $value) => strtolower(trim($value)),
         );
     }
 
@@ -153,10 +154,10 @@ class Customer extends Authenticatable implements JWTSubject
 
         return $query
             // Customer table filters
-            ->when(! empty($filters['full_name']), fn ($q) => $q->where('full_name', 'like', '%'.$filters['full_name'].'%'))
-            ->when(! empty($filters['email']), fn ($q) => $q->where('email', 'like', '%'.$filters['email'].'%'))
-            ->when(! empty($filters['phone']), fn ($q) => $q->where('phone', 'like', '%'.$filters['phone'].'%'))
-            ->when(! empty($filters['gender']), fn ($q) => $q->where('gender', $filters['gender']))
+            ->when(! empty($filters['full_name']), fn($q) => $q->where('full_name', 'like', '%' . $filters['full_name'] . '%'))
+            ->when(! empty($filters['email']), fn($q) => $q->where('email', 'like', '%' . $filters['email'] . '%'))
+            ->when(! empty($filters['phone']), fn($q) => $q->where('phone', 'like', '%' . $filters['phone'] . '%'))
+            ->when(! empty($filters['gender']), fn($q) => $q->where('gender', $filters['gender']))
             ->when(! empty($filters['dob']), function ($q) use ($filters) {
                 if (is_array($filters['dob']) && isset($filters['dob']['from'], $filters['dob']['to'])) {
                     $q->whereBetween('dob', [$filters['dob']['from'], $filters['dob']['to']]);
@@ -166,8 +167,8 @@ class Customer extends Authenticatable implements JWTSubject
             })
 
             // Pivot table filters
-            ->when(isset($filters['is_active']), fn ($q) => $q->where('company_customer.is_active', $filters['is_active']))
-            ->when(isset($filters['is_delinquent']), fn ($q) => $q->where('company_customer.is_delinquent', $filters['is_delinquent']))
+            ->when(isset($filters['is_active']), fn($q) => $q->where('company_customer.is_active', $filters['is_active']))
+            ->when(isset($filters['is_delinquent']), fn($q) => $q->where('company_customer.is_delinquent', $filters['is_delinquent']))
             ->when(! empty($filters['delinquent_days']), function ($q) use ($filters) {
                 if (is_array($filters['delinquent_days']) && isset($filters['delinquent_days']['min'], $filters['delinquent_days']['max'])) {
                     $q->whereBetween('company_customer.delinquent_days', [$filters['delinquent_days']['min'], $filters['delinquent_days']['max']]);
