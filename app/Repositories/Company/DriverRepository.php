@@ -108,7 +108,9 @@ class DriverRepository
         ];
         $company->drivers()->syncWithoutDetaching([$driver->id => $pivotData]);
 
-        return $driver->fresh(['companies']);
+        return $company->drivers()
+            ->where('drivers.id', $driver->id)
+            ->first();
     }
 
     public function deleteDriver(Company $company, $id): ?bool

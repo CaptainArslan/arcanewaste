@@ -74,7 +74,7 @@ class DriverController extends Controller
     public function update(DriverUpdateRequest $request, Driver $driver)
     {
         $company = Auth::guard('company')->user();
-        $driver = $this->driverRepository->updateDriver($company, $request->all(), $driver->id);
+        $driver = $this->driverRepository->updateDriver($company, $request->all(), $driver);
         if (! $driver) {
             return $this->sendErrorResponse('Driver not updated', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
