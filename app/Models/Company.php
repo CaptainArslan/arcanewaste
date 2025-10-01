@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Traits\HasAddresses;
 use App\Traits\HasDocuments;
+use App\Traits\HasDeviceTokens;
+use App\Models\DeviceToken;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,6 +23,7 @@ class Company extends Authenticatable implements JWTSubject
 {
     use HasAddresses, HasDocuments;
     use HasFactory, HasSlug, Notifiable, SoftDeletes;
+    use HasDeviceTokens;
 
     protected $fillable = [
         'name',
@@ -89,11 +91,6 @@ class Company extends Authenticatable implements JWTSubject
     }
 
     // Relationships
-    public function devices(): MorphMany
-    {
-        return $this->morphMany(DeviceToken::class, 'deviceable');
-    }
-
     public function paymentOptions(): HasMany
     {
         return $this->hasMany(PaymentOption::class, 'company_id');
@@ -165,7 +162,6 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(Promotion::class, 'company_id');
     }
 
-
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'company_id');
@@ -177,11 +173,5 @@ class Company extends Authenticatable implements JWTSubject
         return Attribute::make(
             get: fn(string $value) => Storage::disk('s3')->url($value),
         );
-    }
-
-    // Helper methods
-    public function getDeviceTokens(): array
-    {
-        return $this->devices()->pluck('device_token')->toArray();
     }
 }
