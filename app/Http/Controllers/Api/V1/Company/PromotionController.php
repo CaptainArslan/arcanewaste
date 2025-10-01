@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Resources\Company\PromotionResource;
+use App\Http\Resources\PromotionResource;
 use App\Repositories\Company\PromotionRepository;
 use App\Http\Requests\Company\PromotionCreateRequest;
 use App\Http\Requests\Company\PromotionUpdateRequest;
