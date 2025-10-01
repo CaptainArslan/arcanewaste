@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\DiscountTypeEnum;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -14,13 +15,13 @@ return new class extends Migration
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('dumpster_size_id')->nullable()->constrained()->cascadeOnDelete();
+            // $table->foreignId('dumpster_size_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('image')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
 
             // Promotion type
-            $table->enum('discount_type', ['percentage', 'fixed'])->default('percentage');
+            $table->string('discount_type')->default(DiscountTypeEnum::PERCENTAGE->value);
             $table->decimal('discount_value', 10, 2); // e.g., 10% or $20
 
             // Validity

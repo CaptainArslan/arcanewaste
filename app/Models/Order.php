@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -22,52 +25,52 @@ class Order extends Model
     ];
 
     // Relationships
-    public function company()
+    public function company() : BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function customer()
+    public function customer() : BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function dumpster()
+    public function dumpster() : BelongsTo
     {
         return $this->belongsTo(Dumpster::class);
     }
 
-    public function dumpsterSize()
+    public function dumpsterSize() : BelongsTo
     {
         return $this->belongsTo(DumpsterSize::class);
     }
 
-    public function wasteType()
+    public function wasteType() : BelongsTo
     {
         return $this->belongsTo(WasteType::class);
     }
 
-    public function timings()
+    public function timings() : HasOne
     {
         return $this->hasOne(OrderTiming::class);
     }
 
-    public function pricing()
+    public function pricing() : HasOne
     {
         return $this->hasOne(OrderPricing::class);
     }
 
-    public function discounts()
+    public function discounts() : HasMany
     {
         return $this->hasMany(OrderDiscount::class);
     }
 
-    public function payments()
+    public function payments() : HasMany
     {
         return $this->hasMany(OrderPayment::class);
     }
 
-    public function address()
+    public function address() : HasOne
     {
         return $this->hasOne(OrderAddress::class);
     }

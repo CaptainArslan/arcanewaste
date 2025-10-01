@@ -7,6 +7,7 @@ use App\Traits\HasDocuments;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -157,6 +158,17 @@ class Company extends Authenticatable implements JWTSubject
             ->withPivot('is_active', 'hourly_rate', 'duty_hours', 'employment_type', 'hired_at', 'terminated_at')
             ->withTimestamps()
             ->withTimestamps();
+    }
+
+    public function promotions(): HasMany
+    {
+        return $this->hasMany(Promotion::class, 'company_id');
+    }
+
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'company_id');
     }
 
     // Accessors & Mutators

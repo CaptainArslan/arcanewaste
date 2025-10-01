@@ -4,6 +4,7 @@ namespace App\Http\Resources\Company;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\DumpsterSizeResource;
 
 class PromotionResource extends JsonResource
 {
@@ -17,7 +18,6 @@ class PromotionResource extends JsonResource
         return [
             'id' => $this->id,
             'company_id' => $this->company_id,
-            'dumpster_size_id' => $this->dumpster_size_id,
             'image' => $this->image,
             'title' => $this->title,
             'description' => $this->description,
@@ -29,6 +29,11 @@ class PromotionResource extends JsonResource
             'usage_limit' => $this->usage_limit,
             'used_count' => $this->used_count,
             'is_active' => $this->is_active,
+
+            // Use your existing resource
+            'dumpster_sizes' => DumpsterSizeResource::collection(
+                $this->whenLoaded('dumpsterSizes')
+            ),
         ];
     }
 }

@@ -27,8 +27,12 @@ class DumpsterSizeResource extends JsonResource
             'volume_cubic_yards' => $this->volume_cubic_yards,
             'weight_limit_lbs' => $this->weight_limit_lbs,
             'is_active' => $this->is_active,
-            'taxes' => TaxResource::collection($this->taxes),
-            'company' => new CompanyResource($this->company),
+            'taxes' => TaxResource::collection(
+                $this->whenLoaded('taxes')
+            ),
+            'company' => new CompanyResource(
+                $this->whenLoaded('company')
+            ),
         ];
     }
 }
