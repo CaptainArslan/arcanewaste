@@ -25,7 +25,7 @@ A comprehensive waste management platform built with Laravel 12, designed to str
 ## 🛠 Technology Stack
 
 - **Backend**: Laravel 12.30.1 (PHP 8.2.12)
-- **Database**: MySQL
+- **Database**: MySQL/SQLite
 - **Authentication**: JWT (tymon/jwt-auth)
 - **API Documentation**: Swagger/OpenAPI (l5-swagger)
 - **Testing**: Pest PHP
@@ -34,6 +34,8 @@ A comprehensive waste management platform built with Laravel 12, designed to str
 - **Payment Processing**: Finix API integration
 - **File Storage**: AWS S3 support
 - **Logging**: Advanced log viewer
+- **Queue System**: Redis/Predis support
+- **Real-time**: Pusher integration
 
 ## 📋 Requirements
 
@@ -138,20 +140,40 @@ database/
 ## 🔧 Key Models
 
 ### Core Entities
-- **Company**: Multi-tenant companies managing waste operations
-- **Customer**: End customers using waste management services
-- **Driver**: Delivery and collection drivers
-- **Order**: Waste collection orders with full lifecycle tracking
+- **Company**: Multi-tenant companies managing waste operations with Finix payment integration
+- **Customer**: End customers using waste management services with polymorphic relationships
+- **Driver**: Delivery and collection drivers with employment tracking
+- **Order**: Waste collection orders with full lifecycle tracking (pending → completed)
 - **Dumpster**: Physical dumpsters with size and status tracking
-- **Warehouse**: Storage facilities for dumpsters
+- **Warehouse**: Storage facilities for dumpsters with capacity management
+- **DumpsterSize**: Configurable dumpster sizes with pricing and specifications
 
 ### Supporting Models
-- **Address**: Polymorphic address management
-- **Document**: File and document management
+- **Address**: Polymorphic address management for all entities
+- **Document**: File and document management with S3 integration
 - **PaymentMethod**: Payment processing configuration
 - **WasteType**: Waste classification system
-- **Timing**: Flexible scheduling system
+- **Timing**: Flexible scheduling system for companies and warehouses
 - **Holiday**: Advanced holiday management with polymorphic relationships
+- **Promotion**: Marketing promotions with discount management
+- **Tax**: Tax configuration with percentage and fixed rate support
+- **DeviceToken**: Push notification device management
+- **LatestLocation**: Real-time location tracking
+- **Contact**: Emergency contact management
+- **GeneralSetting**: Configurable application settings
+- **PaymentOption**: Payment terms and conditions
+- **OrderPricing**: Order-specific pricing calculations
+- **OrderDiscount**: Applied discounts on orders
+- **OrderPayment**: Payment tracking for orders
+- **OrderAddress**: Delivery address for orders
+- **OrderTiming**: Order-specific timing information
+- **DriverAttendance**: Driver attendance tracking
+- **DriverBreak**: Driver break time management
+- **DriverOverTime**: Overtime tracking
+- **DriverTimeSchedule**: Driver scheduling system
+- **MerchantOnboardingLog**: Finix onboarding process tracking
+- **PasswordResetTokens**: OTP and password reset management
+- **SecureFile**: Secure file storage management
 
 ## 🚀 Development
 
@@ -196,9 +218,96 @@ API documentation is available via Swagger UI. After starting the application:
 
 ### Key API Endpoints
 
-- `POST /api/v1/company/auth/register` - Company registration
-- `POST /api/v1/media/upload` - File upload
-- Additional endpoints will be available as the API is developed
+#### Authentication
+- `POST /api/v1/company/auth/send-otp` - Send OTP for registration
+- `POST /api/v1/company/auth/register` - Company registration with OTP verification
+- `POST /api/v1/company/auth/login` - Company login
+- `POST /api/v1/company/auth/forgot-password` - Send OTP for password reset
+- `POST /api/v1/company/auth/reset-password` - Reset password with OTP
+- `POST /api/v1/company/auth/update-password` - Update password (authenticated)
+- `POST /api/v1/company/auth/logout` - Company logout
+- `GET /api/v1/company/details` - Get company details
+
+#### Media Management
+- `POST /api/v1/media/upload` - Upload files to S3 with optional cleanup
+
+#### Company Management
+- `GET /api/v1/company/payment-methods` - List available payment methods
+- `GET /api/v1/company/payment-methods/{code}` - Get specific payment method
+- `GET /api/v1/company/payment-methods/{code}/onboarding-requirements` - Get onboarding requirements
+
+#### General Settings
+- `GET /api/v1/company/general-settings` - List company settings
+- `GET /api/v1/company/general-settings/{id}` - Get specific setting
+- `PUT /api/v1/company/general-settings/{id}/{key}` - Update setting
+
+#### Payment Options
+- `GET /api/v1/company/payment-options` - List payment options
+- `GET /api/v1/company/payment-options/{id}` - Get specific payment option
+- `PUT /api/v1/company/payment-options/{id}/{type}` - Update payment option
+
+#### Warehouse Management
+- `GET /api/v1/company/warehouses` - List warehouses
+- `GET /api/v1/company/warehouses/{id}` - Get specific warehouse
+- `POST /api/v1/company/warehouses` - Create warehouse
+- `PUT /api/v1/company/warehouses/{id}` - Update warehouse
+- `DELETE /api/v1/company/warehouses/{id}` - Delete warehouse
+
+#### Timing Management
+- `GET /api/v1/company/timings` - List company timings
+- `GET /api/v1/company/timings/{id}` - Get specific timing
+- `PUT /api/v1/company/timings/sync` - Sync timings
+
+#### Holiday Management
+- `GET /api/v1/company/holidays` - List company holidays
+- `GET /api/v1/company/holidays/{id}` - Get specific holiday
+- `POST /api/v1/company/holidays` - Create holiday
+- `PUT /api/v1/company/holidays/{id}` - Update holiday
+- `DELETE /api/v1/company/holidays/{id}` - Delete holiday
+- `GET /api/v1/days-of-week-options` - Get day options for weekly holidays
+
+#### Tax Management
+- `GET /api/v1/company/taxes` - List taxes
+- `GET /api/v1/company/taxes/{id}` - Get specific tax
+- `POST /api/v1/company/taxes` - Create tax
+- `PUT /api/v1/company/taxes/{id}` - Update tax
+- `DELETE /api/v1/company/taxes/{id}` - Delete tax
+
+#### Dumpster Size Management
+- `GET /api/v1/company/dumpster-sizes` - List dumpster sizes
+- `GET /api/v1/company/dumpster-sizes/{id}` - Get specific dumpster size
+- `POST /api/v1/company/dumpster-sizes` - Create dumpster size
+- `PUT /api/v1/company/dumpster-sizes/{id}` - Update dumpster size
+- `DELETE /api/v1/company/dumpster-sizes/{id}` - Delete dumpster size
+
+#### Dumpster Management
+- `GET /api/v1/company/dumpsters` - List dumpsters
+- `GET /api/v1/company/dumpsters/{id}` - Get specific dumpster
+- `POST /api/v1/company/dumpsters` - Create dumpster
+- `PUT /api/v1/company/dumpsters/{id}` - Update dumpster
+- `DELETE /api/v1/company/dumpsters/{id}` - Delete dumpster
+
+#### Customer Management
+- `GET /api/v1/company/customers` - List customers
+- `GET /api/v1/company/customers/{id}` - Get specific customer
+- `POST /api/v1/company/customers` - Create customer
+- `PUT /api/v1/company/customers/{id}` - Update customer
+- `DELETE /api/v1/company/customers/{id}` - Delete customer
+
+#### Driver Management
+- `GET /api/v1/company/drivers` - List drivers
+- `GET /api/v1/company/drivers/{id}` - Get specific driver
+- `POST /api/v1/company/drivers` - Create driver
+- `PUT /api/v1/company/drivers/{id}` - Update driver
+- `DELETE /api/v1/company/drivers/{id}` - Delete driver
+- `PUT /api/v1/company/drivers/{id}/terminate` - Terminate driver
+
+#### Promotion Management
+- `GET /api/v1/company/promotions` - List promotions
+- `GET /api/v1/company/promotions/{id}` - Get specific promotion
+- `POST /api/v1/company/promotions` - Create promotion
+- `PUT /api/v1/company/promotions/{id}` - Update promotion
+- `DELETE /api/v1/company/promotions/{id}` - Delete promotion
 
 ## 🔐 Authentication
 
@@ -228,11 +337,64 @@ The system is designed to support mobile applications with:
 ## 🗄 Database Schema
 
 The application uses a comprehensive database schema supporting:
+
+### Core Tables
+- **companies**: Multi-tenant companies with Finix integration
+- **customers**: Customer information with polymorphic relationships
+- **drivers**: Driver profiles with employment tracking
+- **orders**: Order lifecycle management
+- **dumpsters**: Physical dumpster inventory
+- **warehouses**: Storage facility management
+- **dumpster_sizes**: Configurable dumpster specifications
+
+### Polymorphic Tables
+- **addresses**: Address management for all entities
+- **documents**: File and document storage
+- **general_settings**: Configurable application settings
+- **timings**: Scheduling for companies and warehouses
+- **holidays**: Holiday management for companies and drivers
+- **device_tokens**: Push notification device management
+- **latest_locations**: Real-time location tracking
+- **contacts**: Emergency contact management
+
+### Relationship Tables
+- **company_customer**: Many-to-many relationship with pivot data
+- **company_driver**: Many-to-many relationship with employment details
+- **dumpster_size_promotion**: Promotion-dumpster size relationships
+- **dumpster_size_tax**: Tax-dumpster size relationships
+
+### Order Management Tables
+- **order_timings**: Order-specific timing information
+- **order_pricings**: Pricing calculations
+- **order_discounts**: Applied discounts
+- **order_payments**: Payment tracking
+- **order_addresses**: Delivery addresses
+
+### Driver Management Tables
+- **driver_attendances**: Attendance tracking
+- **driver_breaks**: Break time management
+- **driver_over_times**: Overtime tracking
+- **driver_time_schedules**: Scheduling system
+
+### Supporting Tables
+- **payment_methods**: Available payment methods
+- **payment_options**: Payment terms and conditions
+- **promotions**: Marketing promotions
+- **taxes**: Tax configuration
+- **waste_types**: Waste classification
+- **merchant_onboarding_logs**: Finix onboarding tracking
+- **password_reset_tokens**: OTP and password reset
+- **secure_files**: Secure file storage
+- **notifications**: System notifications
+
+### Key Features
 - Multi-tenancy (company-based data isolation)
 - Polymorphic relationships for addresses, documents, and settings
 - Audit trails and soft deletes
 - Flexible timing and scheduling
 - Complex order management with pricing and payments
+- Real-time location tracking
+- Device token management for push notifications
 
 ## 🎉 Holiday Management System
 
@@ -366,6 +528,40 @@ The holiday system uses polymorphic relationships to support multiple entity typ
 - **Flexible Filtering**: Advanced filtering capabilities for holiday management
 - **Polymorphic Design**: Single table supports multiple entity types efficiently
 
+## 🏗 Architecture & Design Patterns
+
+### Design Patterns Used
+- **Repository Pattern**: Data access abstraction in `app/Repositories/`
+- **Service Layer**: Business logic in `app/Services/`
+- **Resource Pattern**: API response formatting in `app/Http/Resources/`
+- **Request Validation**: Form request validation in `app/Http/Requests/`
+- **Trait Pattern**: Reusable functionality in `app/Traits/`
+- **Enum Pattern**: Type-safe constants in `app/Enums/`
+
+### Key Traits
+- **HasAddresses**: Polymorphic address management
+- **HasDocuments**: File and document management
+- **HasEmergencyContacts**: Emergency contact management
+- **HasDeviceTokens**: Push notification device management
+
+### Enums
+- **DiscountTypeEnum**: Percentage and fixed discount types
+- **DumpsterStatusEnum**: Available, rented, maintenance, inactive
+- **EmploymentTypeEnum**: Full-time, part-time, contract
+- **GenderEnum**: Male, female, other
+- **HolidayApprovalStatusEnum**: Pending, approved, rejected
+- **FinixOnboardingStatusEnum**: Onboarding status tracking
+- **EmergencyContactTypeEnum**: Contact type classification
+- **NotificationEnum**: Notification types
+- **PaymentOptionTypeEnum**: Payment option types
+- **RecurrenceTypeEnum**: Holiday recurrence types
+- **TaxEnums**: Tax calculation types
+
+### Services
+- **CompanyAuthenticationService**: Company registration, OTP, password management
+- **DeviceService**: Device token registration and management
+- **FinixService**: Payment gateway integration
+
 ## 🚀 Deployment
 
 ### Production Considerations
@@ -391,6 +587,16 @@ The holiday system uses polymorphic relationships to support multiple entity typ
    - Configure AWS S3 for production file storage
    - Set up CDN if needed
 
+5. **Payment Integration**
+   - Configure Finix production credentials
+   - Set up webhook endpoints
+   - Test payment flows
+
+6. **Monitoring**
+   - Laravel Telescope for debugging
+   - Log monitoring and alerting
+   - Performance monitoring
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -411,9 +617,45 @@ For support and questions:
 - Check the API documentation
 - Review the Laravel documentation
 
+## 📊 Project Statistics
+
+### Codebase Overview
+- **Total Models**: 30+ Eloquent models
+- **API Controllers**: 15+ RESTful controllers
+- **Database Tables**: 40+ tables with relationships
+- **API Endpoints**: 50+ endpoints
+- **Enums**: 10+ type-safe enums
+- **Traits**: 5+ reusable traits
+- **Services**: 3+ business logic services
+- **Migrations**: 40+ database migrations
+
+### Key Features Implemented
+- ✅ Multi-tenant company management
+- ✅ JWT authentication system
+- ✅ File upload with S3 integration
+- ✅ Payment gateway integration (Finix)
+- ✅ Real-time location tracking
+- ✅ Push notification system
+- ✅ Advanced holiday management
+- ✅ Order lifecycle management
+- ✅ Driver and customer management
+- ✅ Warehouse and dumpster management
+- ✅ Tax and pricing system
+- ✅ Promotion and discount system
+- ✅ Document management
+- ✅ Address management
+- ✅ Emergency contact system
+- ✅ Device token management
+- ✅ API documentation with Swagger
+
 ## 🔄 Version History
 
 - **v2.0** - Current version with multi-tenant architecture
+  - Complete API implementation
+  - Finix payment integration
+  - Advanced holiday management
+  - Real-time features
+  - Comprehensive documentation
 - **v1.0** - Initial release
 
 ---
