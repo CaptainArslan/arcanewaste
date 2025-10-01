@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\Company\DumpsterSizeController;
 use App\Http\Controllers\Api\V1\Company\PaymentOptionController;
 use App\Http\Controllers\Api\V1\Company\GeneralSettingController;
 use App\Http\Controllers\Api\V1\Company\AuthController as CompanyAuthController;
+use App\Http\Controllers\Api\V1\Company\CompanyController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -49,6 +50,7 @@ Route::prefix('v1')->group(function () {
             Route::get('payment-methods/{code}/onboarding-requirements', [PaymentMethodController::class, 'onboardingRequirements']);
 
             Route::get('details', [CompanyAuthController::class, 'details']);
+            Route::put('details', [CompanyController::class, 'details']);
 
             // General Settings Routes
             Route::get('general-settings', [GeneralSettingController::class, 'index']);
