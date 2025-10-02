@@ -21,8 +21,11 @@ class AddressResource extends JsonResource
             'city' => $this->city,
             'state' => $this->state,
             'country' => $this->country,
-            'zip' => $this->zip,
+            'postal_code' => $this->postal_code,
             'is_primary' => $this->is_primary,
+            'label' => $this->label,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
         ];
     }
 }
