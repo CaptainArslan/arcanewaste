@@ -565,48 +565,11 @@
                         lng: parseFloat(company.address.longitude)
                     };
 
-                    // Create a custom building marker icon
-                    const markerIcon = {
-                        url: 'data:image/svg+xml;base64,' + btoa(`
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                                <defs>
-                                    <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-                                    </linearGradient>
-                                </defs>
-                                <rect x="6" y="8" width="20" height="22" fill="url(#buildingGradient)" stroke="#ffffff" stroke-width="2" rx="2"/>
-                                <rect x="10" y="2" width="12" height="6" fill="url(#buildingGradient)" stroke="#ffffff" stroke-width="1.5" rx="1"/>
-                                <rect x="8" y="12" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="13" y="12" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="18" y="12" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="8" y="17" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="13" y="17" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="18" y="17" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="8" y="22" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="13" y="22" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <rect x="18" y="22" width="3" height="3" fill="#ffffff" rx="0.5"/>
-                                <path d="M14 28v2h4v-2z" fill="url(#buildingGradient)"/>
-                            </svg>
-                        `),
-                        scaledSize: new google.maps.Size(32, 32),
-                        anchor: new google.maps.Point(16, 32),
-                        labelOrigin: new google.maps.Point(16, -5)
-                    };
-
                     const marker = new google.maps.Marker({
                         position: position,
                         map: map,
                         title: company.name,
-                        icon: markerIcon,
-                        animation: google.maps.Animation.DROP,
-                        label: {
-                            text: company.name.charAt(0).toUpperCase(),
-                            color: '#ffffff',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            fontFamily: 'Inter, sans-serif'
-                        }
+                        animation: google.maps.Animation.DROP
                     });
 
                     // Add a subtle animation on hover
@@ -639,45 +602,12 @@
                 }
             });
 
-            // Initialize marker clustering with enhanced styling
+            // Initialize marker clustering
             if (clusteringEnabled) {
                 markerClusterer = new MarkerClusterer(map, markers, {
-                    imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
                     maxZoom: 15,
                     gridSize: 50,
-                    minimumClusterSize: 2,
-                    styles: [
-                        {
-                            url: 'data:image/svg+xml;base64,' + btoa(`
-                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
-                                    <defs>
-                                        <linearGradient id="clusterGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-                                        </linearGradient>
-                                    </defs>
-                                    <rect x="5" y="10" width="40" height="35" fill="url(#clusterGradient1)" stroke="#ffffff" stroke-width="3" rx="4"/>
-                                    <rect x="15" y="3" width="20" height="10" fill="url(#clusterGradient1)" stroke="#ffffff" stroke-width="2" rx="2"/>
-                                    <rect x="12" y="18" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="19" y="18" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="26" y="18" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="12" y="26" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="19" y="26" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="26" y="26" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="12" y="34" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="19" y="34" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <rect x="26" y="34" width="4" height="4" fill="#ffffff" rx="1"/>
-                                    <circle cx="25" cy="25" r="18" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
-                                </svg>
-                            `),
-                            width: 50,
-                            height: 50,
-                            textSize: 16,
-                            textColor: '#ffffff',
-                            anchorX: 25,
-                            anchorY: 25
-                        }
-                    ]
+                    minimumClusterSize: 2
                 });
             }
         }
@@ -686,10 +616,15 @@
             const address = company.address;
             return `
                 <div style="padding: 20px; min-width: 250px; font-family: 'Inter', sans-serif;">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9;">
-                        <div style="width: 12px; height: 12px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%;"></div>
-                        <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem; font-weight: 600;">${company.name}</h3>
-                    </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9;">
+                            <div style="width: 12px; height: 12px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%;"></div>
+                            <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem; font-weight: 600;">${company.name}</h3>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <a href="/maps/company/${company.id}" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+                                <i class="fas fa-map"></i> View Company Map
+                            </a>
+                        </div>
                     
                     ${address ? `
                         <div style="margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 4px solid #667eea;">
@@ -752,7 +687,6 @@
 
             if (clusteringEnabled) {
                 markerClusterer = new MarkerClusterer(map, markers, {
-                    imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
                     maxZoom: 15,
                     gridSize: 50,
                     minimumClusterSize: 2

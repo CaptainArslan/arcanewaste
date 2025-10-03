@@ -14,4 +14,5 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::get('/maps', [MapController::class, 'index'])->name('maps');
+Route::get('/maps/company/{company}', [MapController::class, 'company'])->name('maps.company');
 

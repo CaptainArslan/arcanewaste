@@ -18,7 +18,19 @@ class MapController extends Controller
             ->get();
 
         return view('maps.index', compact('companies'));
-        
+    }
+
+    public function company($companyId)
+    {
+        // Get specific company with all related data
+        $company = Company::with([
+            'address',
+            'warehouses.address',
+            'dumpsters.latestLocation',
+            'dumpsters.size'
+        ])->findOrFail($companyId);
+
+        return view('maps.company', compact('company'));
     }
 }
 
