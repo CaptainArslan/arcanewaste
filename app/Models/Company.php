@@ -168,6 +168,15 @@ class Company extends Authenticatable implements JWTSubject
     }
 
     // Accessors & Mutators
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => ucfirst($value),
+            set: fn(string $value) => strtolower($value),
+        );
+    }
+
     protected function logo(): Attribute
     {
         return Attribute::make(
