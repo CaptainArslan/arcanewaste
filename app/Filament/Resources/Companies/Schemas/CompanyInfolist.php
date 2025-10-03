@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Companies\Schemas;
 
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Schemas\Schema;
 
 class CompanyInfolist
@@ -15,7 +16,7 @@ class CompanyInfolist
                 TextEntry::make('name'),
                 TextEntry::make('slug'),
                 TextEntry::make('customer_panel_url'),
-                TextEntry::make('logo'),
+                ImageEntry::make('logo'),
                 TextEntry::make('phone'),
                 TextEntry::make('email')
                     ->label('Email address'),

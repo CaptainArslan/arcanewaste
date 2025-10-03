@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources\Companies\Tables;
 
+use Filament\Tables\Table;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
+use Filament\Actions\ForceDeleteBulkAction;
 
 class CompaniesTable
 {
@@ -25,8 +26,9 @@ class CompaniesTable
                     ->searchable(),
                 TextColumn::make('customer_panel_url')
                     ->searchable(),
-                TextColumn::make('logo')
-                    ->searchable(),
+                ImageColumn::make('logo')
+                    ->circular()
+                    ->defaultImageUrl(url('/images/default-company-logo.png')),
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('email')
@@ -40,16 +42,16 @@ class CompaniesTable
                     ->searchable(),
                 TextColumn::make('finix_merchant_id')
                     ->searchable(),
-                TextColumn::make('finix_onboarding_form_id')
-                    ->searchable(),
-                TextColumn::make('finix_onboarding_url_expired_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('finix_onboarding_status')
-                    ->searchable(),
-                TextColumn::make('finix_onboarding_completed_at')
-                    ->dateTime()
-                    ->sortable(),
+                // TextColumn::make('finix_onboarding_form_id')
+                //     ->searchable(),
+                // TextColumn::make('finix_onboarding_url_expired_at')
+                //     ->dateTime()
+                //     ->sortable(),
+                // TextColumn::make('finix_onboarding_status')
+                //     ->searchable(),
+                // TextColumn::make('finix_onboarding_completed_at')
+                //     ->dateTime()
+                //     ->sortable(),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('created_at')
