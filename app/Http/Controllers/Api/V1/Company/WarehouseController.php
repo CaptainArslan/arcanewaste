@@ -7,7 +7,7 @@ use App\Http\Requests\Company\WareHouseCreateRequest;
 use App\Http\Requests\Company\WareHouseUpdateRequest;
 use App\Http\Resources\WarehouseResource;
 use App\Models\Warehouse;
-use App\Repositories\WarehouseRepository;
+use App\Repositories\Company\WarehouseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

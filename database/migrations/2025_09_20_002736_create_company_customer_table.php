@@ -16,6 +16,7 @@ return new class extends Migration
 
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('payment_option_id')->constrained()->cascadeOnDelete();
 
             // Company-specific fields
             $table->string('full_name')->nullable(); // optional company-specific name

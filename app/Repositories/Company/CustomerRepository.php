@@ -70,6 +70,7 @@ class CustomerRepository
             'image' => $data['image'] ?? $customer->image,
             'is_active' => $data['is_active'] ?? true,
             'is_delinquent' => $data['is_delinquent'] ?? false,
+            'payment_option_id' => $data['payment_option_id'] ?? null,
             'delinquent_days' => $data['delinquent_days'] ?? 0,
         ];
 

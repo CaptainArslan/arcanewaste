@@ -9,6 +9,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerCreateRequest extends FormRequest
 {
@@ -27,14 +29,22 @@ class CustomerCreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $companyId = Auth::guard('company')->id();
+
         return [
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email'],
             'phone' => ['required', 'string', 'max:255'],
-            'gender' => ['required', 'string', 'in:'.implode(',', GenderEnum::values())],
+            'gender' => ['required', 'string', 'in:' . implode(',', GenderEnum::values())],
             'dob' => ['required', 'date'],
             'address' => ['required', 'array', new AddressRule],
             'emergency_contacts' => ['required', 'array', new EmergencyContactRule],
+            'payment_option_id' => [
+                'required',
+                'exists:payment_options,id',
+                Rule::exists('payment_options', 'id')->where('company_id', $companyId)
+            ],
+            'image' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -53,6 +63,10 @@ class CustomerCreateRequest extends FormRequest
             'gender.in' => 'Gender must be either male, female or other',
             'dob.required' => 'Date of birth is required',
             'dob.date' => 'Date of birth must be a date',
+            'payment_option_id.required' => 'Payment option is required',
+            'payment_option_id.exists' => 'Payment option does not exist',
+            'payment_option_id.required' => 'Payment option is required',
+            'payment_option_id.exists' => 'Payment option does not exist',
         ];
     }
 
